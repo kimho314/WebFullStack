@@ -18,7 +18,17 @@ function App() {
       ...inputs,
       [name]: value
     });
-  }
+  };
+
+  const onRemove = id => {
+    setUsers(users.fileter(user => user.id !== id));
+  };
+
+  const onToggle = id => {
+    setUsers(users.map(
+      user => user.id === id ? { ...user, active: !user.active } : user
+    ));
+  };
 
   const { username, email } = inputs;
 
@@ -26,17 +36,20 @@ function App() {
     {
       id: 1,
       username: 'velopert',
-      email: 'public.velopert@gmail.com'
+      email: 'public.velopert@gmail.com',
+      active: true,
     },
     {
       id: 2,
       username: 'velopert2',
-      email: 'public.velopert2@gmail.com'
+      email: 'public.velopert2@gmail.com',
+      active: false,
     },
     {
       id: 3,
       username: 'velopert3',
-      email: 'public.velopert3@gmail.com'
+      email: 'public.velopert3@gmail.com',
+      active: false,
     },
   ]);
 
@@ -77,7 +90,7 @@ function App() {
     // <InputSample />
     <>
       <CreateUser username={username} email={email} onChange={onChange} onCreate={onCreate} />
-      <UserList users={users} />
+      <UserList users={users} onRemove={onRemove} onToggle={onToggle} />
     </>
   );
 }
