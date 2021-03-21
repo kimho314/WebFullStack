@@ -1,4 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback, useReducer, createContext } from 'react';
+import produce from 'immer';
 // import Hello from './Hello';
 // import Wrapper from './Wrapper';
 import Counter from './Counter';
@@ -50,24 +51,35 @@ function reducer(state, action) {
     //     }
     //   };
     case 'CREATE_USER':
-      return {
-        inputs: initialState.inputs,
-        users: state.users.concat(action.user),
-      };
+      // return {
+      //   inputs: initialState.inputs,
+      //   users: state.users.concat(action.user),
+      // };
+      return produce(state, dratf => {
+        dratf.users.push(action.user);
+      });
     case 'TOGGLE_USER':
-      return {
-        ...state,
-        users: state.users.map(user =>
-          user.id === action.id
-            ? { ...user, active: !user.active }
-            : user
-        )
-      };
+      // return {
+      //   ...state,
+      //   users: state.users.map(user =>
+      //     user.id === action.id
+      //       ? { ...user, active: !user.active }
+      //       : user
+      //   )
+      // };
+      return produce(state, draft => {
+        const user = draft.users.find(user => user.id === action.id);
+        user.active = !user.active;
+      });
     case 'REMOVE_USER':
-      return {
-        ...state,
-        uesrs: state.users.filter(user => user.id !== action.id)
-      };
+      // return {
+      //   ...state,
+      //   uesrs: state.users.filter(user => user.id !== action.id)
+      // };
+      return produce(state, draft => {
+        const index = draft.users.findIndex(user => user.id === action.id);
+        draft.users.splice(index, 1);
+      });
     default:
       throw new Error('Unhandled case');
   }
