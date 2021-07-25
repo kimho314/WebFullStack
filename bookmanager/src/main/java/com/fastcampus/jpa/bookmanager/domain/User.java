@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     // IDENTITY : Mysql, MariaDB
     // SEQUENCE : Oracle, Postgre, Mssql
     // TABLE : DB 종류에 상관없이 ID값 관리하는 별도 DB 생성함
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NonNull
     private String name;
