@@ -1,7 +1,0 @@
-rootProject.name = 'gradle_multi_modules'
-
-include 'api'
-include 'domain'
-include 'core'
-include 'web'
-
