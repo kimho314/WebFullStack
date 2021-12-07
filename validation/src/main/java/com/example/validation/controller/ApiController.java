@@ -1,17 +1,17 @@
 package com.example.validation.controller;
 
+import com.example.validation.dto.Terms;
 import com.example.validation.dto.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class ApiController {
@@ -37,5 +37,13 @@ public class ApiController {
         System.out.println(user);
 
         return user;
+    }
+
+    @PostMapping("/terms")
+    public Terms.Response getTerms(@RequestBody @Valid Terms.Request request){
+        log.info("terms = {}", request.getTerms());
+        return Terms.Response.builder()
+                .responseMessage("SUCCESS")
+                .build();
     }
 }
