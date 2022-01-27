@@ -1,6 +1,6 @@
 package com.coding.test.lambda;
 
-public class ConcreteOperation implements Operation{
+public class ConcreteOperation1 implements Operation1 {
 
     @Override
     public void operation(int num1, int num2) {
