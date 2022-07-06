@@ -9,3 +9,4 @@ services:
     environment:
       POSTGRES_USER: "luna"
       POSTGRES_PASSWORD: "0314"
+      POSTGRES_HOST_AUTH_METHOD: md5

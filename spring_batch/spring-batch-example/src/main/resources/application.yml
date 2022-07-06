@@ -1,0 +1,6 @@
+spring:
+  batch:
+    job:
+      names: ${job.name:NONE} # enable to run only one batch
+    jdbc:
+      initialize-schema: never # better set this option into never so that sql hasn't been created automatically
