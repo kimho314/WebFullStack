@@ -33,6 +33,7 @@ public class ItemReaderConfiguration {
     private final DataSource dataSource;
     private final EntityManagerFactory entityManagerFactory;
 
+    // dataSource, entityManagerFactory가 빨간줄 나는것은 IntelliJ의 오류로 실행 시 문제 없음
     public ItemReaderConfiguration(
             JobBuilderFactory jobBuilderFactory,
             StepBuilderFactory stepBuilderFactory,
