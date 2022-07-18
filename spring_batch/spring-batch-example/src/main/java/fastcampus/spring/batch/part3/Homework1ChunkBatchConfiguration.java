@@ -1,6 +1,5 @@
 package fastcampus.spring.batch.part3;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.EntityManagerFactory;
@@ -21,6 +20,7 @@ import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.support.CompositeItemWriter;
+import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,9 +63,13 @@ public class Homework1ChunkBatchConfiguration {
     }
 
     private CompositeItemWriter<? super Person> itemWriter() throws Exception {
-        CompositeItemWriter<Person> compositeItemWriter = new CompositeItemWriter<>();
-        compositeItemWriter.setDelegates(Arrays.asList(insertItemWriter(), printItemWriter()));
-        return compositeItemWriter;
+//        CompositeItemWriter<Person> compositeItemWriter = new CompositeItemWriter<>();
+//        compositeItemWriter.setDelegates(Arrays.asList(insertItemWriter(), printItemWriter()));
+//        return compositeItemWriter;
+
+        return new CompositeItemWriterBuilder<Person>()
+                .delegates(insertItemWriter(), printItemWriter())
+                .build();
     }
 
     private ItemWriter<Person> printItemWriter() {
