@@ -87,10 +87,11 @@ public class Homework1ChunkBatchConfiguration {
     }
 
     private ItemProcessor<? super Person, ? extends Person> itemProcessor(Boolean allowDuplicate) {
-        if (!allowDuplicate) {
+        log.info("allowDuplicate : {}", allowDuplicate);
+        if (allowDuplicate) {
             return item -> item;
         }
-        log.info("allowDuplicate : {}", allowDuplicate);
+
         Map<String, Person> map = new HashMap<>();
         return item -> {
             if (map.containsValue(item)) {
