@@ -19,7 +19,9 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.item.support.CompositeItemWriter;
+import org.springframework.batch.item.support.builder.CompositeItemProcessorBuilder;
 import org.springframework.batch.item.support.builder.CompositeItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -48,6 +50,8 @@ public class Homework1ChunkBatchConfiguration {
         return jobBuilderFactory.get("homework1Job")
                 .incrementer(new RunIdIncrementer())
                 .start(this.homework1Step(null))
+                .listener(new SavePersonListener.SavePersonJobExecutionListener())
+                .listener(new SavePersonListener.SavePersonAnnotationJobExecutionListener())
                 .build();
     }
 
@@ -59,6 +63,10 @@ public class Homework1ChunkBatchConfiguration {
                 .reader(itemReader())
                 .processor(itemProcessor(ObjectUtils.isEmpty(allowDuplicate) ? Boolean.FALSE : allowDuplicate))
                 .writer(itemWriter())
+                .listener(new SavePersonListener.SavePersonStepExecutionListener())
+                .faultTolerant()
+                .skip(NotFoundNameException.class)
+                .skipLimit(2)
                 .build();
     }
 
@@ -86,20 +94,35 @@ public class Homework1ChunkBatchConfiguration {
         return itemWriter;
     }
 
-    private ItemProcessor<? super Person, ? extends Person> itemProcessor(Boolean allowDuplicate) {
+    private ItemProcessor<? super Person, ? extends Person> itemProcessor(Boolean allowDuplicate) throws Exception {
         log.info("allowDuplicate : {}", allowDuplicate);
         if (allowDuplicate) {
             return item -> item;
         }
 
         Map<String, Person> map = new HashMap<>();
-        return item -> {
+        ItemProcessor<Person, Person> duplicationValidationProcessor = item -> {
             if (map.containsValue(item)) {
                 return null;
             }
             map.put(item.getName(), item);
             return item;
         };
+
+        ItemProcessor<Person, Person> validationProcessor = item -> {
+            if (item.isNotEmptyName()) {
+                return item;
+            }
+
+            throw new NotFoundNameException();
+        };
+
+        CompositeItemProcessor<Person, Person> itemProcessor = new CompositeItemProcessorBuilder<Person, Person>()
+                .delegates(validationProcessor, duplicationValidationProcessor)
+                .build();
+        itemProcessor.afterPropertiesSet();
+
+        return itemProcessor;
     }
 
     private FlatFileItemReader<Person> itemReader() throws Exception {

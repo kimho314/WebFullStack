@@ -1,5 +1,6 @@
 package fastcampus.spring.batch.part3;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,5 +53,14 @@ public class Person {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37).append(getName()).append(getAge()).append(getAddress()).toHashCode();
+    }
+
+    public boolean isNotEmptyName() {
+        return Objects.nonNull(this.name) && !this.name.isEmpty();
+    }
+
+    public Person unknownName() {
+        this.name = "UNKNOWN";
+        return this;
     }
 }
