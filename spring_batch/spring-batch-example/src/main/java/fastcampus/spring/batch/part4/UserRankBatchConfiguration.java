@@ -10,10 +10,10 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -90,10 +90,11 @@ public class UserRankBatchConfiguration {
     }
 
     private ItemReader<? extends User> jpaUserReader() throws Exception {
-        JpaCursorItemReader<User> itemReader = new JpaCursorItemReaderBuilder<User>()
+        JpaPagingItemReader<User> itemReader = new JpaPagingItemReaderBuilder<User>()
                 .name("userJpaCursorReader")
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("select u from User u")
+                .pageSize(10) // pagingItemReader 의 pageSize 는 chunk size와 동일하게 맞춘다
                 .build();
         itemReader.afterPropertiesSet();
         return itemReader;
