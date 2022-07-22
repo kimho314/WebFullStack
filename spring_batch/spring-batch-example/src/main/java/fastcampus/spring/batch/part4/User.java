@@ -1,4 +1,4 @@
-package fastcampus.spring.batch.part3;
+package fastcampus.spring.batch.part4;
 
 import lombok.*;
 import org.apache.commons.lang3.ObjectUtils;

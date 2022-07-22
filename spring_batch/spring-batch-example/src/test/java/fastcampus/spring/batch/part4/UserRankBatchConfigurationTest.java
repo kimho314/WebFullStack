@@ -1,5 +1,6 @@
-package fastcampus.spring.batch.part3;
+package fastcampus.spring.batch.part4;
 
+import fastcampus.spring.batch.TestConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

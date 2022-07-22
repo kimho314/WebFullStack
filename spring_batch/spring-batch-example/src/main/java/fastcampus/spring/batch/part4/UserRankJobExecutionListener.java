@@ -1,4 +1,4 @@
-package fastcampus.spring.batch.part3;
+package fastcampus.spring.batch.part4;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
