@@ -22,6 +22,7 @@ public class UserRankJobExecutionListener implements JobExecutionListener {
         long endEpochMilli = jobExecution.getEndTime().toInstant().toEpochMilli();
         long duration = endEpochMilli - jobCreateEpochMilli;
         int sum = jobExecution.getStepExecutions().stream()
+                .filter(stepExecution -> stepExecution.getStepName().equals("userLevelUpStep"))
                 .mapToInt(StepExecution::getWriteCount)
                 .sum();
         log.info("총 데이터 처리 {}건, 처리 시간 : {} millis", sum, duration);

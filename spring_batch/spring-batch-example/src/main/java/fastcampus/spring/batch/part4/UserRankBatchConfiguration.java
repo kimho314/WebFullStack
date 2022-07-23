@@ -18,11 +18,13 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.persistence.EntityManagerFactory;
+import java.time.LocalDateTime;
 
 /**
  * user rank system : NORMAL, SILVER, COLD, VIP
@@ -36,6 +38,13 @@ import javax.persistence.EntityManagerFactory;
  * - saveUserStep : save User info
  * - userLevelUpStep : promote User rank
  * JobExecutionListener.afterJob : print out log "총 데이터 처리 {}건, 처리 시간 : {} millis"
+ * User의 totalAmount를 Orders Entity로 변경
+ * - User 1 ... N Order
+ * 주문 총 금액은 Order 기준으로 합산
+ * '-date=2020-11' JobParameters 사용
+ * - 주문 금액 집께는 orderStatisticsStep으로 생성
+ * - '2020년_11월_주문_금액.csv' 파일은 2020년 11월 1일 ~ 11월 30일 주문 통계 내역
+ * - date 파라미터가 없는 경우, orderStatisticsStep 은 실행하지 않는다.
  */
 @Slf4j
 @Configuration
@@ -58,18 +67,18 @@ public class UserRankBatchConfiguration {
         return jobBuilderFactory.get("userRankJob")
                 .incrementer(new RunIdIncrementer())
                 .start(this.saveUserStep())
-                .next(this.userLevelUpStep())
+                .next(this.userLevelUpStep(null))
                 .listener(new UserRankJobExecutionListener())
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step userLevelUpStep() throws Exception {
+    public Step userLevelUpStep(@Value("#{jobParameters[date]}") String date) throws Exception {
         return stepBuilderFactory.get("userLevelUpStep")
                 .<User, User>chunk(10)
                 .reader(jpaUserReader())
-                .processor(userRankPromotionProcessor())
+                .processor(userRankPromotionProcessor(date))
                 .writer(jpaUserRankWriter())
                 .build();
     }
@@ -82,9 +91,12 @@ public class UserRankBatchConfiguration {
         return itemWriter;
     }
 
-    private ItemProcessor<? super User, ? extends User> userRankPromotionProcessor() {
+    private ItemProcessor<? super User, ? extends User> userRankPromotionProcessor(String date) {
+        String[] splitDate = date.split("-");
+        String year = splitDate[0];
+        String month = splitDate[1];
         return item -> {
-            Rank rank = Rank.findByScore(item.getScore());
+            Rank rank = Rank.findByScore(item.getTotalScore(year, month));
             return item.updateRank(rank);
         };
     }
@@ -93,7 +105,7 @@ public class UserRankBatchConfiguration {
         JpaPagingItemReader<User> itemReader = new JpaPagingItemReaderBuilder<User>()
                 .name("userJpaCursorReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("select u from User u")
+                .queryString("select u from User u order by id asc")
                 .pageSize(10) // pagingItemReader 의 pageSize 는 chunk size와 동일하게 맞춘다
                 .build();
         itemReader.afterPropertiesSet();
@@ -103,6 +115,7 @@ public class UserRankBatchConfiguration {
     @Bean
     @JobScope
     public Step saveUserStep() throws Exception {
+        //FIXME : tasklet기반으로 만들것
         return stepBuilderFactory.get("saveUserStep")
                 .<User, User>chunk(10)
                 .reader(csvUserReader())
@@ -113,7 +126,6 @@ public class UserRankBatchConfiguration {
     private ItemWriter<? super User> jpaUserWriter() throws Exception {
         JpaItemWriter<User> itemWriter = new JpaItemWriterBuilder<User>()
                 .entityManagerFactory(entityManagerFactory)
-//                .usePersist(true)
                 .build();
         itemWriter.afterPropertiesSet();
 
@@ -137,11 +149,17 @@ public class UserRankBatchConfiguration {
                 throw new IllegalArgumentException("score must be over 0");
             }
 
-            return User.builder()
+            User user = User.builder()
                     .name(name)
                     .age(age)
-                    .score(score)
+                    .localDateTime(LocalDateTime.now())
                     .build();
+            user.addOrder(Order.builder()
+                    .score(score)
+                    .updateDateTime(LocalDateTime.now())
+                    .build());
+
+            return user;
         });
 
         FlatFileItemReader<User> itemReader = new FlatFileItemReaderBuilder<User>()

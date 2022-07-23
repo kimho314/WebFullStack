@@ -5,9 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ActiveProfiles(profiles = "postgresql")
 @SpringBatchTest // 해당 annotation 을 부텽줘야 @JobScope 이 Test 에서 정상적으로 동작함
@@ -57,9 +58,14 @@ class UserRankBatchConfigurationTest {
     public void userLevelUpStepTest() throws Exception {
         //given
         final String userLevelUpStep = "userLevelUpStep";
+        Map<String, JobParameter> map = new HashMap<>();
+        map.put("date", new JobParameter("2022-07"));
+        JobParameters jobParameters = new JobParameters(map);
 
         //when
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParametersBuilder().toJobParameters());
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParametersBuilder()
+                .addJobParameters(jobParameters)
+                .toJobParameters());
 
         //then
         final Long expectedUserCount = 3L;
@@ -71,25 +77,41 @@ class UserRankBatchConfigurationTest {
         User user1 = User.builder()
                 .name("김호섭")
                 .age(34L)
-                .score(300000L)
-                .rank(Rank.GOLD)
+                .localDateTime(LocalDateTime.now())
                 .build();
+        user1.updateRank(Rank.GOLD);
+        user1.addOrder(Order.builder()
+                .score(300000L)
+                .updateDateTime(LocalDateTime.now())
+                .build());
+
         User user2 = User.builder()
                 .name("닐")
                 .age(30L)
-                .score(500000L)
-                .rank(Rank.VIP)
+                .localDateTime(LocalDateTime.now())
                 .build();
+        user2.updateRank(Rank.VIP);
+        user2.addOrder(Order.builder()
+                .score(500000L)
+                .updateDateTime(LocalDateTime.now())
+                .build());
+
         User user3 = User.builder()
                 .name("김민섭")
                 .age(32L)
-                .score(100000L)
+                .localDateTime(LocalDateTime.now())
                 .build();
+        user3.addOrder(Order.builder()
+                .score(100000L)
+                .updateDateTime(LocalDateTime.now())
+                .build());
         List<User> expectedUsers = Arrays.asList(user1, user2, user3);
 
         List<User> users = userRepository.findAll();
         for (int i = 0; i < users.size(); i++) {
-            Assertions.assertEquals(expectedUsers.get(i), users.get(i));
+            Assertions.assertEquals(expectedUsers.get(i).getName(), users.get(i).getName());
+            Assertions.assertEquals(expectedUsers.get(i).getAge(), users.get(i).getAge());
+            Assertions.assertEquals(expectedUsers.get(i).getRank(), users.get(i).getRank());
         }
     }
 
