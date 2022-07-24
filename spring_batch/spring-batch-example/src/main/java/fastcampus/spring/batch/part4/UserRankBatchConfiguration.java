@@ -14,17 +14,11 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.persistence.EntityManagerFactory;
-import java.time.LocalDateTime;
 
 /**
  * user rank system : NORMAL, SILVER, COLD, VIP
@@ -53,13 +47,16 @@ public class UserRankBatchConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final EntityManagerFactory entityManagerFactory;
+    private final SaveUserTasklet saveUserTasklet;
 
     public UserRankBatchConfiguration(JobBuilderFactory jobBuilderFactory,
                                       StepBuilderFactory stepBuilderFactory,
-                                      EntityManagerFactory entityManagerFactory) {
+                                      EntityManagerFactory entityManagerFactory,
+                                      SaveUserTasklet saveUserTasklet) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.entityManagerFactory = entityManagerFactory;
+        this.saveUserTasklet = saveUserTasklet;
     }
 
     @Bean
@@ -115,62 +112,8 @@ public class UserRankBatchConfiguration {
     @Bean
     @JobScope
     public Step saveUserStep() throws Exception {
-        //FIXME : tasklet기반으로 만들것
         return stepBuilderFactory.get("saveUserStep")
-                .<User, User>chunk(10)
-                .reader(csvUserReader())
-                .writer(jpaUserWriter())
+                .tasklet(saveUserTasklet)
                 .build();
-    }
-
-    private ItemWriter<? super User> jpaUserWriter() throws Exception {
-        JpaItemWriter<User> itemWriter = new JpaItemWriterBuilder<User>()
-                .entityManagerFactory(entityManagerFactory)
-                .build();
-        itemWriter.afterPropertiesSet();
-
-        return itemWriter;
-    }
-
-    private ItemReader<? extends User> csvUserReader() throws Exception {
-        DefaultLineMapper<User> lineMapper = new DefaultLineMapper<>();
-        DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames("name", "age", "score");
-        lineMapper.setLineTokenizer(tokenizer);
-
-        lineMapper.setFieldSetMapper(fieldSet -> {
-            String name = fieldSet.readString("name");
-            long age = fieldSet.readLong("age");
-            if (age <= 0) {
-                throw new IllegalArgumentException("age must be over 0");
-            }
-            long score = fieldSet.readLong("score");
-            if (score < 0L) {
-                throw new IllegalArgumentException("score must be over 0");
-            }
-
-            User user = User.builder()
-                    .name(name)
-                    .age(age)
-                    .localDateTime(LocalDateTime.now())
-                    .build();
-            user.addOrder(Order.builder()
-                    .score(score)
-                    .updateDateTime(LocalDateTime.now())
-                    .build());
-
-            return user;
-        });
-
-        FlatFileItemReader<User> itemReader = new FlatFileItemReaderBuilder<User>()
-                .name("csvFileItemReader")
-                .encoding("UTF-8")
-                .resource(new ClassPathResource("user.csv")) // resources directory 및에 있는 파일을 읽게 해줌
-                .linesToSkip(1) // 첫번재 줄을 skip 하고 다음 줄부터 읽게 해줌
-                .lineMapper(lineMapper)
-                .build();
-        itemReader.afterPropertiesSet();
-
-        return itemReader;
     }
 }

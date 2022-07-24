@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,17 +22,20 @@ import java.util.Map;
 @ActiveProfiles(profiles = "postgresql")
 @SpringBatchTest // 해당 annotation 을 부텽줘야 @JobScope 이 Test 에서 정상적으로 동작함
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {UserRankBatchConfiguration.class, TestConfiguration.class})
+@ContextConfiguration(classes = {UserRankBatchConfiguration.class, TestConfiguration.class, SaveUserTasklet.class})
 class UserRankBatchConfigurationTest {
-
+    private static final Long INCREMENT = 100000L;
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @AfterEach
     void afterAll() {
         userRepository.deleteAll();
+        orderRepository.deleteAll();
     }
 
     @Test
@@ -44,14 +47,10 @@ class UserRankBatchConfigurationTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchStep(testStep);
 
         //then
-        final Long expectedUserCount = 3L;
-        final Long expectJpaCount = userRepository.count();
+        final Long expectedUserCount = 5L;
+        final Long userCount = userRepository.count();
 
-        int sum = jobExecution.getStepExecutions().stream()
-                .mapToInt(StepExecution::getWriteCount)
-                .sum();
-        Assertions.assertEquals(expectedUserCount, sum);
-        Assertions.assertEquals(expectJpaCount, sum);
+        Assertions.assertEquals(expectedUserCount, userCount);
     }
 
     @Test
@@ -68,51 +67,40 @@ class UserRankBatchConfigurationTest {
                 .toJobParameters());
 
         //then
-        final Long expectedUserCount = 3L;
-        Assertions.assertEquals(expectedUserCount, jobExecution.getStepExecutions().stream()
-                .filter(stepExecution -> stepExecution.getStepName().equals("userLevelUpStep"))
-                .mapToInt(StepExecution::getWriteCount)
-                .sum());
+        final Long expectedUserCount = 5L;
+        Assertions.assertEquals(expectedUserCount,
+                jobExecution.getStepExecutions().stream()
+                        .filter(stepExecution -> stepExecution.getStepName().equals("userLevelUpStep"))
+                        .mapToInt(StepExecution::getWriteCount)
+                        .sum());
 
-        User user1 = User.builder()
-                .name("김호섭")
-                .age(34L)
-                .localDateTime(LocalDateTime.now())
-                .build();
-        user1.updateRank(Rank.GOLD);
-        user1.addOrder(Order.builder()
-                .score(300000L)
-                .updateDateTime(LocalDateTime.now())
-                .build());
-
-        User user2 = User.builder()
-                .name("닐")
-                .age(30L)
-                .localDateTime(LocalDateTime.now())
-                .build();
-        user2.updateRank(Rank.VIP);
-        user2.addOrder(Order.builder()
-                .score(500000L)
-                .updateDateTime(LocalDateTime.now())
-                .build());
-
-        User user3 = User.builder()
-                .name("김민섭")
-                .age(32L)
-                .localDateTime(LocalDateTime.now())
-                .build();
-        user3.addOrder(Order.builder()
-                .score(100000L)
-                .updateDateTime(LocalDateTime.now())
-                .build());
-        List<User> expectedUsers = Arrays.asList(user1, user2, user3);
+        List<User> expectedUsers = getUsers();
 
         List<User> users = userRepository.findAll();
         for (int i = 0; i < users.size(); i++) {
             Assertions.assertEquals(expectedUsers.get(i).getName(), users.get(i).getName());
             Assertions.assertEquals(expectedUsers.get(i).getAge(), users.get(i).getAge());
-            Assertions.assertEquals(expectedUsers.get(i).getRank(), users.get(i).getRank());
         }
+    }
+
+    private List<User> getUsers() {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            User user = User.builder()
+                    .name("test name" + (i + 1))
+                    .age((long) i + 1)
+                    .localDateTime(LocalDateTime.now())
+                    .build();
+            Order order = Order.builder()
+                    .score(INCREMENT * (i + 1))
+                    .updateDateTime(LocalDateTime.now())
+                    .build();
+            user.addOrder(order);
+
+            users.add(user);
+        }
+
+        return users;
     }
 
 }

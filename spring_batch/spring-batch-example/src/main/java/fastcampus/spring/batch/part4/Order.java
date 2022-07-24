@@ -22,7 +22,8 @@ public class Order {
 
     private Long score;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     private LocalDateTime updateDateTime;

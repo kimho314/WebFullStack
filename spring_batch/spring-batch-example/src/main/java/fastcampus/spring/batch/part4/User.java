@@ -16,6 +16,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
+
+    @Column(name = "user_id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +26,7 @@ public class User {
 
     private Long age;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Order> orders = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -51,9 +53,9 @@ public class User {
     }
 
 
-    public Long getTotalScore(String _year, String _monthd) {
+    public Long getTotalScore(String _year, String _month) {
         final int year = Integer.parseInt(_year);
-        final Month month = Month.of(Integer.parseInt(_monthd) - 1);
+        final Month month = Month.of(Integer.parseInt(_month));
 
         long sum = this.orders.stream()
                 .filter(order -> {
