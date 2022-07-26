@@ -23,7 +23,7 @@ import java.util.Map;
 @SpringBatchTest // 해당 annotation 을 부텽줘야 @JobScope 이 Test 에서 정상적으로 동작함
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {UserRankBatchConfiguration.class, TestConfiguration.class, SaveUserTasklet.class})
-class UserRankBatchConfigurationTest {
+class User2RankBatchConfigurationTest {
     private static final Long INCREMENT = 100000L;
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
