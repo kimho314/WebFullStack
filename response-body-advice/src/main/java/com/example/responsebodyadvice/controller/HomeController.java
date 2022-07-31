@@ -21,7 +21,7 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home() {
-        return homeService.getHomeString(Boolean.FALSE);
+        return homeService.getHomeString(Boolean.TRUE);
     }
 
     @GetMapping("/home/response-entity")
@@ -29,7 +29,15 @@ public class HomeController {
         var resp = HomeDto.builder()
                 .message("home with response entity")
                 .build();
-        return ResponseEntity.ok(resp);
+//        return ResponseEntity.ok(resp);
+        return ResponseEntity.accepted().body(resp);
+    }
+
+    @GetMapping("/home/dto")
+    public HomeDto homeWithDto() {
+        return HomeDto.builder()
+                .message("home with dto response")
+                .build();
     }
 
     @GetMapping("/home/option")
@@ -39,5 +47,10 @@ public class HomeController {
                         .message("optional home")
                         .build()
         );
+    }
+
+    @GetMapping("/home/nullable-option")
+    public Optional<HomeDto> homeWithNullableOptional() {
+        return Optional.ofNullable(null);
     }
 }

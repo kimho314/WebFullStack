@@ -2,6 +2,7 @@ package com.example.responsebodyadvice.config;
 
 import com.example.responsebodyadvice.constants.CommonResponse;
 import com.example.responsebodyadvice.constants.ResponseCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
@@ -21,7 +22,7 @@ public class ServiceResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return !returnType.getParameterType().equals(CommonResponse.class) ||
+        return !returnType.getParameterType().equals(CommonResponse.class) &&
                 !returnType.getParameterType().equals(ResponseEntity.class);
     }
 
@@ -34,6 +35,15 @@ public class ServiceResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (returnType.isOptional()) {
             log.info("optional body : {}", body);
         }
+
+        if (returnType.getParameterType().equals(String.class)) {
+            try {
+                return OBJECT_MAPPER.writeValueAsString(body);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         return commonResponseBuilder
                 .result(body)
                 .build();
