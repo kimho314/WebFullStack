@@ -14,6 +14,8 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.util.Objects;
+
 @Slf4j
 @RestControllerAdvice
 public class ServiceResponseBodyAdvice implements ResponseBodyAdvice<Object> {
@@ -26,6 +28,18 @@ public class ServiceResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                 !returnType.getParameterType().equals(ResponseEntity.class);
     }
 
+    /**
+     * optional type은 자동 converting 가능 -> 핸들링 필요 없음
+     * String 타입은 StringHttpMessageConvert 때문에 String을 바로 return 해야함
+     *
+     * @param body                  the body to be written
+     * @param returnType            the return type of the controller method
+     * @param selectedContentType   the content type selected through content negotiation
+     * @param selectedConverterType the converter type selected to write to the response
+     * @param request               the current request
+     * @param response              the current response
+     * @return
+     */
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
@@ -42,6 +56,10 @@ public class ServiceResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        if (Objects.isNull(body)) {
+            return commonResponseBuilder.build();
         }
 
         return commonResponseBuilder

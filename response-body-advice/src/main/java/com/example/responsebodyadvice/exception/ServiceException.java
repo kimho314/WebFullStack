@@ -1,8 +1,10 @@
 package com.example.responsebodyadvice.exception;
 
 import com.example.responsebodyadvice.constants.ResponseCode;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public class ServiceException extends RuntimeException {
     private final HttpStatus httpStatus;
     private final ResponseCode responseCode;

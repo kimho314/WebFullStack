@@ -24,6 +24,18 @@ public class HomeController {
         return homeService.getHomeString(Boolean.TRUE);
     }
 
+    @GetMapping("/home/exception")
+    public HomeDto homeWithException() {
+//        throw new ServiceException(ResponseCode.COMMON_BAD_REQUEST,
+//                ResponseCode.COMMON_BAD_REQUEST.name());
+        throw new IllegalArgumentException("Illegal Arguments");
+    }
+
+    @GetMapping("/home/null")
+    public HomeDto homeWithNull() {
+        return null;
+    }
+
     @GetMapping("/home/response-entity")
     public ResponseEntity<HomeDto> homeWithResponseEntity() {
         var resp = HomeDto.builder()
