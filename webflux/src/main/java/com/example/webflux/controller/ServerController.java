@@ -28,4 +28,10 @@ public class ServerController {
     public Mono<Dish> serveADish() {
         return kitchenService.getADish();
     }
+
+    @GetMapping(value = "/served-dishes", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<Dish> deliverDishes() {
+        return kitchenService.getDishes()
+                .map(Dish::deliver);
+    }
 }
