@@ -1,6 +1,15 @@
 server:
   port: 8080
 
+
 logging:
   level:
     root: debug
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/local
+  webflux:
+    hiddenmethod:
+      filter:
+        enabled: true
