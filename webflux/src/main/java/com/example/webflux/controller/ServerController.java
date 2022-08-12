@@ -34,4 +34,5 @@ public class ServerController {
         return kitchenService.getDishes()
                 .map(Dish::deliver);
     }
+
 }

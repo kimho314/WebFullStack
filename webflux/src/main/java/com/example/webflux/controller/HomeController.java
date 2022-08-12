@@ -29,7 +29,7 @@ public class HomeController {
         return Mono.just(Rendering.view("home.html")
                 .modelAttribute("items", itemRepository.findAll())
                 .modelAttribute("cart", cartRepository.findById("My Cart")
-                        .defaultIfEmpty(new Cart("My Cart")))
+                        .defaultIfEmpty(Cart.builder().id("My Cart").build()))
                 .build());
     }
 }
