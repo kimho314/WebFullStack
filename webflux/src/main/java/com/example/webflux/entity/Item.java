@@ -8,5 +8,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 public record Item(@Id String id,
                    String name,
+                   String description,
                    double price) {
 }
