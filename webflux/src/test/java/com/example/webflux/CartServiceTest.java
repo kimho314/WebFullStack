@@ -50,7 +50,7 @@ public class CartServiceTest {
     @Test
     void addItemToEmptyCartShouldProductOneCartItem() {
         cartService.addToCart("My Cart", "item1")
-                .as(StepVerifier::create)
+                .as(StepVerifier::create) // StepVerifier : 테스트 도구가 구독하여 결과 확인 해준다.
                 .expectNextMatches(cart -> {
                     assertThat(cart.cartItems())
                             .extracting(cartItems -> cartItems.stream().map(CartItem::quantity).collect(Collectors.toList()))
@@ -64,6 +64,28 @@ public class CartServiceTest {
 
                     return Boolean.TRUE;
                 })
-                .verifyComplete();
+                .verifyComplete(); // onCompletion 시그널을 확인하여 동작을 테스트 한다.
+    }
+
+    @Test
+    void alternativeWayToTestItemToEmptyCartShouldProductOneCartItem() {
+        StepVerifier.create(
+                        cartService.addToCart("My Cart", "item1")
+                                .log()
+                )
+                .expectNextMatches(cart -> {
+                    assertThat(cart.cartItems())
+                            .extracting(cartItems -> cartItems.stream().map(CartItem::quantity).collect(Collectors.toList()))
+                            .asList()
+                            .containsExactlyInAnyOrder(1);
+
+                    assertThat(cart.cartItems())
+                            .extracting(cartItems -> cartItems.stream().map(CartItem::item).collect(Collectors.toList()))
+                            .asList()
+                            .containsExactly(new Item("item1", "TV tray", "Alf TV tray", 19.99));
+
+                    return Boolean.TRUE;
+                })
+                .verifyComplete(); // 테스트 도구가 구독하여 결과 확인 해준다.
     }
 }
