@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var c, python, java bool
+
 func main() {
 	fmt.Println("Hello World!!!!!")
 	// fmt.Println("time : ", time.Now())
@@ -30,4 +32,21 @@ func main() {
 	}
 	timeInKST := current_time.In(loc)
 	fmt.Println("timeInKST : ", timeInKST)
+
+	fmt.Println("add : ", add(10, 24))
+
+	a, b := swap("kim", "nil")
+	fmt.Print("after swap : ")
+	fmt.Println(a, b)
+
+	var i int
+	fmt.Println(i, c, python, java)
+}
+
+func add(x int, y int) int {
+	return x + y
+}
+
+func swap(x, y string) (string, string) {
+	return y, x
 }
