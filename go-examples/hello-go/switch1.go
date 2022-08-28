@@ -36,4 +36,22 @@ func main() {
 	default:
 		fmt.Println("No matched value")
 	}
+
+	switch c := "go"; c + "lang" {
+	case "golang":
+		fmt.Println("go lang")
+	case "java":
+		fmt.Println("java")
+	default:
+		fmt.Println("None")
+	}
+
+	switch i,j := 20, 30; {
+	case i < j:
+		fmt.Println("i is less than j")
+	case i == j:
+		fmt.Println("i is equal to j")
+	case i > j:
+		fmt.Println("i is greater than j")
+	}
 }
