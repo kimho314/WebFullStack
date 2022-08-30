@@ -10,4 +10,14 @@ func main() {
 	case 1,3,5:
 		fmt.Println("a -> ", a, "는 홀수")
 	}
+
+	switch e := "go"; e {
+	case "java":
+		fmt.Println("Java!")
+	case "go":
+		fmt.Println("go")
+		fallthrough
+	case "python":
+		fmt.Println("python")
+	} 
 }
