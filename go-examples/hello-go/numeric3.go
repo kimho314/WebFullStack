@@ -26,5 +26,5 @@ func main() {
 
 	fmt.Println("ex8 : ", num4-0.1)
 	fmt.Println("ex9 : ", float32(num4-0.1))
-	fmt.Println("ex10 : ", float64(num4-0.1))
+	fmt.Println("ex10 : ", float64(num4-0.1)) // 부동소수점 오차 발생!!!
 }
