@@ -46,7 +46,7 @@ func main() {
 		fmt.Println("None")
 	}
 
-	switch i,j := 20, 30; {
+	switch i, j := 20, 30; {
 	case i < j:
 		fmt.Println("i is less than j")
 	case i == j:

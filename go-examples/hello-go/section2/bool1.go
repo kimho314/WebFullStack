@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main(){
+func main() {
 	//bool : true or false
 	//암묵적 형변환 안됨
 

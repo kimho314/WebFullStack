@@ -4,22 +4,22 @@ import (
 	"fmt"
 )
 
-func main(){
+func main() {
 	fmt.Println("variable1")
 
 	var a int
 	var b string
 	var c, d, e int
-	var f,g,h int = 1,2,3
+	var f, g, h int = 1, 2, 3
 	var i float32 = 11.4
 	var j string = "Hi Golang"
 	var k = 4.74
 	var l = "Hi! Seoul!"
 	var m = true
 
-	a= 4
-	b="Hello Go"
-	e=77
+	a = 4
+	b = "Hello Go"
+	e = 77
 
 	fmt.Println("a : ", a)
 	fmt.Println("b : ", b)

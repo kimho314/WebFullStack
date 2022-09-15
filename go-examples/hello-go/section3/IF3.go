@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main(){
+func main() {
 	i := 100
 
 	if i >= 120 {

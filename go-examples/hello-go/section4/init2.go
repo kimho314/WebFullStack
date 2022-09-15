@@ -25,7 +25,6 @@ func init() {
 	fmt.Println("Init5 Method Start")
 }
 
-
 func main() {
 	//init : invoked on load of package
 	fmt.Println("main method start")
