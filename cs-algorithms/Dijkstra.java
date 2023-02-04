@@ -30,19 +30,19 @@ public class Dijkstra {
         priorityQueue.add(new Edge(distances.get(start), start));
 
         while (priorityQueue.size() > 0) {
-            var edgeNode = priorityQueue.poll();
-            var currentDistance = edgeNode.distance;
-            var currentVertex = edgeNode.vertex;
+            Edge edgeNode = priorityQueue.poll();
+            Integer currentDistance = edgeNode.distance;
+            String currentVertex = edgeNode.vertex;
 
             if (distances.get(currentVertex) < currentDistance) {
                 continue;
             }
 
-            var nodeList = graph.get(currentVertex);
+            ArrayList<Edge> nodeList = graph.get(currentVertex);
             for (Edge adjacentNode : nodeList) {
-                var adjacent = adjacentNode.vertex;
-                var weight = adjacentNode.distance;
-                var distance = currentDistance + weight;
+                String adjacent = adjacentNode.vertex;
+                Integer weight = adjacentNode.distance;
+                Integer distance = currentDistance + weight;
 
                 if (distance < distances.get(adjacent)) {
                     distances.put(adjacent, distance);
