@@ -24,6 +24,7 @@ public class QueueExample {
         while (simpleQueue.size() > 0) {
             System.out.println(simpleQueue.dequeue());
         }
+        System.out.println(simpleQueue.dequeue());
     }
 
     public static class SimpleQueue<E> {
