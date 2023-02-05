@@ -3,7 +3,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Comparable {
+public class ComparableExample {
     public static class Edge implements java.lang.Comparable<Edge> {
         private String vertex;
         private Integer distance;
