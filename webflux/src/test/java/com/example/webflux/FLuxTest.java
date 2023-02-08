@@ -22,4 +22,10 @@ public class FLuxTest {
 
         stringFlux.subscribe(log::info, e -> log.error(e.toString()));
     }
+
+    @Test
+    void emptyFLuxTest() {
+        Flux<?> emptyFlux = Flux.empty().log();
+        emptyFlux.subscribe(o -> log.info(o.toString()));
+    }
 }
