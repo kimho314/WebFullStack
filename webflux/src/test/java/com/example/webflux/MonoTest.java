@@ -22,4 +22,11 @@ public class MonoTest {
         Mono<?> mono = Mono.justOrEmpty(Optional.empty()).log();
         mono.subscribe(o -> log.info(o.toString()));
     }
+
+    @Test
+    void optionalMonoTest() {
+        Optional<String> optional = Optional.of("John");
+        Mono<String> stringMono = Mono.justOrEmpty(optional).log();
+        stringMono.subscribe(log::info);
+    }
 }

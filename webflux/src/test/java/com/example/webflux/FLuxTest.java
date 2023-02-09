@@ -1,5 +1,8 @@
 package com.example.webflux;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
@@ -27,5 +30,27 @@ public class FLuxTest {
     void emptyFLuxTest() {
         Flux<?> emptyFlux = Flux.empty().log();
         emptyFlux.subscribe(o -> log.info(o.toString()));
+    }
+
+    @Test
+    void listToFluxTest() {
+        List<String> list = Arrays.asList("John", "Raj", "Peter");
+        Flux<String> stringFlux = Flux.fromIterable(list).log();
+        stringFlux.subscribe(log::info);
+    }
+
+    @Test
+    void streamToFluxTest() {
+        List<String> list = Arrays.asList("John", "Raj", "Peter");
+        Stream<String> stream = list.stream();
+        Flux<String> stringFlux = Flux.fromStream(stream).log();
+        stringFlux.subscribe(log::info);
+    }
+
+    @Test
+    void arrayToFluxTest() {
+        String[] array = {"John", "Raj", "Peter"};
+        Flux<String> stringFlux = Flux.fromArray(array).log();
+        stringFlux.subscribe(log::info);
     }
 }
