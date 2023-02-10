@@ -1,5 +1,6 @@
 package com.example.webflux;
 
+import com.example.webflux.dto.Order;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -52,5 +53,53 @@ public class FLuxTest {
         String[] array = {"John", "Raj", "Peter"};
         Flux<String> stringFlux = Flux.fromArray(array).log();
         stringFlux.subscribe(log::info);
+    }
+
+    @Test
+    void fluxRangeTest() {
+        Flux<Integer> integerFlux = Flux.range(5, 10).log();
+        integerFlux.subscribe(it -> log.info(it.toString()));
+        Flux<Integer> integerFlux2 = Flux.range(5, 0).log();
+        integerFlux2.subscribe(it -> log.info(it.toString()));
+        Flux<Integer> integerFlux3 = Flux.range(5, 1).log();
+        integerFlux3.subscribe(it -> log.info(it.toString()));
+    }
+
+    @Test
+    void fluxFilterTest() {
+        Flux<String> stringFlux = Flux.just("John", "Raj", "Sachin")
+                .filter(it -> it.length() > 3)
+                .log();
+        stringFlux.subscribe(log::info);
+    }
+
+    @Test
+    void fluxMapTest() {
+        Flux<Order> orderFlux = Flux.just(
+                new Order(1L, 100.0),
+                new Order(2L, 200.0),
+                new Order(3L, 300.0)
+        );
+
+        orderFlux.filter(it -> it.getAmount() >= 200.0)
+                .map(Order::getId)
+                .log()
+                .subscribe(it -> log.info(it.toString()));
+    }
+
+    @Test
+    void fluxFlatMapTest() {
+        Flux<Long> longFlux = Flux.just(1L, 2L, 3L);
+        // one input -> multiple outputs
+        Flux<Order> orderFlux = longFlux.flatMap(this::getOrders);
+        orderFlux.subscribe(it -> log.info(it.getAmount().toString()));
+    }
+
+    Flux<Order> getOrders(Long orderId) {
+        return Flux.just(
+                new Order(1L, 100.0),
+                new Order(2L, 200.0),
+                new Order(3L, 300.0)
+        );
     }
 }
