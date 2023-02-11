@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Subscription;
+import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
 
 @Slf4j
@@ -101,5 +103,36 @@ public class FLuxTest {
                 new Order(2L, 200.0),
                 new Order(3L, 300.0)
         );
+    }
+
+    @Test
+    void backPressureTest() {
+        Flux<Integer> integerFlux = Flux.range(1, 10).log();
+//        integerFlux.subscribe(it -> log.info(it.toString()),
+//                Throwable::printStackTrace,
+//                () -> log.info("# complete")
+//        );
+
+        integerFlux.subscribe(new BaseSubscriber<Integer>() {
+            @Override
+            protected void hookOnSubscribe(Subscription subscription) {
+                subscription.request(5);
+            }
+
+            @Override
+            protected void hookOnNext(Integer value) {
+                log.info(value.toString());
+            }
+
+            @Override
+            protected void hookOnError(Throwable throwable) {
+                log.error(Arrays.toString(throwable.getStackTrace()));
+            }
+
+            @Override
+            protected void hookOnComplete() {
+                log.info("# hookOnComplete");
+            }
+        });
     }
 }
