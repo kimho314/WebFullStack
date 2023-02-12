@@ -113,7 +113,7 @@ public class FLuxTest {
 //                () -> log.info("# complete")
 //        );
 
-        integerFlux.subscribe(new BaseSubscriber<Integer>() {
+        integerFlux.subscribe(new BaseSubscriber<>() {
             @Override
             protected void hookOnSubscribe(Subscription subscription) {
                 subscription.request(5);
@@ -122,6 +122,9 @@ public class FLuxTest {
             @Override
             protected void hookOnNext(Integer value) {
                 log.info(value.toString());
+                if (value == 3) {
+                    cancel();
+                }
             }
 
             @Override
