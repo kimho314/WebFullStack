@@ -94,6 +94,7 @@ public class SchedulerTest {
     @Test
     @SneakyThrows
     void fluxWithDelayTest() {
+        // delayElements uses parallel scheduler internally
         Flux<Long> longFlux = Flux.just(1L, 2L, 3L).delayElements(Duration.ofSeconds(1));
         longFlux.subscribe(it -> log.info(it.toString()));
         Thread.sleep(4000);
