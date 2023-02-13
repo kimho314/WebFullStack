@@ -1,6 +1,7 @@
 package com.example.webflux;
 
 import com.example.webflux.dto.Order;
+import java.time.Duration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -70,5 +71,31 @@ public class SchedulerTest {
                 });
         longFlux.subscribe(orderId -> log.info("sub with - " + Thread.currentThread().getName()));
         Thread.sleep(3000);
+    }
+
+    @Test
+    @SneakyThrows
+    void boundedElasticSchedulerTest() {
+        Flux<Long> longFlux = orderFlux
+                .publishOn(Schedulers.boundedElastic())
+                .map(order -> {
+                    log.info("map with - " + Thread.currentThread().getName());
+                    return order.getId();
+                })
+                .publishOn(Schedulers.boundedElastic())
+                .map(orderId -> {
+                    log.info("map with - " + Thread.currentThread().getName());
+                    return orderId * 2;
+                });
+        longFlux.subscribe(orderId -> log.info("sub with - " + Thread.currentThread().getName()));
+        Thread.sleep(3000);
+    }
+
+    @Test
+    @SneakyThrows
+    void fluxWithDelayTest() {
+        Flux<Long> longFlux = Flux.just(1L, 2L, 3L).delayElements(Duration.ofSeconds(1));
+        longFlux.subscribe(it -> log.info(it.toString()));
+        Thread.sleep(4000);
     }
 }
