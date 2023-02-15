@@ -4,7 +4,9 @@ server:
 
 logging:
   level:
-    root: debug
+    root: info
+  charset:
+    file:
 spring:
   data:
     mongodb:
@@ -12,4 +14,5 @@ spring:
   webflux:
     hiddenmethod:
       filter:
-        enabled: true
+        enabled:
+          true:
