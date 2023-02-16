@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 public class OrderController {
@@ -17,5 +18,10 @@ public class OrderController {
                         new Order(3L, 300.0))
                 .delayElements(Duration.ofSeconds(1))
                 .log();
+    }
+
+    @GetMapping(value = "/order")
+    public Mono<Order> getOrder() {
+        return Mono.just(new Order(1L, 100.0)).log();
     }
 }
