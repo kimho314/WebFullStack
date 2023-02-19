@@ -19,4 +19,11 @@ public class OrderHandler {
                                 new Order(3L, 300.0)),
                         Order.class);
     }
+
+    public Mono<ServerResponse> getOrder(ServerRequest serverRequest) {
+        return ServerResponse.ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(Mono.just(new Order(1L, 100.0)),
+                        Order.class);
+    }
 }
