@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @Slf4j
-@SpringBootApplication(scanBasePackages = {"com.example.webflux.handler", "com.example.webflux.router"})
+@SpringBootApplication(scanBasePackages = {"com.example.webflux"})
 public class WebfluxApplication {
 
     public static void main(String[] args) {
