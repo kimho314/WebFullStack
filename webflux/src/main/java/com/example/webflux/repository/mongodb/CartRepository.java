@@ -1,4 +1,4 @@
-package com.example.webflux.repository;
+package com.example.webflux.repository.mongodb;
 
 import com.example.webflux.entity.Cart;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;

@@ -3,7 +3,7 @@ package com.example.webflux;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.example.webflux.entity.Item;
-import com.example.webflux.repository.ItemRepository;
+import com.example.webflux.repository.mongodb.ItemRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;

@@ -2,8 +2,8 @@ package com.example.webflux.service;
 
 import com.example.webflux.entity.Cart;
 import com.example.webflux.entity.CartItem;
-import com.example.webflux.repository.CartRepository;
-import com.example.webflux.repository.ItemRepository;
+import com.example.webflux.repository.mongodb.CartRepository;
+import com.example.webflux.repository.mongodb.ItemRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

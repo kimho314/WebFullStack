@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguratio
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 @Configuration
-@EnableReactiveMongoRepositories(basePackages = {"com.example.webflux.repository"})
+@EnableReactiveMongoRepositories(basePackages = {"com.example.webflux.repository.mongodb"})
 public class MongoConfiguration extends AbstractReactiveMongoConfiguration {
 
     @Override

@@ -1,11 +1,17 @@
 package com.example.webflux;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+
 import com.example.webflux.entity.Cart;
 import com.example.webflux.entity.CartItem;
 import com.example.webflux.entity.Item;
-import com.example.webflux.repository.CartRepository;
-import com.example.webflux.repository.ItemRepository;
+import com.example.webflux.repository.mongodb.CartRepository;
+import com.example.webflux.repository.mongodb.ItemRepository;
 import com.example.webflux.service.CartService;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,13 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
@@ -53,12 +52,14 @@ public class CartServiceTest {
                 .as(StepVerifier::create) // StepVerifier : 테스트 도구가 구독하여 결과 확인 해준다.
                 .expectNextMatches(cart -> {
                     assertThat(cart.cartItems())
-                            .extracting(cartItems -> cartItems.stream().map(CartItem::quantity).collect(Collectors.toList()))
+                            .extracting(cartItems -> cartItems.stream().map(CartItem::quantity)
+                                    .collect(Collectors.toList()))
                             .asList()
                             .containsExactlyInAnyOrder(1);
 
                     assertThat(cart.cartItems())
-                            .extracting(cartItems -> cartItems.stream().map(CartItem::item).collect(Collectors.toList()))
+                            .extracting(
+                                    cartItems -> cartItems.stream().map(CartItem::item).collect(Collectors.toList()))
                             .asList()
                             .containsExactly(new Item("item1", "TV tray", "Alf TV tray", 19.99));
 
@@ -75,12 +76,14 @@ public class CartServiceTest {
                 )
                 .expectNextMatches(cart -> {
                     assertThat(cart.cartItems())
-                            .extracting(cartItems -> cartItems.stream().map(CartItem::quantity).collect(Collectors.toList()))
+                            .extracting(cartItems -> cartItems.stream().map(CartItem::quantity)
+                                    .collect(Collectors.toList()))
                             .asList()
                             .containsExactlyInAnyOrder(1);
 
                     assertThat(cart.cartItems())
-                            .extracting(cartItems -> cartItems.stream().map(CartItem::item).collect(Collectors.toList()))
+                            .extracting(
+                                    cartItems -> cartItems.stream().map(CartItem::item).collect(Collectors.toList()))
                             .asList()
                             .containsExactly(new Item("item1", "TV tray", "Alf TV tray", 19.99));
 

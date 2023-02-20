@@ -11,6 +11,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/local
+  r2dbc:
+    url: r2dbc:postgresql://127.0.0.1:5432/postgres
+    username: postgres
+    password: ghtjq2959@
   webflux:
     hiddenmethod:
       filter:
