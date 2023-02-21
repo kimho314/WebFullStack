@@ -1,4 +1,4 @@
-package com.example.webflux.entity;
+package com.example.webflux.entity.r2dbc;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("order")
-public class Order {
+@Table("ecommerce_order")
+public class EcommerceOrder {
     @Id
     private Long id;
     private Double amount;
