@@ -21,7 +21,10 @@ public class OrderRouter {
         return RouterFunctions
                 .route(RequestPredicates.GET("/orders"),
                         orderHandler::getOrders)
+                //.andRoute(RequestPredicates.GET("/order/{id}"),
                 .andRoute(RequestPredicates.GET("/order"),
-                        orderHandler::getOrder);
+                        orderHandler::getOrder)
+                .andRoute(RequestPredicates.POST("/order"),
+                        orderHandler::createOrder);
     }
 }
