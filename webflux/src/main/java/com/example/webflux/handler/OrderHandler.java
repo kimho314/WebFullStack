@@ -1,7 +1,6 @@
 package com.example.webflux.handler;
 
 import com.example.webflux.entity.r2dbc.EcommerceOrder;
-import com.example.webflux.repository.r2dbc.OrderRepository;
 import com.example.webflux.request.CreateOrderRequest;
 import com.example.webflux.response.OrderResponse;
 import com.example.webflux.service.OrderService;
@@ -15,15 +14,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 public class OrderHandler {
-    private final OrderRepository orderRepository;
     private final OrderService orderService;
 
-    public OrderHandler(
-            OrderService orderService,
-            OrderRepository orderRepository
-    ) {
+    public OrderHandler(OrderService orderService) {
         this.orderService = orderService;
-        this.orderRepository = orderRepository;
     }
 
     public Mono<ServerResponse> getOrders(ServerRequest serverRequest) {
@@ -62,6 +56,30 @@ public class OrderHandler {
                                                 .amount(order.amount())
                                                 .placedDate(order.placedDate())
                                                 .build())
+                                .flatMap(orderService::create)
+                                .map(order -> OrderResponse.builder()
+                                        .id(order.getId())
+                                        .amount(order.getAmount())
+                                        .placedDate(order.getPlacedDate())
+                                        .build()),
+                        OrderResponse.class
+                );
+    }
+
+    public Mono<ServerResponse> updateOrder(ServerRequest serverRequest) {
+        Mono<CreateOrderRequest> createOrderRequestMono = serverRequest.bodyToMono(CreateOrderRequest.class);
+        Long id = Long.valueOf(serverRequest.pathVariable("id"));
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(
+                        orderService.getOrder(id)
+                                .flatMap(order -> createOrderRequestMono.map(request ->
+                                        EcommerceOrder.builder()
+                                                .id(order.getId())
+                                                .amount(request.amount())
+                                                .placedDate(request.placedDate())
+                                                .build()))
                                 .flatMap(orderService::create)
                                 .map(order -> OrderResponse.builder()
                                         .id(order.getId())

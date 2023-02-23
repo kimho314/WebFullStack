@@ -2,6 +2,7 @@ package com.example.webflux.router;
 
 import com.example.webflux.handler.OrderHandler;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -19,12 +20,18 @@ public class OrderRouter {
     @Bean
     public RouterFunction<ServerResponse> orderRouters() {
         return RouterFunctions
-                .route(RequestPredicates.GET("/orders"),
+                .route(RequestPredicates.GET("/orders")
+                                .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                         orderHandler::getOrders)
                 //.andRoute(RequestPredicates.GET("/order/{id}"),
-                .andRoute(RequestPredicates.GET("/order"),
+                .andRoute(RequestPredicates.GET("/order")
+                                .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
                         orderHandler::getOrder)
-                .andRoute(RequestPredicates.POST("/order"),
-                        orderHandler::createOrder);
+                .andRoute(RequestPredicates.POST("/order")
+                                .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                        orderHandler::createOrder)
+                .andRoute(RequestPredicates.PUT("/order/{id}")
+                                .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                        orderHandler::updateOrder);
     }
 }
