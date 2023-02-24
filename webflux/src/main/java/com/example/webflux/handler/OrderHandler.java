@@ -34,8 +34,12 @@ public class OrderHandler {
     public Mono<ServerResponse> getOrder(ServerRequest serverRequest) {
         //Long id = Long.valueOf(serverRequest.pathVariable("id"));
         Long id = Long.valueOf(serverRequest.queryParam("id").orElseThrow());
+        String firstHeader = serverRequest.headers()
+                .firstHeader("first-header"); // get a first header named "first-header"
+
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
+                .header("response-header", firstHeader)
                 .body(orderService.getOrder(id)
                                 .map(order -> OrderResponse.builder()
                                         .id(order.getId())
@@ -86,6 +90,24 @@ public class OrderHandler {
                                         .amount(order.getAmount())
                                         .placedDate(order.getPlacedDate())
                                         .build()),
+                        OrderResponse.class
+                );
+    }
+
+    public Mono<ServerResponse> deleteOrder(ServerRequest serverRequest) {
+        Long id = Long.valueOf(serverRequest.pathVariable("id"));
+
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(
+                        orderService.getOrder(id)
+                                .switchIfEmpty(Mono.empty())
+                                .flatMap(order -> orderService.deleteById(id)
+                                        .map(it -> OrderResponse.builder()
+                                                .id(order.getId())
+                                                .amount(order.getAmount())
+                                                .placedDate(order.getPlacedDate())
+                                                .build())),
                         OrderResponse.class
                 );
     }

@@ -32,6 +32,9 @@ public class OrderRouter {
                         orderHandler::createOrder)
                 .andRoute(RequestPredicates.PUT("/order/{id}")
                                 .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
-                        orderHandler::updateOrder);
+                        orderHandler::updateOrder)
+                .andRoute(RequestPredicates.DELETE("/order/{id}")
+                                .and(RequestPredicates.accept(MediaType.APPLICATION_JSON)),
+                        orderHandler::deleteOrder);
     }
 }

@@ -31,4 +31,9 @@ public class OrderService {
     public Mono<EcommerceOrder> create(EcommerceOrder ecommerceOrder) {
         return orderRepository.save(ecommerceOrder);
     }
+
+    @Transactional
+    public Mono<Void> deleteById(Long id) {
+        return orderRepository.deleteById(id);
+    }
 }
