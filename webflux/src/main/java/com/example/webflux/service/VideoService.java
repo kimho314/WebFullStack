@@ -16,7 +16,7 @@ public class VideoService {
         this.resourceLoader = resourceLoader;
     }
 
-    public Mono<Resource> getVideo() {
-        return Mono.fromSupplier(() -> resourceLoader.getResource(String.format(format, "video1")));
+    public Mono<Resource> getVideo(String videoFile) {
+        return Mono.fromSupplier(() -> resourceLoader.getResource(String.format(format, videoFile)));
     }
 }

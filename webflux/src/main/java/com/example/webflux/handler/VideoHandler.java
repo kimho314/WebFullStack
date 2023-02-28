@@ -19,8 +19,10 @@ public class VideoHandler {
 
     public Mono<ServerResponse> watchVideo(ServerRequest request) {
         String range = request.headers().firstHeader("Range");
+        String videoFile = request.queryParam("v").orElse(null);
+        log.info("videoFile : {}", videoFile);
         log.info("# range : {}", range);
         return ServerResponse.ok()
-                .body(videoService.getVideo(), Resource.class);
+                .body(videoService.getVideo(videoFile), Resource.class);
     }
 }
