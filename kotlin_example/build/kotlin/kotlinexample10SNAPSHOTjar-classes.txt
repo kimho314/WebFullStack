@@ -1,0 +1,1 @@
+E:\LUNA_git\kotlin_example\build\classes\kotlin\main\Color.class;E:\LUNA_git\kotlin_example\build\classes\kotlin\main\MainKt$WhenMappings.class;E:\LUNA_git\kotlin_example\build\classes\kotlin\main\MainKt.class;E:\LUNA_git\kotlin_example\build\classes\kotlin\main\Person.class;E:\LUNA_git\kotlin_example\build\classes\kotlin\main\Rectangle.class
