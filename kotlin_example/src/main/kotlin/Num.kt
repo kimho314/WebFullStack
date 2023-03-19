@@ -1,0 +1,2 @@
+class Num(val value: Int) : Expr {
+}
