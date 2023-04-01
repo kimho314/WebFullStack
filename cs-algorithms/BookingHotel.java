@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**
@@ -34,7 +35,7 @@ public class BookingHotel {
         }
 
         // 입실시간 오름차순 정렬
-        Arrays.sort(bookTime, (a, b) -> a[0] - b[0]);
+        Arrays.sort(bookTime, Comparator.comparingInt(a -> a[0]));
 
         // 현재 이용중인 방의 퇴실시간정보 사용을 위해 퇴실시간 min-heap 선언
         PriorityQueue<int[]> inUse = new PriorityQueue<>((a, b) -> a[1] - b[1]);
