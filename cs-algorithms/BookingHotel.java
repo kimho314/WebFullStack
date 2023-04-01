@@ -38,7 +38,7 @@ public class BookingHotel {
         Arrays.sort(bookTime, Comparator.comparingInt(a -> a[0]));
 
         // 현재 이용중인 방의 퇴실시간정보 사용을 위해 퇴실시간 min-heap 선언
-        PriorityQueue<int[]> inUse = new PriorityQueue<>((a, b) -> a[1] - b[1]);
+        PriorityQueue<int[]> inUse = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
         int ans = 0;
 
         for (int[] ints : bookTime) {
