@@ -3,6 +3,10 @@ import java.util.List;
 
 /**
  * https://school.programmers.co.kr/learn/courses/30/lessons/148652
+ * https://school.programmers.co.kr/questions/44982 -> hint
+ * 1 1 0 1 1 -> 4 (4^1)
+ * 11011 11011 00000 11011 11011 -> 4 * 4 = 16 (4^2)
+ * 11011 11011 00000 11011 11011  11011 11011 00000 11011 11011  000000 00000 00000 00000 00000  11011 11011 00000 11011 11011  11011 11011 00000 11011 11011 -> 16 * 4 = 64 (4^3)
  */
 public class CantorBitArray {
     private static final List<String> list = new ArrayList<>(List.of("00000", "11011"));
@@ -29,6 +33,7 @@ public class CantorBitArray {
         }
         return answer;
     }
+
 
     public String getCantor(int n) {
         if (n == 1) {
