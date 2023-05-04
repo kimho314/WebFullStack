@@ -22,8 +22,10 @@ public class MagicElevator {
         System.out.println(new MagicElevator().solution(16));
         System.out.println(new MagicElevator().solution(10));
         System.out.println(new MagicElevator().solution(1000));
+        System.out.println(new MagicElevator().solution(33));
     }
 
+    //FIXME
     public int solution(int storey) {
         int answer = 0;
         List<Integer> splitNum = getSplitNum(storey);
@@ -34,11 +36,11 @@ public class MagicElevator {
         else {
             answer = splitNum.stream().mapToInt(Integer::intValue).sum();
 
-            int lastNum = splitNum.get(splitNum.size() - 1);
-            int lastNumOfBiggerNum = lastNum + 1;
-            int biggerNum = lastNumOfBiggerNum * (int) Math.pow(10, splitNum.size() - 1);
-            List<Integer> diffNum = getSplitNum(biggerNum - answer);
-            answer = Math.min(answer, (lastNumOfBiggerNum + diffNum.stream().mapToInt(Integer::intValue).sum()));
+            int diff = 10 - splitNum.get(0);
+            splitNum.set(1, splitNum.get(1) + 1);
+            splitNum.set(0, 0);
+
+            answer = Math.min(answer, splitNum.stream().mapToInt(Integer::intValue).sum() + diff);
         }
 
         return answer;
