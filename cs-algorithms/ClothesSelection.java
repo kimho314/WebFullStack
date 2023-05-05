@@ -1,6 +1,8 @@
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.*;
 
 /**
  * <a href="https://school.programmers.co.kr/learn/courses/30/lessons/42578">...</a>
@@ -12,27 +14,29 @@ public class ClothesSelection {
     }
 
     public int solution(String[][] clothes) {
-        int answer = 0;
-        HashMap<String, ArrayList<String>> map = new HashMap<>();
-        for (String[] cloth : clothes) {
-            String name = cloth[0];
-            String kind = cloth[1];
-            ArrayList<String> names = map.getOrDefault(kind, null);
-            if (names == null) {
-                map.put(kind, new ArrayList<>(List.of(name)));
+        int answer = 1;
+        Map<String, Integer> map = new HashMap<>();
+        for (String[] clothe : clothes) {
+            if (map.containsKey(clothe[1])) {
+                map.put(clothe[1], map.get(clothe[1]) + 1);
+                continue;
             }
-            else {
-                names.add(name);
-            }
+            map.put(clothe[1], 1);
         }
 
-        for (int i = 0; i < map.size(); i++) {
-            List<String> keys = map.keySet().stream().toList();
-            for (int j = 0; j < keys.size() - i; j++) {
-
-            }
+        for (String s : map.keySet()) {
+            // 착용안하는 경우의 수 = +1
+            answer *= (map.get(s) + 1);
         }
 
-        return answer;
+        return answer - 1;
+    }
+
+    public int solution2(String[][] clothes) {
+        return Arrays.stream(clothes)
+                .collect(groupingBy(p -> p[1], mapping(p -> p[0], counting())))
+                .values()
+                .stream()
+                .reduce(1L, (x, y) -> x * (y + 1)).intValue() - 1;
     }
 }
