@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.*;
 
 /**
  * <a href="https://school.programmers.co.kr/learn/courses/30/lessons/42578">...</a>
+ * <a href="https://school.programmers.co.kr/questions/33347">explanation</a>
  */
 public class ClothesSelection {
     public static void main(String[] args) {
