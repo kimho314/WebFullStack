@@ -19,9 +19,10 @@ public class OpenChatting {
             String[] split = s.split(" ");
             String command = split[0];
             String uid = split[1];
+            String nickname;
             switch (command) {
                 case "Enter":
-                    String nickname = split[2];
+                    nickname = split[2];
                     if (!user.containsKey(uid)) {
                         user.put(uid, nickname);
                     }
@@ -35,6 +36,7 @@ public class OpenChatting {
                                         return it;
                                     })
                                     .collect(Collectors.toList());
+                            user.put(uid, nickname);
                         }
                     }
                     answer.add(String.format(messages.get(0), uid, nickname));
@@ -43,15 +45,16 @@ public class OpenChatting {
                     answer.add(String.format(messages.get(1), uid, user.get(uid)));
                     break;
                 case "Change":
-                    String newNickname = split[2];
+                    nickname = split[2];
                     answer = answer.stream()
                             .map(it -> {
                                 if (it.contains(uid)) {
-                                    return it.replace(user.get(uid), newNickname);
+                                    return it.replace(user.get(uid), nickname);
                                 }
                                 return it;
                             })
                             .collect(Collectors.toList());
+                    user.put(uid, nickname);
                     break;
                 default:
                     throw new IllegalArgumentException("illegal command");
