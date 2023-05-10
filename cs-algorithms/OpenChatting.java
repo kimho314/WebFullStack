@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * <a href="https://school.programmers.co.kr/learn/courses/30/lessons/42888">...</a>
@@ -13,56 +12,31 @@ public class OpenChatting {
         List<String> answer = new ArrayList<>();
         // command uid nickname
         Map<String, String> user = new HashMap<>();
-        List<String> messages = new ArrayList<>(Arrays.asList("%s %s님이 들어왔습니다.", "%s %s님이 나갔습니다."));
+        List<String> messages = new ArrayList<>(Arrays.asList("%s님이 들어왔습니다.", "%s님이 나갔습니다."));
+
+        for (String s : record) {
+            String[] split = s.split(" ");
+            if (split.length == 3) {
+                user.put(split[1], split[2]);
+            }
+        }
 
         for (String s : record) {
             String[] split = s.split(" ");
             String command = split[0];
             String uid = split[1];
-            String nickname;
             switch (command) {
                 case "Enter":
-                    nickname = split[2];
-                    if (!user.containsKey(uid)) {
-                        user.put(uid, nickname);
-                    }
-                    else {
-                        if (!user.get(uid).equals(nickname)) {
-                            answer = answer.stream()
-                                    .map(it -> {
-                                        if (it.contains(uid)) {
-                                            return it.replace(user.get(uid), nickname);
-                                        }
-                                        return it;
-                                    })
-                                    .collect(Collectors.toList());
-                            user.put(uid, nickname);
-                        }
-                    }
-                    answer.add(String.format(messages.get(0), uid, nickname));
+                    answer.add(String.format(messages.get(0), user.get(uid)));
                     break;
                 case "Leave":
-                    answer.add(String.format(messages.get(1), uid, user.get(uid)));
-                    break;
-                case "Change":
-                    nickname = split[2];
-                    answer = answer.stream()
-                            .map(it -> {
-                                if (it.contains(uid)) {
-                                    return it.replace(user.get(uid), nickname);
-                                }
-                                return it;
-                            })
-                            .collect(Collectors.toList());
-                    user.put(uid, nickname);
+                    answer.add(String.format(messages.get(1), user.get(uid)));
                     break;
                 default:
-                    throw new IllegalArgumentException("illegal command");
+                    break;
             }
         }
-        String collect = String.join("|", user.keySet());
-        return answer.stream()
-                .map(it -> it.replaceAll(collect, "").trim())
-                .toArray(String[]::new);
+
+        return answer.toArray(String[]::new);
     }
 }
