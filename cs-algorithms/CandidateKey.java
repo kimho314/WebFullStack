@@ -8,16 +8,16 @@ public class CandidateKey {
     public static Set<String> set = new HashSet<>();
 
     public static void main(String[] args) {
-//        System.out.println(new CandidateKey().solution(new String[][]{
-//                        {"100", "ryan", "music", "2"},
-//                        {"200", "apeach", "math", "2"},
-//                        {"300", "tube", "computer", "3"},
-//                        {"400", "con", "computer", "4"},
-//                        {"500", "muzi", "music", "3"},
-//                        {"600", "apeach", "music", "2"}
-//                }
-//        ));
-//        System.out.println("=============");
+        System.out.println(new CandidateKey().solution(new String[][]{
+                        {"100", "ryan", "music", "2"},
+                        {"200", "apeach", "math", "2"},
+                        {"300", "tube", "computer", "3"},
+                        {"400", "con", "computer", "4"},
+                        {"500", "muzi", "music", "3"},
+                        {"600", "apeach", "music", "2"}
+                }
+        ));
+        System.out.println("=============");
         System.out.println(new CandidateKey().solution(new String[][]{
                         {"a", "1", "aaa", "c", "ng"},
                         {"a", "1", "bbb", "e", "g"},
@@ -25,13 +25,13 @@ public class CandidateKey {
                         {"d", "2", "bbb", "d", "ng"}
                 }
         ));
-//        System.out.println("=============");
-//        System.out.println(new CandidateKey().solution(new String[][]{
-//                        {"a", "aa"},
-//                        {"aa", "a"},
-//                        {"a,a"},
-//                }
-//        ));
+        System.out.println("=============");
+        System.out.println(new CandidateKey().solution(new String[][]{
+                        {"a", "aa"},
+                        {"aa", "a"},
+                        {"a,a"},
+                }
+        ));
     }
 
 
@@ -98,21 +98,16 @@ public class CandidateKey {
                 }
             }
             boolean isUnique = keySet.size() == relation.length;
-            boolean isMinimality = candidateKeySet.stream().noneMatch(s::contains);
-//            List<String> candidateKeys = new ArrayList<>(candidateKeySet);
-//            for (String key : candidateKeys) {
-//                boolean flag = true;
-//                for (char ch : key.toCharArray()) {
-//                    if (!s.contains(String.valueOf(ch))) {
-//                        flag = false;
-//                        break;
-//                    }
-//                }
-//                if (!flag) {
-//                    isMinimality = false;
-//                    break;
-//                }
-//            }
+            boolean isMinimality = true;
+            if (!candidateKeySet.isEmpty()) {
+                // s is key meets uniqueness
+                // if s doesn't hava all elements of other candidate key then s meets minimality
+                List<List<String>> list = candidateKeySet.stream()
+                        .map(str -> List.of(str.split("")))
+                        .collect(Collectors.toList());
+                isMinimality = list.stream().noneMatch(it -> new HashSet<>(Arrays.asList(s.split(""))).containsAll(it));
+            }
+
             if (isUnique && isMinimality) {
                 candidateKeySet.add(s);
             }
