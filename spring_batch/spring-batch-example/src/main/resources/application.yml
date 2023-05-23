@@ -1,18 +1,18 @@
 spring:
-  batch:
-    job:
-      names: ${job.name:NONE} # enable to run only one batch
-  #    jdbc:
-  #      initialize-schema: never # better set this option into never so that sql hasn't been created automatically
-  datasource:
-    driver-class-name: org.h2.Driver
-  sql:
-    init:
-      data-locations: classpath:person.sql
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
+    batch:
+        job:
+            names: ${job.name:NONE} # enable to run only one batch
+    #    jdbc:
+    #      initialize-schema: never # better set this option into never so that sql hasn't been created automatically
+    datasource:
+        driver-class-name: org.h2.Driver
+    sql:
+        init:
+            data-locations: classpath:person.sql
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                format_sql: true
