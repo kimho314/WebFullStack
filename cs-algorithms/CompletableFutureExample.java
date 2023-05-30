@@ -1,13 +1,43 @@
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 public class CompletableFutureExample {
 
     public static void main(String[] args) {
 //        example1();
-        System.out.println("================");
-        example2();
-        System.out.println("================");
+//        System.out.println("================");
+//        example2();
+//        System.out.println("================");
 //        example3();
+        example4();
+    }
+
+    private static Integer getRandomNumber() {
+        String name = Thread.currentThread().getName();
+        try {
+            Thread.sleep(3000);
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        int num = (int) (Math.random() * 100);
+        System.out.println("[" + name + "]" + " num : " + num);
+        return num;
+    }
+
+    private static void example4() {
+        long start = System.currentTimeMillis();
+        CompletableFuture<Integer> task1 = CompletableFuture.supplyAsync(CompletableFutureExample::getRandomNumber);
+        CompletableFuture<Integer> task2 = CompletableFuture.supplyAsync(CompletableFutureExample::getRandomNumber);
+        CompletableFuture<Integer> task3 = CompletableFuture.supplyAsync(CompletableFutureExample::getRandomNumber);
+        CompletableFuture<Integer> task4 = CompletableFuture.supplyAsync(CompletableFutureExample::getRandomNumber);
+        CompletableFuture<Integer> task5 = CompletableFuture.supplyAsync(CompletableFutureExample::getRandomNumber);
+        int sum = Stream.of(task1, task2, task3, task4, task5)
+                .map(CompletableFuture::join) // attach each completable future task using join()
+                .mapToInt(value -> value) // map each result to int value
+                .sum();
+        long end = System.currentTimeMillis();
+        System.out.println("sum : " + sum + " elapsed : " + (end - start));
     }
 
     private static void example3() {
@@ -34,7 +64,8 @@ public class CompletableFutureExample {
             System.out.println("Function 1 started.");
             try {
                 Thread.sleep(2000);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.println("Function 1 finished.");
@@ -47,7 +78,8 @@ public class CompletableFutureExample {
             System.out.println("Function 2 started with result " + result + ".");
             try {
                 Thread.sleep(3000);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.println("Function 2 finished.");
@@ -60,7 +92,8 @@ public class CompletableFutureExample {
             System.out.println("Function 3 started with result " + result + ".");
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
             }
             System.out.println("Function 3 finished.");
@@ -92,7 +125,8 @@ public class CompletableFutureExample {
         System.out.println("Function 1 started.");
         try {
             Thread.sleep(2000);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println("Function 1 finished.");
@@ -103,7 +137,8 @@ public class CompletableFutureExample {
         System.out.println("Function 2 started.");
         try {
             Thread.sleep(3000);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println("Function 2 finished.");
