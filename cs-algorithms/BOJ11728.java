@@ -18,33 +18,22 @@ public class BOJ11728 {
 
         StringBuilder ans = new StringBuilder();
         int left = 1, right = 1;
-        int cnt = 0;
-        while (cnt < N + M) {
-            if (left <= N && right <= M) {
-                if (A[left] <= B[right]) {
-                    ans.append(A[left]).append(" ");
-                    left++;
-                }
-                else {
-                    ans.append(B[right]).append(" ");
-                    right++;
-                }
-                cnt++;
+        while (left <= N && right <= M) {
+            if (A[left] <= B[right]) {
+                ans.append(A[left]).append(" ");
+                left++;
             }
             else {
-                break;
+                ans.append(B[right]).append(" ");
+                right++;
             }
         }
 
-        if (left <= N) {
-            while (left <= N) {
-                ans.append(A[left++]).append(' ');
-            }
+        while (left <= N) {
+            ans.append(A[left++]).append(' ');
         }
-        if (right <= M) {
-            while (right <= M) {
-                ans.append(B[right++]).append(' ');
-            }
+        while (right <= M) {
+            ans.append(B[right++]).append(' ');
         }
 
         System.out.println(ans);
