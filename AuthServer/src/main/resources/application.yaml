@@ -1,0 +1,24 @@
+server:
+    port: 8080
+    servlet:
+        encoding:
+            charset: utf-8
+    tomcat:
+        connection-timeout: 5s
+spring:
+    application:
+        name: auth-server
+    datasource:
+        username: postgres
+        password: ghtjq2959@
+        url: jdbc:postgresql://127.0.0.1:5432/postgres
+        hikari:
+            schema: ecommerce
+            maximum-pool-size: 10
+            auto-commit: false
+    jpa:
+        hibernate:
+            ddl-auto: none
+        open-in-view: false
+        show-sql: true
+        generate-ddl: false
