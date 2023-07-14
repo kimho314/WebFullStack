@@ -3,12 +3,15 @@ package com.example.authserver.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Getter
 @Setter
-@Builder
 @Table(name = "member")
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -16,7 +19,6 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
     private String name;
 
     @Column(length = 11)
@@ -30,4 +32,8 @@ public class Member {
 
     @Column(nullable = false)
     private String password;
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    private List<Token> tokens = new ArrayList<>();
 }

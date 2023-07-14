@@ -15,7 +15,7 @@ spring:
         hikari:
             schema: ecommerce
             maximum-pool-size: 10
-            auto-commit: false
+    #            auto-commit: false
     jpa:
         hibernate:
             ddl-auto: none
