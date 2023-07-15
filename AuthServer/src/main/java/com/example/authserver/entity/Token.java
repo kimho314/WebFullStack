@@ -1,7 +1,10 @@
 package com.example.authserver.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +12,6 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "token")
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Token {

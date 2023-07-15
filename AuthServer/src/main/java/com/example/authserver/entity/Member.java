@@ -1,7 +1,10 @@
 package com.example.authserver.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +14,6 @@ import java.util.List;
 @Setter
 @Table(name = "member")
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
@@ -33,7 +35,6 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<Token> tokens = new ArrayList<>();
 }

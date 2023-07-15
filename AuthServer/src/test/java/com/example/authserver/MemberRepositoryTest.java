@@ -16,12 +16,11 @@ public class MemberRepositoryTest {
 
     @Test
     void saveMemberTest() {
-        Member member = Member.builder()
-                .email("hoseop.kim@gmail.com")
-                .userId("khs")
-                .password("12345")
-                .phoneNumber("01029597794")
-                .build();
+        Member member = new Member();
+        member.setUserId("khs");
+        member.setPassword("12345");
+        member.setEmail("hoseop.kim@gmail.com");
+        member.setPhoneNumber("01029597794");
         Member saved = memberRepository.save(member);
         Assertions.assertEquals(member.getUserId(), saved.getUserId());
     }
