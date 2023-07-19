@@ -1,57 +1,61 @@
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 
 public class BOJ2667 {
-    static final int N = 7;
+    static int N;
     static int GROUP_CNT = 0;
-    static boolean[][] VISITED = new boolean[N][N];
+    static boolean[][] VISITED;
     static int[][] DIR = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-    static int[][] MAP = {
-            {0, 1, 1, 0, 1, 0, 0},
-            {0, 1, 1, 0, 1, 0, 1},
-            {1, 1, 1, 0, 1, 0, 1},
-            {0, 0, 0, 0, 1, 1, 1},
-            {0, 1, 0, 0, 0, 0, 0},
-            {0, 1, 1, 1, 1, 1, 0},
-            {0, 1, 1, 1, 0, 0, 0}
-    };
+    static int[][] MAP;
 
     static ArrayList<Integer> GROUP = new ArrayList<>();
-    ;
+    static FastReader sc = new FastReader();
 
     public static void main(String[] args) {
+        N = sc.nextInt();
+        VISITED = new boolean[N][N];
+        MAP = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            String[] next = sc.next().split("");
+            for (int j = 0; j < N; j++) {
+                MAP[i][j] = Integer.parseInt(next[j]);
+            }
+        }
+
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                if (!VISITED[i][j] && MAP[i][j] == 1) {
-                    GROUP_CNT = 0;
+                if (MAP[i][j] == 1 && !VISITED[i][j]) {
                     dfs(i, j);
                     GROUP.add(GROUP_CNT);
+                    GROUP_CNT = 0;
                 }
             }
         }
 
-        Collections.sort(GROUP);
-        for (Integer gr : GROUP) {
-            System.out.print(gr + " ");
-        }
+        GROUP.sort(Comparator.comparingInt(it -> it));
+        System.out.println(GROUP.size());
+        GROUP.forEach(System.out::println);
     }
 
-    public static void dfs(int i, int j) {
+    public static void dfs(int x, int y) {
+        VISITED[x][y] = true;
         GROUP_CNT++;
-        VISITED[i][j] = true;
-        for (int k = 0; k < 4; k++) {
-            int nx = i + DIR[k][0];
-            int ny = j + DIR[k][1];
-            if (nx < 0 || ny < 0 || nx >= N || ny >= N) {
-                continue;  // 지도를 벗어나는 곳으로 가는가?
+
+        for (int i = 0; i < 4; i++) {
+            int dx = x + DIR[i][0];
+            int dy = y + DIR[i][1];
+
+            if (dx < 0 || dy < 0 || dx >= N | dy >= N) {
+                continue;
             }
-            if (MAP[nx][ny] == 0) {
-                continue;  // 갈 수 있는 칸인지 확인해야 한다.
+            if (MAP[dx][dy] == 0) {
+                continue;
             }
-            if (VISITED[nx][ny]) {
-                continue;  // 이미 방문한 적이 있는 곳인가?
+            if (VISITED[dx][dy]) {
+                continue;
             }
-            dfs(nx, ny);
+
+            dfs(dx, dy);
         }
     }
 
