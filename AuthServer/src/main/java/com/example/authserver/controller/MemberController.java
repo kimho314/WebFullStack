@@ -22,4 +22,5 @@ public class MemberController {
         memberService.create(request);
     }
 
+
 }
