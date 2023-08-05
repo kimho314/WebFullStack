@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.PriorityQueue;
 
 public class HallOfFame1 {
     public static void main(String[] args) {
@@ -39,5 +40,24 @@ public class HallOfFame1 {
         Arrays.sort(hof);
         int lowestScore = hof[0];
         return lowestScore < point;
+    }
+
+    public int[] solution2(int k, int[] score) {
+        int[] answer = new int[score.length];
+
+        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>();
+
+        for (int i = 0; i < score.length; i++) {
+
+            priorityQueue.add(score[i]);
+            if (priorityQueue.size() > k) {
+                priorityQueue.poll();
+            }
+
+            answer[i] = priorityQueue.peek();
+        }
+
+
+        return answer;
     }
 }
