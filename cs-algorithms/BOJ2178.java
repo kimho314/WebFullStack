@@ -33,31 +33,34 @@ public class BOJ2178 {
             }
         }
 
-        Queue<Integer> Q = new LinkedList<>();
-        Q.add(x);
-        Q.add(y);
+        Queue<Integer> needVisit = new LinkedList<>();
+        needVisit.add(x);
+        needVisit.add(y);
         DIST[x][y] = 1;
         VISIT[x][y] = true;
 
-        while (!Q.isEmpty()) {
-            x = Q.poll();
-            y = Q.poll();
-            for (int k = 0; k < 4; k++) {
-                int nx = x + DIR[k][0];
-                int ny = y + DIR[k][1];
-                if (nx < 0 || ny < 0 || nx >= N || ny >= M) {
-                    continue;  // 지도를 벗어나는 곳으로 가는가?
+        while (!needVisit.isEmpty()) {
+            x = needVisit.poll();
+            y = needVisit.poll();
+
+            for (int i = 0; i < 4; i++) {
+                int dx = x + DIR[i][0];
+                int dy = y + DIR[i][1];
+
+                if (dx < 0 || dy < 0 || dx >= N || dy >= M) {
+                    continue;
                 }
-                if (MAP[nx][ny] == 0) {
-                    continue;  // 갈 수 있는 칸인지 확인해야 한다.
+                if (MAP[dx][dy] == 0) {
+                    continue;
                 }
-                if (VISIT[nx][ny]) {
-                    continue;  // 이미 방문한 적이 있는 곳인가?
+                if (VISIT[dx][dy]) {
+                    continue;
                 }
-                Q.add(nx);
-                Q.add(ny);
-                VISIT[nx][ny] = true;
-                DIST[nx][ny] = DIST[x][y] + 1;
+
+                needVisit.add(dx);
+                needVisit.add(dy);
+                VISIT[dx][dy] = true;
+                DIST[dx][dy] = DIST[x][y] + 1;
             }
         }
     }
