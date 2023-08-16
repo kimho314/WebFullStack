@@ -1,6 +1,6 @@
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class BOJ2252 {
     static FastReader sc = new FastReader();
@@ -13,10 +13,10 @@ public class BOJ2252 {
         N = sc.nextInt();
         M = sc.nextInt();
         ADJ = new ArrayList[N + 1];
-        INDEG = new int[N + 1];
         for (int i = 1; i <= N; i++) {
             ADJ[i] = new ArrayList<>();
         }
+        INDEG = new int[N + 1];
         for (int i = 0; i < M; i++) {
             int x = sc.nextInt();
             int y = sc.nextInt();
@@ -24,10 +24,11 @@ public class BOJ2252 {
             INDEG[y]++;
         }
 
-        Deque<Integer> queue = new LinkedList<>();
-
+        Queue<Integer> queue = new LinkedList<>();
         for (int i = 1; i <= N; i++) {
-            queue.add(i);
+            if (INDEG[i] == 0) {
+                queue.add(i);
+            }
         }
 
         while (!queue.isEmpty()) {
@@ -40,6 +41,7 @@ public class BOJ2252 {
                 }
             }
         }
+
         System.out.println(sb);
     }
 }
