@@ -17,8 +17,6 @@ public class BOJ9470 {
             T--;
             input();
             process();
-            System.out.println();
-            System.out.println(sb);
         }
     }
 
@@ -39,7 +37,7 @@ public class BOJ9470 {
             if (MAX_CNT[x] >= 2) {
                 ORDER[x]++;
             }
-            
+
             ans = Math.max(ans, ORDER[x]);
 
             for (int y : ADJ[x]) {
@@ -58,7 +56,7 @@ public class BOJ9470 {
                 }
             }
         }
-        sb.append(K).append(' ').append(ans);
+        System.out.println(K + " " + ans);
     }
 
     private static void input() {
