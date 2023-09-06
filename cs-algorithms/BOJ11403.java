@@ -1,59 +1,53 @@
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
 
 public class BOJ11403 {
-    static StringBuilder sb = new StringBuilder();
-
+    static FastReader SC = new FastReader();
+    static StringBuilder SB = new StringBuilder();
+    static int[][] ADJ;
+    static boolean[] VISITED;
     static int N;
-    static int[][] map;
-    static boolean[] visited;
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        N = Integer.parseInt(scanner.nextLine());
-        map = new int[N][N];
-        for (int i = 0; i < N; i++) {
-            String[] split = scanner.nextLine().split("");
-            for (int j = 0; j < N; j++) {
-                map[i][j] = Integer.parseInt(split[j]);
+        N = SC.nextInt();
+        ADJ = new int[N + 1][N + 1];
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++) {
+                ADJ[i][j] = SC.nextInt();
             }
         }
 
-        for (int i = 0; i < N; i++) {
-            visited = new boolean[N];
+        for (int i = 1; i <= N; i++) {
+            VISITED = new boolean[N + 1];
             bfs(i);
         }
-        System.out.println(sb);
-        scanner.close();
+        System.out.println(SB);
     }
 
-    static void bfs(int start) {
+    private static void bfs(int start) {
         Queue<Integer> needVisit = new LinkedList<>();
-
-        visited[start] = false;
         needVisit.add(start);
+        VISITED[start] = false;
 
         while (!needVisit.isEmpty()) {
             int x = needVisit.poll();
 
-            for (int y = 0; y < N; y++) {
-                if (map[x][y] == 0) {
+            for (int y = 1; y <= N; y++) {
+                if (ADJ[x][y] == 0) {
                     continue;
                 }
-
-                if (visited[y]) {
+                if (VISITED[y]) {
                     continue;
                 }
 
                 needVisit.add(y);
-                visited[y] = true;
+                VISITED[y] = true;
             }
         }
 
-        for (int i = 0; i < N; i++) {
-            sb.append(visited[i] ? 1 : 0).append(" ");
+        for (int i = 1; i <= N; i++) {
+            SB.append(VISITED[i] ? 1 : 0).append(' ');
         }
-        sb.append("\n");
+        SB.append('\n');
     }
 }
