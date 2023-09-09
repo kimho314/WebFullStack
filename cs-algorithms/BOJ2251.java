@@ -1,8 +1,13 @@
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
 
 public class BOJ2251 {
+    static FastReader SC = new FastReader();
+    static StringBuilder SB = new StringBuilder();
+    static int[] LIMIT;
+    static boolean[] POSSIBLE;
+    static boolean[][][] VISITED;
+
     static class State {
         int[] x;
 
@@ -12,67 +17,60 @@ public class BOJ2251 {
         }
 
         State move(int from, int to, int[] limit) {
-            int[] nx = new int[]{x[0], x[1], x[2]};
+            int[] nX = new int[]{x[0], x[1], x[2]};
             if (x[from] + x[to] <= limit[to]) {
-                nx[to] = nx[from] + nx[to];
-                nx[from] = 0;
+                nX[to] = nX[from] + nX[to];
+                nX[from] = 0;
             }
             else {
-                nx[from] -= limit[to] - nx[to];
-                nx[to] = limit[to];
+                nX[from] -= limit[to] - nX[to];
+                nX[to] = limit[to];
             }
-            return new State(nx);
+            return new State(nX);
         }
     }
 
-    static Scanner sc = new Scanner(System.in);
-    static StringBuilder sb = new StringBuilder();
+    public static void main(String[] args) {
+        LIMIT = new int[3];
+        for (int i = 0; i < 3; i++) {
+            LIMIT[i] = SC.nextInt();
+        }
+        VISITED = new boolean[201][201][201];
+        POSSIBLE = new boolean[201];
 
-    static int[] limit;
-    static boolean[] possible;
-    static boolean[][][] visit;
+        bfs(0, 0, LIMIT[2]);
+        for (int i = 0; i <= 200; i++) {
+            if (POSSIBLE[i]) {
+                SB.append(i).append(' ');
+            }
+        }
+        System.out.println(SB);
+    }
 
-    public static void bfs(int x1, int x2, int x3) {
+    private static void bfs(int x1, int x2, int x3) {
         Queue<State> needVisit = new LinkedList<>();
-        visit[x1][x2][x3] = true;
+        VISITED[x1][x2][x3] = true;
         needVisit.add(new State(new int[]{x1, x2, x3}));
 
         while (!needVisit.isEmpty()) {
             State st = needVisit.poll();
             if (st.x[0] == 0) {
-                possible[st.x[2]] = true;
+                POSSIBLE[st.x[2]] = true;
             }
-
             for (int from = 0; from < 3; from++) {
                 for (int to = 0; to < 3; to++) {
                     if (from == to) {
                         continue;
                     }
 
-                    State nextState = st.move(from, to, limit);
-                    if (!visit[nextState.x[0]][nextState.x[1]][nextState.x[2]]) {
-                        visit[nextState.x[0]][nextState.x[1]][nextState.x[2]] = true;
-                        needVisit.add(nextState);
+                    State next = st.move(from, to, LIMIT);
+
+                    if (!VISITED[next.x[0]][next.x[1]][next.x[2]]) {
+                        VISITED[next.x[0]][next.x[1]][next.x[2]] = true;
+                        needVisit.add(next);
                     }
                 }
             }
         }
-    }
-
-    public static void main(String[] args) {
-        limit = new int[3];
-        for (int i = 0; i < 3; i++) {
-            limit[i] = sc.nextInt();
-        }
-        visit = new boolean[205][205][205];
-        possible = new boolean[205];
-
-        bfs(0, 0, limit[2]);
-        for (int i = 0; i <= 200; i++) {
-            if (possible[i]) {
-                sb.append(i).append(" ");
-            }
-        }
-        System.out.println(sb);
     }
 }
