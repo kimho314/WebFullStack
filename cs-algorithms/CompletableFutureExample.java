@@ -9,7 +9,21 @@ public class CompletableFutureExample {
 //        example2();
 //        System.out.println("================");
 //        example3();
-        example4();
+//        example4();
+        example5();
+    }
+
+    private static void example5() {
+        CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> "Result 1");
+        CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> "Result 2");
+
+        CompletableFuture<Void> allOfFuture = CompletableFuture.allOf(future1, future2);
+
+        allOfFuture.join();// Wait for all to complete
+
+        String result1 = future1.join();
+        String result2 = future2.join();
+        System.out.println(result1 + " : " + result2);
     }
 
     private static Integer getRandomNumber() {
