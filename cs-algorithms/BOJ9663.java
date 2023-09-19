@@ -15,33 +15,31 @@ public class BOJ9663 {
 
     private static void recFunc(int row) {
         if (row == N + 1) {
-            if (validityCheck()) {
-                ANS++;
-            }
+            ANS++;
         }
         else {
             for (int c = 1; c <= N; c++) {
-                COL[row] = c;
-                recFunc(row + 1);
-                COL[row] = 0;
+                boolean possible = true;
+                for (int r = 1; r <= row - 1; r++) {
+                    if (validityCheck(row, c, r, COL[r])) {
+                        possible = false;
+                        break;
+                    }
+                }
+
+                if (possible) {
+                    COL[row] = c;
+                    recFunc(row + 1);
+                    COL[row] = 0;
+                }
             }
         }
     }
 
-    private static boolean validityCheck() {
-        for (int i = 1; i < N; i++) {
-            for (int j = i + 1; j <= N; j++) {
-                if (COL[i] == COL[j]) {
-                    return false;
-                }
-                if (COL[i] + i == COL[j] + j) {
-                    return false;
-                }
-                if (COL[i] - i == COL[j] - j) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    private static boolean validityCheck(int r1, int c1, int r2, int c2) {
+        if (c1 == c2) return true;
+        if (r1 - c1 == r2 - c2) return true;
+        if (r1 + c1 == r2 + c2) return true;
+        return false;
     }
 }
