@@ -6,8 +6,6 @@ public class BOJ16938 {
     static int ANS = 0;
     static int[] A;
     static int[] SELECTED;
-    static int[] USED;
-    static StringBuilder SB = new StringBuilder();
 
     public static void main(String[] args) {
         N = SC.nextInt();
@@ -20,7 +18,6 @@ public class BOJ16938 {
         }
         for (int i = 2; i <= N; i++) {
             SELECTED = new int[i + 1];
-            USED = new int[i + 1];
             recFunc(1, i);
         }
         System.out.println(ANS);
@@ -38,7 +35,7 @@ public class BOJ16938 {
             }
             int range = max - min;
             if ((sum >= L && sum <= R) && (range >= X)) {
-                System.out.println(Arrays.toString(SELECTED));
+                System.out.println(Arrays.toString(Arrays.copyOfRange(SELECTED, 1, SELECTED.length)));
                 ANS++;
             }
         }
