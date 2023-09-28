@@ -7,11 +7,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
@@ -26,12 +29,13 @@ public class DataSourceConfig {
 
     @Bean
     @ConfigurationProperties(value = "spring.datasource.hikari")
-    public HikariDataSource dataSource(DataSourceProperties dataSourceProperties) {
-        return dataSourceProperties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
+    public DataSource dataSource(DataSourceProperties dataSourceProperties) {
+        HikariDataSource dataSource = dataSourceProperties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
+        return new LazyConnectionDataSourceProxy(dataSource);
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(HikariDataSource dataSource) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
 
