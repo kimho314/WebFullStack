@@ -1,0 +1,22 @@
+spring:
+    datasource:
+        hikari:
+            maximum-pool-size: 30
+            connection-timeout: 5000
+            auto-commit: false
+        url: "jdbc:mysql://localhost:3306/book_manager"
+        username: "root"
+        password: "ghtjq2959@"
+        driver-class-name: "com.mysql.cj.jdbc.Driver"
+    jpa:
+        generate-ddl: false
+        hibernate:
+            ddl-auto: none
+        open-in-view: false
+        show-sql: true
+
+logging:
+    level:
+        org:
+            hibernate: debug
+        sql: debug
