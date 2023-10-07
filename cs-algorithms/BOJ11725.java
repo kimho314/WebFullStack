@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class BOJ11725 {
     static FastReader SC = new FastReader();
@@ -25,30 +23,23 @@ public class BOJ11725 {
             ADJ[p2].add(p1);
         }
 
-        bfs(1);
-
+        dfs(1, 1);
         for (int i = 2; i <= N; i++) {
             System.out.println(ROOT[i]);
         }
     }
 
-    private static void bfs(int start) {
-        Queue<Integer> needVisit = new LinkedList<>();
-        needVisit.add(start);
+    private static void dfs(int start, int parent) {
+        VISITED[start] = true;
+        ROOT[start] = parent;
 
-        while (!needVisit.isEmpty()) {
-            int x = needVisit.poll();
-            VISITED[x] = true;
-
-            for (int y : ADJ[x]) {
-                if (VISITED[y]) {
-                    continue;
-                }
-
-                VISITED[y] = true;
-                ROOT[y] = x;
-                needVisit.add(y);
+        for (int x : ADJ[start]) {
+            if (VISITED[x]) {
+                continue;
             }
+
+            VISITED[x] = true;
+            dfs(x, start);
         }
     }
 }
