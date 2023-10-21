@@ -35,6 +35,7 @@ public class BOJ15666 {
                     SELECTED[k] = A[i];
                     last = SELECTED[k];
                     recFunc(k + 1);
+                    SELECTED[k] = 0;
                 }
             }
         }
