@@ -14,11 +14,11 @@ spring:
         open-in-view: false
         properties:
             hibernate:
-                show_sql: true
                 format_sql: true
     output:
         ansi:
             enabled: always
 logging:
     level:
-        org.hibernate.type: trace
+        org.springframework.web: debug
+#        org.hibernate.type: trace
