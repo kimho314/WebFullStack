@@ -12,31 +12,31 @@ public class BOJ2805 {
             TREES[i] = FB.nextInt();
         }
 
-        long left = 0;
-        long right = 2000000000;
-        long answer = 0;
-
-        while (left <= right) {
-            int mid = (int) ((left + right) / 2);
+        long l = 1L;
+        long r = 2000000000L;
+        long height = 0L;
+        while (l <= r) {
+            long mid = (l + r) / 2;
             if (determination(mid)) {
-                answer = mid;
-                left = mid + 1;
+                l = mid + 1;
+                height = mid;
             }
             else {
-                right = mid - 1;
+                r = mid - 1;
             }
         }
 
-        System.out.println(answer);
+        System.out.println(height);
     }
 
-    private static boolean determination(int h) {
-        long sum = 0;
+    private static boolean determination(long mid) {
+        long sum = 0L;
         for (int i = 1; i <= N; i++) {
-            if (TREES[i] > h) {
-                sum += TREES[i] - h;
+            if (mid <= TREES[i]) {
+                sum += TREES[i] - mid;
             }
         }
+
         return sum >= M;
     }
 }
