@@ -13,37 +13,36 @@ public class BOJ2110 {
             HOMES[i] = sc.nextInt();
         }
 
-        int left = 1;
-        int right = 1000000000;
+        Arrays.sort(HOMES, 1, N + 1);
+        int l = 0;
+        int r = 1000000000;
         int res = 0;
 
-        Arrays.sort(HOMES);
-
-        while (left <= right) {
-            int mid = (left + right) / 2;
-
+        while (l <= r) {
+            int mid = (r + l) / 2;
             if (determination(mid)) {
+                l = mid + 1;
                 res = mid;
-                left = mid + 1;
             }
             else {
-                right = mid - 1;
+                r = mid - 1;
             }
         }
 
         System.out.println(res);
     }
 
-    // 공유기 사이 거리 distance 일 때, 설치 가능한 귱유기 갯 수가 C 이상인지 판단
-    static boolean determination(int distance) {
-        int start = 1;
+    private static boolean determination(int mid) {
         int cnt = 1;
+        int cur = 1;
         for (int i = 2; i <= N; i++) {
-            if (HOMES[i] - HOMES[start] >= distance) {
-                start = i;
+            if (HOMES[i] - HOMES[cur] >= mid) {
                 cnt++;
+                cur = i;
             }
         }
+
         return cnt >= C;
     }
+
 }
