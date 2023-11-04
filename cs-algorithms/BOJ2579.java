@@ -13,16 +13,13 @@ public class BOJ2579 {
             A[i] = sc.nextInt();
         }
 
-        // 초기값 구하기
         Dy[1][0] = 0;
         Dy[1][1] = A[1];
-
         if (N >= 2) {
             Dy[2][0] = A[2];
             Dy[2][1] = A[1] + A[2];
         }
 
-        // 점화식을 토대로 Dy 배열 채우기
         for (int i = 3; i <= N; i++) {
             Dy[i][0] = Math.max(Dy[i - 2][0] + A[i], Dy[i - 2][1] + A[i]);
             Dy[i][1] = Dy[i - 1][0] + A[i];
