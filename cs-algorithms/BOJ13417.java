@@ -19,10 +19,7 @@ public class BOJ13417 {
                     sb.append(chars[i]);
                 }
                 else {
-                    StringBuilder tmp = new StringBuilder();
-                    tmp.append(chars[i]);
-                    tmp.append(sb);
-                    sb = tmp;
+                    sb.insert(0, chars[i]);
                 }
             }
             SB.append(sb).append('\n');
