@@ -1,107 +1,103 @@
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
 
 public class BOJ14502 {
-    static Scanner sc = new Scanner(System.in);
-    static StringBuilder sb = new StringBuilder();
-
-    static int N, M, B, ans;
-    static int[][] A, blank;
-    static boolean[][] visit;
-    static int[][] dir = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    static FastReader SC = new FastReader();
+    static int N, M, B, ANS;
+    static int[][] A, BLANK;
+    static boolean[][] VISITED;
+    static int[][] DIR = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        M = sc.nextInt();
+        N = SC.nextInt();
+        M = SC.nextInt();
         A = new int[N + 1][M + 1];
-        blank = new int[N * M + 1][2];
-        visit = new boolean[N + 1][M + 1];
+        BLANK = new int[N * M + 1][2];
+        VISITED = new boolean[N + 1][M + 1];
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
-                A[i][j] = sc.nextInt();
+                A[i][j] = SC.nextInt();
             }
         }
 
-
-        // 모든 벽의 위치를 먼저 모아놓자.
+        // 벽을 놓을 수 있는 위치 모아놓기
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
                 if (A[i][j] == 0) {
                     B++;
-                    blank[B][0] = i;
-                    blank[B][1] = j;
+                    BLANK[B][0] = i;
+                    BLANK[B][1] = j;
                 }
             }
         }
 
-        // 벽을 3개 세우는 모든 방법을 확인해보자!
         dfs(1, 0);
-        System.out.println(ans);
+        System.out.println(ANS);
     }
 
-    // 바이러스 퍼뜨리기!!
-    static void bfs() {
-        Queue<Integer> Q = new LinkedList<>();
+    // idx 번째 빈 칸텡 벽을 세울 지 말지 결정 하고, cnt 개의 벽을 세운다
+    private static void dfs(int idx, int count) {
+        if (count == 3) {
+            bfs();
+            return;
+        }
+        if (idx > B) { // 더 이상 세울 수 있는 벽이 없을 경우
+            return;
+        }
 
-        // 모든 바이러스가 시작점으로 가능하니까, 전부 큐에 넣어준다.
+        A[BLANK[idx][0]][BLANK[idx][1]] = 1;
+        dfs(idx + 1, count + 1); // idx 번째에 벽을 세 웠을 경우의 수 구하기
+
+        A[BLANK[idx][0]][BLANK[idx][1]] = 0;
+        dfs(idx + 1, count); // idx 번째에 벽을 안 새웠을 경우의 수 구하기
+    }
+
+    private static void bfs() {
+        Queue<Integer> queue = new LinkedList<>();
+
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
-                visit[i][j] = false;
+                VISITED[i][j] = false;
                 if (A[i][j] == 2) {
-                    Q.add(i);
-                    Q.add(j);
-                    visit[i][j] = true;
+                    queue.add(i);
+                    queue.add(j);
+                    VISITED[i][j] = true;
                 }
             }
         }
 
-        // BFS 과정
-        while (!Q.isEmpty()) {
-            int x = Q.poll(), y = Q.poll();
+        while (!queue.isEmpty()) {
+            int x = queue.poll();
+            int y = queue.poll();
+
             for (int k = 0; k < 4; k++) {
-                int nx = x + dir[k][0], ny = y + dir[k][1];
-                if (nx < 1 || ny < 1 || nx > N || ny > M) {
+                int dx = x + DIR[k][0];
+                int dy = y + DIR[k][1];
+
+                if (dx < 1 || dy < 1 || dx > N || dy > M) {
                     continue;
                 }
-                if (A[nx][ny] != 0) {
+                if (A[dx][dy] != 0) {
                     continue;
                 }
-                if (visit[nx][ny]) {
+                if (VISITED[dx][dy]) {
                     continue;
                 }
-                visit[nx][ny] = true;
-                Q.add(nx);
-                Q.add(ny);
+
+                VISITED[dx][dy] = true;
+                queue.add(dx);
+                queue.add(dy);
             }
         }
 
-        // 탐색이 종료된 시점이니, 안전 영역의 넓이를 계산하고, 정답을 갱신한다.
         int cnt = 0;
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= M; j++) {
-                if (A[i][j] == 0 && !visit[i][j]) {
+                if (A[i][j] == 0 && !VISITED[i][j]) {
                     cnt++;
                 }
             }
         }
-        ans = Math.max(ans, cnt);
-    }
-
-    // idx 번째 빈 칸에 벽을 세울 지 말 지 결정해야 하고, 이 전까지 selected_cnt 개의 벽을 세웠다.
-    static void dfs(int idx, int selected_cnt) {
-        if (selected_cnt == 3) {  // 3 개의 벽을 모두 세운 상태
-            bfs();
-            return;
-        }
-        if (idx > B) { // 더 이상 세울 수 있는 벽이 없는 상태
-            return;
-        }
-
-        A[blank[idx][0]][blank[idx][1]] = 1;
-        dfs(idx + 1, selected_cnt + 1);
-
-        A[blank[idx][0]][blank[idx][1]] = 0;
-        dfs(idx + 1, selected_cnt);
+        ANS = Math.max(ANS, cnt);
     }
 }
