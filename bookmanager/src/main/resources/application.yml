@@ -1,4 +1,10 @@
+server:
+    port: 8080
+
 spring:
+    threads:
+        virtual:
+            enabled: true
     datasource:
         hikari:
             maximum-pool-size: 30
