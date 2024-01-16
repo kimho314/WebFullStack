@@ -4,7 +4,6 @@ import java.util.PriorityQueue;
 
 public class BOJ1916 {
     static FastReader sc = new FastReader();
-    static StringBuilder sb = new StringBuilder();
 
     static class Edge {
         public int to, weight;
@@ -19,6 +18,7 @@ public class BOJ1916 {
         public int idx, dist;
 
         public Info() {
+
         }
 
         public Info(int _idx, int _dist) {
@@ -37,7 +37,7 @@ public class BOJ1916 {
         dist = new int[N + 1];
         edges = new ArrayList[N + 1];
         for (int i = 1; i <= N; i++) {
-            edges[i] = new ArrayList<Edge>();
+            edges[i] = new ArrayList<>();
         }
         for (int i = 1; i <= M; i++) {
             int from = sc.nextInt();
