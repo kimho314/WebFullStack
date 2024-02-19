@@ -1,6 +1,6 @@
 package com.example.bookmanager.controller;
 
-import com.example.bookmanager.service.OrderServiceV0;
+import com.example.bookmanager.service.OrderServiceV2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class OrderControllerV0 {
-    private final OrderServiceV0 orderServiceV0;
+public class OrderControllerV2 {
+    private final OrderServiceV2 orderServiceV2;
 
-    @GetMapping("/v0/request/{itemId}")
+    @GetMapping("/v2/request/{itemId}")
     public String request(@PathVariable(name = "itemId") String itemId) {
-        orderServiceV0.orderItem(itemId);
+        orderServiceV2.orderItem(itemId);
         return "ok";
     }
 }
