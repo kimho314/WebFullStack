@@ -1,9 +1,9 @@
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class BOJ11053 {
     static FastReader SC = new FastReader();
     static int N;
-    static int[] A;
+    static int[] A, DP;
 
     public static void main(String[] args) {
         N = SC.nextInt();
@@ -12,18 +12,21 @@ public class BOJ11053 {
             A[i] = SC.nextInt();
         }
 
-        ArrayList<Integer>[] DP = new ArrayList[N];
-        for (int i = 0; i < N; i++) {
-            DP[i] = new ArrayList<>();
-        }
-        DP[0].add(A[0]);
+        DP = new int[N];
+        Arrays.fill(DP, 1);
+
         for (int i = 1; i < N; i++) {
-            DP[i].addAll(DP[i - 1]);
-            if (A[i] > DP[i - 1].get(DP[i - 1].size() - 1)) {
-                DP[i].add(A[i]);
+            for (int j = 0; j < i; j++) {
+                if (A[i] > A[j]) {
+                    DP[i] = Math.max(DP[i], DP[j] + 1);
+                }
             }
         }
 
-        System.out.println(DP[N - 1].size());
+        int res = DP[0];
+        for (int i = 1; i < N; i++) {
+            res = Math.max(res, DP[i]);
+        }
+        System.out.println(res);
     }
 }
