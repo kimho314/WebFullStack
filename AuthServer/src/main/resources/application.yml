@@ -1,0 +1,19 @@
+spring:
+  application:
+      name: AuthServer
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/auth_server
+      username: root
+      password: ghtjq2959@
+      hikari:
+          auto-commit: false
+          connection-test-query: SELECT 1
+#          connection-init-sql:
+
+
+
+
+logging:
+    level:
+      org.springframework.security: TRACE
