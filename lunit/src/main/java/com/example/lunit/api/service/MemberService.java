@@ -47,7 +47,7 @@ public class MemberService implements UserDetailsService {
             throw new RuntimeException("member exists");
         }
 
-        Member member = MemberMapper.signupMapper(signupRequestDto.userName(), signupRequestDto.password(), signupRequestDto.role());
+        Member member = MemberMapper.signupMapper(signupRequestDto.userName(), passwordEncoder.encode(signupRequestDto.password()), signupRequestDto.role());
 
         String accessToken = tokenProvider.createToken(signupRequestDto.userName(), signupRequestDto.role(), MemberMapper.DEFAULT_EXPIRE_DURATION);
         Token token = TokenMapper.tokenMapper(accessToken, member);
