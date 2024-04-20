@@ -54,7 +54,7 @@ public class TokenProvider {
 
         HttpServletRequest request = requestAttributes.getRequest();
         String header = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(header) && header.startsWith("Hearer")) {
+        if (StringUtils.hasText(header) && header.startsWith("Bearer")) {
             return header.substring(7);
         }
         return null;
