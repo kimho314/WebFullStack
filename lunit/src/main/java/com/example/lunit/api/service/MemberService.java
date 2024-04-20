@@ -1,7 +1,8 @@
 package com.example.lunit.api.service;
 
+import com.example.lunit.api.dto.LoginRequestDto;
 import com.example.lunit.api.dto.SignupRequestDto;
-import com.example.lunit.api.dto.SignupResponseDto;
+import com.example.lunit.api.dto.TokenResponseDto;
 import com.example.lunit.api.mapper.MemberMapper;
 import com.example.lunit.api.mapper.TokenMapper;
 import com.example.lunit.common.component.TokenProvider;
@@ -11,14 +12,13 @@ import com.example.lunit.domain.repository.MemberRepository;
 import com.example.lunit.domain.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
 
 @Slf4j
 @Service
@@ -42,21 +42,37 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
+    public void signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.existsByUserName(signupRequestDto.userName())) {
             throw new RuntimeException("member exists");
         }
 
-        Member member = MemberMapper.signupMapper(signupRequestDto.userName(), passwordEncoder.encode(signupRequestDto.password()), signupRequestDto.role());
-
-        String accessToken = tokenProvider.createToken(signupRequestDto.userName(), signupRequestDto.role(), MemberMapper.DEFAULT_EXPIRE_DURATION);
-        Token token = TokenMapper.tokenMapper(accessToken, member);
-
-        member.setTokens(Arrays.asList(token));
+        Member member = MemberMapper.signupMapper(
+                signupRequestDto.userName(),
+                passwordEncoder.encode(signupRequestDto.password()),
+                signupRequestDto.role(),
+                signupRequestDto.email()
+        );
 
         memberRepository.save(member);
-        tokenRepository.save(token);
+    }
 
-        return new SignupResponseDto(accessToken);
+    @Transactional
+    public TokenResponseDto login(LoginRequestDto request) {
+        if (!memberRepository.existsByUserName(request.userName())) {
+            throw new UsernameNotFoundException(request.userName() + "not found");
+        }
+
+        Member member = memberRepository.findByUserName(request.userName())
+                .orElseThrow(() -> new RuntimeException("user not found"));
+        if (!passwordEncoder.matches(request.password(), member.getPassword())) {
+            throw new BadCredentialsException("password is incorrect");
+        }
+
+        String accessToken = tokenProvider.createToken(member.getUsername(), member.getRole(), member.getExpireDuration());
+        Token token = TokenMapper.tokenMapper(accessToken, member);
+        Token saved = tokenRepository.save(token);
+
+        return new TokenResponseDto(saved.getAccessToken());
     }
 }

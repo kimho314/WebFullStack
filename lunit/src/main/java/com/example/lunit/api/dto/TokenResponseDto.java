@@ -1,6 +1,6 @@
 package com.example.lunit.api.dto;
 
-public record SignupResponseDto(
+public record TokenResponseDto(
         String accessToken
 ) {
 }

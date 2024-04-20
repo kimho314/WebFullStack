@@ -2,11 +2,8 @@ package com.example.lunit.member;
 
 import com.example.lunit.api.controller.MemberController;
 import com.example.lunit.api.dto.SignupRequestDto;
-import com.example.lunit.api.dto.SignupResponseDto;
 import com.example.lunit.common.enums.Role;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +34,7 @@ public class MemberControllerTest {
     @Transactional
     void signupTest() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        SignupRequestDto request = new SignupRequestDto("kimho314", "ghtjq2959@", Role.CLIENT);
+        SignupRequestDto request = new SignupRequestDto("kimho314", "ghtjq2959@", "kimho314@gmail.com", Role.CLIENT);
         String jsonBody = objectMapper.writeValueAsString(request);
 
         ResultActions perform = mockMvc.perform(
@@ -50,10 +47,5 @@ public class MemberControllerTest {
 
         MvcResult mvcResult = perform.andExpect(status().isOk())
                 .andReturn();
-
-        String contentAsString = mvcResult.getResponse().getContentAsString();
-        SignupResponseDto signupResponseDto = objectMapper.readValue(contentAsString, new TypeReference<SignupResponseDto>() {
-        });
-        Assertions.assertNotNull(signupResponseDto.accessToken());
     }
 }

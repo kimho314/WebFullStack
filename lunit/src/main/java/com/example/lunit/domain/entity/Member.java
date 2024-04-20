@@ -31,6 +31,9 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "PASSWORD", nullable = false, length = 1000)
     private String password;
 
+    @Column(length = 320)
+    private String email;
+
     @ColumnDefault("TRUE")
     @Column(name = "IS_ENABLED", nullable = false)
     private Boolean isEnabled = false;
