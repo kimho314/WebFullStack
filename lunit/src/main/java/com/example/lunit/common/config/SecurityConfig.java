@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request.requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/login", "/signup", "/reissue-token").permitAll()
-                        .requestMatchers("/member-info", "/logout").hasAnyRole(Role.CLIENT.name(), Role.ADMIN.name())
+                        .requestMatchers("/member-info", "/logout", "/signout").hasAnyRole(Role.CLIENT.name(), Role.ADMIN.name())
                         .requestMatchers("/api/**").hasRole(Role.CLIENT.name())
                         .anyRequest().authenticated()
                 )

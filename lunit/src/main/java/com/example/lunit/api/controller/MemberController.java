@@ -53,4 +53,10 @@ public class MemberController {
 
         return ResponseEntity.ok(memberService.getMemberInfo(userName));
     }
+
+    @DeleteMapping("/signout")
+    public ResponseEntity<Void> signout(Principal principal) {
+        memberService.sigout(principal.getName());
+        return ResponseEntity.ok(null);
+    }
 }

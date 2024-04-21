@@ -148,4 +148,17 @@ public class MemberService implements UserDetailsService {
 
         return new ReissueTokenResponseDto(newToken, token.getTokenType());
     }
+
+    @Transactional
+    public void sigout(String name) {
+        Member member = memberRepository.findByUserName(name)
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member not found"));
+        if (!member.getIsEnabled()) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "member is disabled");
+        }
+
+        tokenRepository.deleteAllByMember(member);
+
+        member.setIsEnabled(Boolean.FALSE);
+    }
 }
