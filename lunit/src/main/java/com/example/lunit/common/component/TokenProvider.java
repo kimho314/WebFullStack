@@ -1,5 +1,7 @@
 package com.example.lunit.common.component;
 
+import com.example.lunit.domain.entity.Token;
+import com.example.lunit.domain.repository.TokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,6 +24,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,12 +34,15 @@ public class TokenProvider {
     public static final String AUTHORIZATION_HEADER = "X-API-TOKEN";
     public static final String AUTHORITIES_KEY = "auth";
     private final String secret;
+    private final TokenRepository tokenRepository;
     private Key key;
 
     public TokenProvider(
-            @Value("${jwt.secret}") String secret
+            @Value("${jwt.secret}") String secret,
+            TokenRepository tokenRepository
     ) {
         this.secret = secret;
+        this.tokenRepository = tokenRepository;
     }
 
     @PostConstruct
@@ -118,6 +124,16 @@ public class TokenProvider {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
+
+            Optional<Token> accessTokenOptional = tokenRepository.findByAccessToken(token);
+            if (accessTokenOptional.isEmpty()) {
+                return false;
+            }
+            Token accessToken = accessTokenOptional.get();
+            if (accessToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+                return false;
+            }
+
             return true;
         }
         catch (SecurityException | MalformedJwtException e) {
