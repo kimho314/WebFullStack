@@ -1,9 +1,6 @@
 package com.example.lunit.api.controller;
 
-import com.example.lunit.api.dto.LoginRequestDto;
-import com.example.lunit.api.dto.MemberInfoResponseDto;
-import com.example.lunit.api.dto.SignupRequestDto;
-import com.example.lunit.api.dto.TokenResponseDto;
+import com.example.lunit.api.dto.*;
 import com.example.lunit.api.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +36,11 @@ public class MemberController {
         memberService.logout(userName);
 
         return ResponseEntity.ok(null);
+    }
+
+    @PutMapping("/reissue-token")
+    public ResponseEntity<ReissueTokenResponseDto> reissueToken(@Valid @RequestBody ReissueTokenRequestDto request) {
+        return ResponseEntity.ok(memberService.reissueToken(request));
     }
 
 

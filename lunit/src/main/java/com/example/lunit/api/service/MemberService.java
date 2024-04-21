@@ -1,21 +1,19 @@
 package com.example.lunit.api.service;
 
-import com.example.lunit.api.dto.LoginRequestDto;
-import com.example.lunit.api.dto.MemberInfoResponseDto;
-import com.example.lunit.api.dto.SignupRequestDto;
-import com.example.lunit.api.dto.TokenResponseDto;
+import com.example.lunit.api.dto.*;
 import com.example.lunit.api.mapper.MemberMapper;
 import com.example.lunit.api.mapper.TokenMapper;
 import com.example.lunit.common.component.TokenProvider;
 import com.example.lunit.common.enums.Role;
 import com.example.lunit.common.enums.TokenType;
+import com.example.lunit.common.exception.ServiceException;
 import com.example.lunit.domain.entity.Member;
 import com.example.lunit.domain.entity.Token;
 import com.example.lunit.domain.repository.MemberRepository;
 import com.example.lunit.domain.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 
 @Slf4j
@@ -39,7 +38,7 @@ public class MemberService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUserName(username)
-                .orElseThrow(() -> new RuntimeException("user not found"));
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "user not found"));
         if (!member.getIsEnabled()) {
             throw new RuntimeException("user not enabled");
         }
@@ -50,7 +49,7 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public TokenResponseDto signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.existsByUserNameAndIsEnabled(signupRequestDto.userName(), true)) {
-            throw new RuntimeException("member exists");
+            throw new ServiceException(HttpStatus.NOT_FOUND.value(), "member exists");
         }
 
         Member member = MemberMapper.signupMapper(
@@ -71,13 +70,13 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public TokenResponseDto login(LoginRequestDto request) {
         if (!memberRepository.existsByUserNameAndIsEnabled(request.userName(), true)) {
-            throw new UsernameNotFoundException(request.userName() + "not found");
+            throw new ServiceException(HttpStatus.NOT_FOUND.value(), request.userName() + "not found");
         }
 
         Member member = memberRepository.findByUserName(request.userName())
-                .orElseThrow(() -> new RuntimeException("user not found"));
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member exists"));
         if (!passwordEncoder.matches(request.password(), member.getPassword())) {
-            throw new BadCredentialsException("password is incorrect");
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "password is incorrect");
         }
 
         Token savedAccessToken = createToken(member, TokenType.ACCESS);
@@ -105,7 +104,7 @@ public class MemberService implements UserDetailsService {
     @Transactional(readOnly = true)
     public MemberInfoResponseDto getMemberInfo(String userName) {
         Member member = memberRepository.findByUserName(userName)
-                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member exists"));
 
 
         return new MemberInfoResponseDto(
@@ -121,17 +120,32 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public void logout(String userName) {
         if (!memberRepository.existsByUserNameAndIsEnabled(userName, true)) {
-            throw new RuntimeException("user not found");
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "member exists");
         }
 
         String accessToken = tokenProvider.resolveToken();
         Token token = tokenRepository.findByJwtToken(accessToken)
-                .orElseThrow(() -> new RuntimeException("token not found"));
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "token not found"));
         if (TokenType.SIGNUP.equals(token.getTokenType())) {
-            throw new IllegalArgumentException("invalid token type");
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "invalid token type");
         }
 
         token.setExpiresAt(LocalDateTime.now());
         tokenRepository.save(token);
+    }
+
+    @Transactional
+    public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto request) {
+        Member member = memberRepository.findByUserName(request.userName())
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member not found"));
+
+        Token token = tokenRepository.findByJwtToken(request.token())
+                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "token not found"));
+
+        String newToken = tokenProvider.createToken(member.getUsername(), member.getRole(), TokenType.REFRESH.equals(token.getTokenType()) ? TokenProvider.DEFAULT_REFRESH_EXPIRE_DURATION : member.getExpireDuration());
+        token.setJwtToken(newToken);
+        token.setExpiresAt(tokenProvider.parseToken(newToken).getExpiration().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
+        return new ReissueTokenResponseDto(newToken, token.getTokenType());
     }
 }
