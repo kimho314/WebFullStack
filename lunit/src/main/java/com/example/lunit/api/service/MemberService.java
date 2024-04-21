@@ -8,6 +8,7 @@ import com.example.lunit.api.mapper.MemberMapper;
 import com.example.lunit.api.mapper.TokenMapper;
 import com.example.lunit.common.component.TokenProvider;
 import com.example.lunit.common.enums.Role;
+import com.example.lunit.common.enums.TokenType;
 import com.example.lunit.domain.entity.Member;
 import com.example.lunit.domain.entity.Token;
 import com.example.lunit.domain.repository.MemberRepository;
@@ -48,7 +49,7 @@ public class MemberService implements UserDetailsService {
 
     @Transactional
     public TokenResponseDto signup(SignupRequestDto signupRequestDto) {
-        if (memberRepository.existsByUserName(signupRequestDto.userName())) {
+        if (memberRepository.existsByUserNameAndIsEnabled(signupRequestDto.userName(), true)) {
             throw new RuntimeException("member exists");
         }
 
@@ -61,15 +62,15 @@ public class MemberService implements UserDetailsService {
 
         memberRepository.save(member);
 
-        Token saved = createToken(member);
+        Token saved = createToken(member, TokenType.SIGNUP);
         member.setTokens(Arrays.asList(saved));
 
-        return new TokenResponseDto(saved.getAccessToken());
+        return new TokenResponseDto(saved.getJwtToken(), null);
     }
 
     @Transactional
     public TokenResponseDto login(LoginRequestDto request) {
-        if (!memberRepository.existsByUserName(request.userName())) {
+        if (!memberRepository.existsByUserNameAndIsEnabled(request.userName(), true)) {
             throw new UsernameNotFoundException(request.userName() + "not found");
         }
 
@@ -79,15 +80,25 @@ public class MemberService implements UserDetailsService {
             throw new BadCredentialsException("password is incorrect");
         }
 
-        Token saved = createToken(member);
-        member.setTokens(Arrays.asList(saved));
+        Token savedAccessToken = createToken(member, TokenType.ACCESS);
+        Token savedRefreshToken = createToken(member, TokenType.REFRESH);
+        member.setTokens(Arrays.asList(savedAccessToken, savedRefreshToken));
 
-        return new TokenResponseDto(saved.getAccessToken());
+        return new TokenResponseDto(savedAccessToken.getJwtToken(), savedRefreshToken.getJwtToken());
     }
 
-    private Token createToken(Member member) {
-        String accessToken = tokenProvider.createToken(member.getUsername(), member.getRole(), member.getExpireDuration());
-        Token token = TokenMapper.tokenMapper(accessToken, member, tokenProvider.parseToken(accessToken).getExpiration());
+    private Token createToken(Member member, TokenType tokenType) {
+        String accessToken = tokenProvider.createToken(
+                member.getUsername(),
+                member.getRole(),
+                TokenType.REFRESH.equals(tokenType) ? TokenProvider.DEFAULT_REFRESH_EXPIRE_DURATION : member.getExpireDuration()
+        );
+        Token token = TokenMapper.tokenMapper(
+                accessToken,
+                member,
+                tokenProvider.parseToken(accessToken).getExpiration(),
+                tokenType
+        );
         return tokenRepository.save(token);
     }
 
@@ -109,13 +120,16 @@ public class MemberService implements UserDetailsService {
 
     @Transactional
     public void logout(String userName) {
-        if (!memberRepository.existsByUserName(userName)) {
+        if (!memberRepository.existsByUserNameAndIsEnabled(userName, true)) {
             throw new RuntimeException("user not found");
         }
-        
+
         String accessToken = tokenProvider.resolveToken();
-        Token token = tokenRepository.findByAccessToken(accessToken)
+        Token token = tokenRepository.findByJwtToken(accessToken)
                 .orElseThrow(() -> new RuntimeException("token not found"));
+        if (TokenType.SIGNUP.equals(token.getTokenType())) {
+            throw new IllegalArgumentException("invalid token type");
+        }
 
         token.setExpiresAt(LocalDateTime.now());
         tokenRepository.save(token);

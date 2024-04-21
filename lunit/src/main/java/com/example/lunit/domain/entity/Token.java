@@ -1,5 +1,6 @@
 package com.example.lunit.domain.entity;
 
+import com.example.lunit.common.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,10 +19,13 @@ public class Token extends BaseEntity {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "ACCESS_TOKEN", length = 1000)
-    private String accessToken;
+    @Column(name = "JWT_TOKEN", length = 1000)
+    private String jwtToken;
 
     private LocalDateTime expiresAt;
+
+    @Enumerated(EnumType.STRING)
+    private TokenType tokenType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")

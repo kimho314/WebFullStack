@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     public static final String AUTHORIZATION_HEADER = "X-API-TOKEN";
     public static final String AUTHORITIES_KEY = "auth";
+    //    public final Long DEFAULT_EXPIRE_DURATION = 3L * 60L * 60L;
+    public static final Long DEFAULT_ACCESS_EXPIRE_DURATION = 10L * 60L;
+    public static final Long DEFAULT_REFRESH_EXPIRE_DURATION = 2L * 24L * 60L * 60L;
+
     private final String secret;
     private final TokenRepository tokenRepository;
     private Key key;
@@ -125,7 +129,7 @@ public class TokenProvider {
                     .build()
                     .parseClaimsJws(token);
 
-            Optional<Token> accessTokenOptional = tokenRepository.findByAccessToken(token);
+            Optional<Token> accessTokenOptional = tokenRepository.findByJwtToken(token);
             if (accessTokenOptional.isEmpty()) {
                 return false;
             }
