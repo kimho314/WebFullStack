@@ -1,6 +1,5 @@
 package com.example.lunit.common.component;
 
-import com.example.lunit.common.enums.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -19,8 +18,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.security.Key;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
@@ -54,23 +53,47 @@ public class TokenProvider {
 
         HttpServletRequest request = requestAttributes.getRequest();
         String header = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(header) && header.startsWith("Bearer")) {
-            return header.substring(7);
+        if (!StringUtils.hasText(header)) {
+            header = request.getHeader(AUTHORIZATION_HEADER.toLowerCase());
+        }
+
+        if (StringUtils.hasText(header)) {
+            return header;
         }
         return null;
     }
 
-    public String createToken(String userName, Role role, long expireDurationInSeconds) {
+    public String resolveToken(HttpServletRequest request) {
+        String header = request.getHeader(AUTHORIZATION_HEADER);
+        if (!StringUtils.hasText(header)) {
+            header = request.getHeader(AUTHORIZATION_HEADER.toLowerCase());
+        }
 
-        long now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-        Date expiration = new Date(now + expireDurationInSeconds);
+        if (StringUtils.hasText(header)) {
+            return header;
+        }
+        return null;
+    }
+
+    public String createToken(String userName, String role, long expireDurationInSeconds) {
+
+        LocalDateTime expireAt = LocalDateTime.now().plusSeconds(expireDurationInSeconds);
+        Date expiration = Timestamp.valueOf(expireAt);
 
         return Jwts.builder()
                 .setSubject(userName)
-                .claim(AUTHORITIES_KEY, role.name())
+                .claim(AUTHORITIES_KEY, role)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(expiration)
                 .compact();
+    }
+
+    public Claims parseToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public Authentication getAuthentication(String token) {
@@ -86,7 +109,7 @@ public class TokenProvider {
 
         User principal = new User(claims.getSubject(), "", authorities);
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
     public boolean validateToken(String token) {

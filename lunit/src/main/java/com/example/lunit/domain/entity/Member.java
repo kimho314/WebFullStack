@@ -1,6 +1,5 @@
 package com.example.lunit.domain.entity;
 
-import com.example.lunit.common.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -44,9 +43,8 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "CUR_ANALYZE_CNT", nullable = false)
     private Integer curAnalyzeCnt;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false, length = 100)
-    private Role role;
+    private String role;
 
     /**
      * 유효기간(sec)
@@ -62,7 +60,7 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role.name()));
+        return List.of(new SimpleGrantedAuthority(this.role));
     }
 
     @Override
