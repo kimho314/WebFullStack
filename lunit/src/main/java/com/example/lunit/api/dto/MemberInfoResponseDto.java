@@ -7,7 +7,7 @@ public record MemberInfoResponseDto(
         Boolean isEnabled,
         String email,
         Role role,
-        Integer max_analyze_cnt,
-        Integer cur_analyze_cnt
+        Integer maxAnalyzeCnt,
+        Integer curAnalyzeCnt
 ) {
 }
