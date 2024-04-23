@@ -83,6 +83,8 @@ public class MemberService implements UserDetailsService {
         Token savedRefreshToken = createToken(member, TokenType.REFRESH);
         member.setTokens(Arrays.asList(savedAccessToken, savedRefreshToken));
 
+        tokenRepository.deleteByMemberAndTokenType(member, TokenType.SIGNUP);
+
         return new TokenResponseDto(savedAccessToken.getJwtToken(), savedRefreshToken.getJwtToken());
     }
 
