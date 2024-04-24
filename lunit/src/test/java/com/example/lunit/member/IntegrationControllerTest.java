@@ -3,6 +3,7 @@ package com.example.lunit.member;
 import com.example.lunit.api.controller.MemberController;
 import com.example.lunit.api.dto.*;
 import com.example.lunit.api.mapper.MemberMapper;
+import com.example.lunit.api.service.FileStorageService;
 import com.example.lunit.common.component.TokenProvider;
 import com.example.lunit.common.enums.Role;
 import com.example.lunit.common.enums.TokenType;
@@ -15,13 +16,22 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MemberControllerTest {
+public class IntegrationControllerTest {
     private static final ObjectMapper OBJECT_MAPPER = ObjectMapperFactory.getInstance();
 
     @Autowired
@@ -38,6 +48,9 @@ public class MemberControllerTest {
     MockMvc mockMvc;
     @Autowired
     MemberRepository memberRepository;
+
+    @MockBean
+    private FileStorageService storageService;
 
     static String accessToken;
     static String refreshToken;
@@ -246,6 +259,32 @@ public class MemberControllerTest {
     }
 
     @Order(9)
+    @Test
+    @DisplayName("영상 분석 실행 테스트")
+    void analyzeDicomTest() throws Exception {
+        File file = ResourceUtils.getFile("classpath:2_Pneumothorax.dcm");
+        InputStream in = new FileInputStream(file);
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.dcm",
+                "text/plain", in);
+
+        given(this.storageService.store(multipartFile))
+                .willReturn(Paths.get("test.dcm"));
+
+        ResultActions perform = mockMvc.perform(
+                multipart("/api/dicom-analysis")
+                        .file(multipartFile)
+                        .header(TokenProvider.AUTHORIZATION_HEADER, accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+        );
+
+        MvcResult mvcResult = perform.andExpect(status().isOk())
+                .andReturn();
+        then(this.storageService).should().store(multipartFile);
+    }
+
+    @Order(10)
     @Test
     @DisplayName("회원 탈퇴 테스트")
     void signoutTest() throws Exception {

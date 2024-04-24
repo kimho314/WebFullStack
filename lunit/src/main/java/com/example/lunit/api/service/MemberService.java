@@ -6,6 +6,7 @@ import com.example.lunit.api.mapper.TokenMapper;
 import com.example.lunit.common.component.TokenProvider;
 import com.example.lunit.common.enums.Role;
 import com.example.lunit.common.enums.TokenType;
+import com.example.lunit.common.exception.MemberNotFoundException;
 import com.example.lunit.common.exception.ServiceException;
 import com.example.lunit.domain.entity.Member;
 import com.example.lunit.domain.entity.Token;
@@ -38,7 +39,7 @@ public class MemberService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUserName(username)
-                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "user not found"));
+                .orElseThrow(() -> new MemberNotFoundException());
         if (!member.getIsEnabled()) {
             throw new RuntimeException("user not enabled");
         }
@@ -49,7 +50,7 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public TokenResponseDto signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.existsByUserNameAndIsEnabled(signupRequestDto.userName(), true)) {
-            throw new ServiceException(HttpStatus.NOT_FOUND.value(), "member exists");
+            throw new MemberNotFoundException();
         }
 
         Member member = MemberMapper.signupMapper(
@@ -70,7 +71,7 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public TokenResponseDto login(LoginRequestDto request) {
         if (!memberRepository.existsByUserNameAndIsEnabled(request.userName(), true)) {
-            throw new ServiceException(HttpStatus.NOT_FOUND.value(), request.userName() + "not found");
+            throw new MemberNotFoundException();
         }
 
         Member member = memberRepository.findByUserName(request.userName())
@@ -106,7 +107,7 @@ public class MemberService implements UserDetailsService {
     @Transactional(readOnly = true)
     public MemberInfoResponseDto getMemberInfo(String userName) {
         Member member = memberRepository.findByUserName(userName)
-                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member exists"));
+                .orElseThrow(() -> new MemberNotFoundException());
 
 
         return new MemberInfoResponseDto(
@@ -139,7 +140,7 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto request) {
         Member member = memberRepository.findByUserName(request.userName())
-                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member not found"));
+                .orElseThrow(() -> new MemberNotFoundException());
 
         Token token = tokenRepository.findByJwtToken(request.token())
                 .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "token not found"));
@@ -154,7 +155,7 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public void sigout(String name) {
         Member member = memberRepository.findByUserName(name)
-                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member not found"));
+                .orElseThrow(() -> new MemberNotFoundException());
         if (!member.getIsEnabled()) {
             throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "member is disabled");
         }
