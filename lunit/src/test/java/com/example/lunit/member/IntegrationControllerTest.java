@@ -17,16 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
@@ -52,8 +49,8 @@ public class IntegrationControllerTest {
     @MockBean
     private FileStorageService storageService;
 
-    static String accessToken;
-    static String refreshToken;
+    private static String accessToken;
+    private static String refreshToken;
 
     @Order(1)
     @Test
@@ -262,13 +259,11 @@ public class IntegrationControllerTest {
     @Test
     @DisplayName("영상 분석 실행 테스트")
     void analyzeDicomTest() throws Exception {
-        File file = ResourceUtils.getFile("classpath:2_Pneumothorax.dcm");
-        InputStream in = new FileInputStream(file);
-        MockMultipartFile multipartFile = new MockMultipartFile("file", "test.dcm",
-                "text/plain", in);
+        ClassPathResource resource = new ClassPathResource("2_Pneumothorax.dcm");
+        MockMultipartFile multipartFile = new MockMultipartFile("file", "2_Pneumothorax.dcm", "text/plain", resource.getInputStream());
 
         given(this.storageService.store(multipartFile))
-                .willReturn(Paths.get("test.dcm"));
+                .willReturn(Paths.get("2_Pneumothorax.dcm"));
 
         ResultActions perform = mockMvc.perform(
                 multipart("/api/dicom-analysis")
@@ -285,6 +280,29 @@ public class IntegrationControllerTest {
     }
 
     @Order(10)
+    @Test
+    @DisplayName("최대 영상 분석수 연장 테스트")
+    void extendMaxCountTest() throws Exception {
+        ExtendMaxAnalysisCountRequestDto request = new ExtendMaxAnalysisCountRequestDto(100);
+        String jsonBody = OBJECT_MAPPER.writeValueAsString(request);
+
+        ResultActions perform = mockMvc.perform(
+                put("/api/extend-max-analysis-count")
+                        .header(TokenProvider.AUTHORIZATION_HEADER, accessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .content(jsonBody)
+        );
+
+        MvcResult mvcResult = perform.andExpect(status().isOk())
+                .andReturn();
+        ExtendMaxAnalysisCountResponseDto extendMaxAnalysisCountResponseDto = OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<ExtendMaxAnalysisCountResponseDto>() {
+        });
+        Assertions.assertEquals(110, extendMaxAnalysisCountResponseDto.maxCount());
+    }
+
+    @Order(11)
     @Test
     @DisplayName("회원 탈퇴 테스트")
     void signoutTest() throws Exception {

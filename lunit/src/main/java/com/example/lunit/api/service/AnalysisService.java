@@ -1,9 +1,6 @@
 package com.example.lunit.api.service;
 
-import com.example.lunit.api.dto.AnalysisResultDto;
-import com.example.lunit.api.dto.AnalyzeDicomResponseDto;
-import com.example.lunit.api.dto.FrontalDto;
-import com.example.lunit.api.dto.PredictionDto;
+import com.example.lunit.api.dto.*;
 import com.example.lunit.common.enums.ResultStatus;
 import com.example.lunit.common.exception.MemberNotFoundException;
 import com.example.lunit.common.exception.ServiceException;
@@ -42,6 +39,13 @@ public class AnalysisService {
         member.setCurAnalyzeCnt(member.getCurAnalyzeCnt() + 1);
 
         Path path = fileStorageService.store(file);
+
+        saveAnalysisResult(member, path, result);
+
+        return new AnalyzeDicomResponseDto(result.predictionTime(), ResultStatus.SUCCESS, HttpStatus.OK.value(), new PredictionDto(new FrontalDto(result.score())));
+    }
+
+    private void saveAnalysisResult(Member member, Path path, AnalysisResultDto result) {
         DicomAnalyzeResult analyzeResult = DicomAnalyzeResult.builder()
                 .member(member)
                 .dicomFileName(path.getFileName().toFile().getName())
@@ -50,8 +54,6 @@ public class AnalysisService {
                 .frontalScore(result.score())
                 .build();
         dicomAnalyzeResultRepository.save(analyzeResult);
-
-        return new AnalyzeDicomResponseDto(result.predictionTime(), ResultStatus.SUCCESS, HttpStatus.OK.value(), new PredictionDto(new FrontalDto(result.score())));
     }
 
     private static AnalysisResultDto analyze() {
@@ -59,10 +61,23 @@ public class AnalysisService {
             log.info("analyzing...");
             long time = new Random().nextLong(10000);
             Thread.sleep(time);
-            return new AnalysisResultDto(time / 1000.0, new Random().nextDouble());
+            return new AnalysisResultDto(time / 1000.0, getScore());
         }
         catch (InterruptedException e) {
             throw new ServiceException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
+    }
+
+    private static double getScore() {
+        return new Random().nextDouble();
+    }
+
+    @Transactional
+    public ExtendMaxAnalysisCountResponseDto extendMaxCount(ExtendMaxAnalysisCountRequestDto request, String name) {
+        Member member = memberRepository.findByUserName(name)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.setMaxAnalyzeCnt(member.getMaxAnalyzeCnt() + request.extendCount());
+        return new ExtendMaxAnalysisCountResponseDto(member.getCurAnalyzeCnt(), member.getMaxAnalyzeCnt());
     }
 }

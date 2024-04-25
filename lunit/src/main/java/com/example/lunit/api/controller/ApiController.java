@@ -1,13 +1,13 @@
 package com.example.lunit.api.controller;
 
 import com.example.lunit.api.dto.AnalyzeDicomResponseDto;
+import com.example.lunit.api.dto.ExtendMaxAnalysisCountRequestDto;
+import com.example.lunit.api.dto.ExtendMaxAnalysisCountResponseDto;
 import com.example.lunit.api.service.AnalysisService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -31,5 +31,20 @@ public class ApiController {
     ) {
         AnalyzeDicomResponseDto result = analysisService.analyze(file, principal.getName());
         return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * @param request
+     * @param principal
+     * @return
+     * @title 최대 분석수 연장
+     */
+    @PutMapping("/extend-max-analysis-count")
+    public ResponseEntity<ExtendMaxAnalysisCountResponseDto> extendMaxAnalysisCount(
+            @Valid @RequestBody ExtendMaxAnalysisCountRequestDto request,
+            Principal principal
+    ) {
+        ExtendMaxAnalysisCountResponseDto result = analysisService.extendMaxCount(request, principal.getName());
+        return ResponseEntity.ok(result);
     }
 }
