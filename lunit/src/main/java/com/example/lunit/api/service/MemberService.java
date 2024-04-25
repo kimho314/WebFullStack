@@ -4,6 +4,7 @@ import com.example.lunit.api.dto.*;
 import com.example.lunit.api.mapper.MemberMapper;
 import com.example.lunit.api.mapper.TokenMapper;
 import com.example.lunit.common.component.TokenProvider;
+import com.example.lunit.common.enums.ResultStatus;
 import com.example.lunit.common.enums.Role;
 import com.example.lunit.common.enums.TokenType;
 import com.example.lunit.common.exception.MemberNotFoundException;
@@ -65,7 +66,7 @@ public class MemberService implements UserDetailsService {
         Token saved = createToken(member, TokenType.SIGNUP);
         member.setTokens(Arrays.asList(saved));
 
-        return new TokenResponseDto(saved.getJwtToken(), null);
+        return new TokenResponseDto(ResultStatus.SUCCESS, HttpStatus.OK.value(), saved.getJwtToken(), null);
     }
 
     @Transactional
@@ -86,7 +87,7 @@ public class MemberService implements UserDetailsService {
 
         tokenRepository.deleteByMemberAndTokenType(member, TokenType.SIGNUP);
 
-        return new TokenResponseDto(savedAccessToken.getJwtToken(), savedRefreshToken.getJwtToken());
+        return new TokenResponseDto(ResultStatus.SUCCESS, HttpStatus.OK.value(), savedAccessToken.getJwtToken(), savedRefreshToken.getJwtToken());
     }
 
     private Token createToken(Member member, TokenType tokenType) {
@@ -111,6 +112,8 @@ public class MemberService implements UserDetailsService {
 
 
         return new MemberInfoResponseDto(
+                ResultStatus.SUCCESS,
+                HttpStatus.OK.value(),
                 member.getUsername(),
                 member.getIsEnabled(),
                 member.getEmail(),
@@ -149,7 +152,7 @@ public class MemberService implements UserDetailsService {
         token.setJwtToken(newToken);
         token.setExpiresAt(tokenProvider.parseToken(newToken).getExpiration().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-        return new ReissueTokenResponseDto(newToken, token.getTokenType());
+        return new ReissueTokenResponseDto(ResultStatus.SUCCESS, HttpStatus.OK.value(), newToken, token.getTokenType());
     }
 
     @Transactional
