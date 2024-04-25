@@ -37,6 +37,7 @@ public class AnalysisService {
         AnalysisResultDto result = analyze();
 
         member.setCurAnalyzeCnt(member.getCurAnalyzeCnt() + 1);
+        memberRepository.save(member);
 
         Path path = fileStorageService.store(file);
 
