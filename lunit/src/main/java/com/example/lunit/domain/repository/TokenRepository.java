@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
     Optional<Token> findByJwtToken(String token);
 
+    Optional<Token> findByMemberAndTokenType(Member member, TokenType tokenType);
+
     void deleteAllByMember(Member member);
 
     void deleteByMemberAndTokenType(Member member, TokenType tokenType);

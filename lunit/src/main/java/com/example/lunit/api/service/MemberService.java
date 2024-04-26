@@ -7,8 +7,7 @@ import com.example.lunit.common.component.TokenProvider;
 import com.example.lunit.common.enums.ResultStatus;
 import com.example.lunit.common.enums.Role;
 import com.example.lunit.common.enums.TokenType;
-import com.example.lunit.common.exception.MemberNotFoundException;
-import com.example.lunit.common.exception.ServiceException;
+import com.example.lunit.common.exception.*;
 import com.example.lunit.domain.entity.Member;
 import com.example.lunit.domain.entity.Token;
 import com.example.lunit.domain.repository.MemberRepository;
@@ -40,7 +39,7 @@ public class MemberService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUserName(username)
-                .orElseThrow(() -> new MemberNotFoundException());
+                .orElseThrow(MemberNotFoundException::new);
         if (!member.getIsEnabled()) {
             throw new RuntimeException("user not enabled");
         }
@@ -51,7 +50,7 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public TokenResponseDto signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.existsByUserNameAndIsEnabled(signupRequestDto.userName(), true)) {
-            throw new MemberNotFoundException();
+            throw new MemberExistException();
         }
 
         Member member = MemberMapper.signupMapper(
@@ -76,13 +75,12 @@ public class MemberService implements UserDetailsService {
         }
 
         Member member = memberRepository.findByUserName(request.userName())
-                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "member exists"));
-        if (!passwordEncoder.matches(request.password(), member.getPassword())) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "password is incorrect");
-        }
+                .orElseThrow(MemberNotFoundException::new);
+        validatePassword(request.password(), member.getPassword());
 
         Token savedAccessToken = createToken(member, TokenType.ACCESS);
         Token savedRefreshToken = createToken(member, TokenType.REFRESH);
+
         member.setTokens(Arrays.asList(savedAccessToken, savedRefreshToken));
 
         tokenRepository.deleteByMemberAndTokenType(member, TokenType.SIGNUP);
@@ -90,11 +88,17 @@ public class MemberService implements UserDetailsService {
         return new TokenResponseDto(ResultStatus.SUCCESS, HttpStatus.OK.value(), savedAccessToken.getJwtToken(), savedRefreshToken.getJwtToken());
     }
 
+    private void validatePassword(String requestPassword, String password) {
+        if (!passwordEncoder.matches(requestPassword, password)) {
+            throw new IncorrectPasswordException();
+        }
+    }
+
     private Token createToken(Member member, TokenType tokenType) {
         String accessToken = tokenProvider.createToken(
                 member.getUsername(),
                 member.getRole(),
-                TokenType.REFRESH.equals(tokenType) ? TokenProvider.DEFAULT_REFRESH_EXPIRE_DURATION : member.getExpireDuration()
+                getExpireDurationInSeconds(tokenType, member)
         );
         Token token = TokenMapper.tokenMapper(
                 accessToken,
@@ -108,7 +112,7 @@ public class MemberService implements UserDetailsService {
     @Transactional(readOnly = true)
     public MemberInfoResponseDto getMemberInfo(String userName) {
         Member member = memberRepository.findByUserName(userName)
-                .orElseThrow(() -> new MemberNotFoundException());
+                .orElseThrow(MemberNotFoundException::new);
 
 
         return new MemberInfoResponseDto(
@@ -131,9 +135,9 @@ public class MemberService implements UserDetailsService {
 
         String accessToken = tokenProvider.resolveToken();
         Token token = tokenRepository.findByJwtToken(accessToken)
-                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "token not found"));
+                .orElseThrow(TokenNotFoundException::new);
         if (TokenType.SIGNUP.equals(token.getTokenType())) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "invalid token type");
+            throw new InvalidTokenException();
         }
 
         token.setExpiresAt(LocalDateTime.now());
@@ -143,24 +147,43 @@ public class MemberService implements UserDetailsService {
     @Transactional
     public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto request) {
         Member member = memberRepository.findByUserName(request.userName())
-                .orElseThrow(() -> new MemberNotFoundException());
+                .orElseThrow(MemberNotFoundException::new);
 
         Token token = tokenRepository.findByJwtToken(request.token())
-                .orElseThrow(() -> new ServiceException(HttpStatus.NOT_FOUND.value(), "token not found"));
+                .orElseThrow(TokenNotFoundException::new);
 
-        String newToken = tokenProvider.createToken(member.getUsername(), member.getRole(), TokenType.REFRESH.equals(token.getTokenType()) ? TokenProvider.DEFAULT_REFRESH_EXPIRE_DURATION : member.getExpireDuration());
+        validateAccessToken(member, token);
+
+        String newToken = tokenProvider.createToken(
+                member.getUsername(),
+                member.getRole(),
+                getExpireDurationInSeconds(token.getTokenType(), member)
+        );
+
         token.setJwtToken(newToken);
         token.setExpiresAt(tokenProvider.parseToken(newToken).getExpiration().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
         return new ReissueTokenResponseDto(ResultStatus.SUCCESS, HttpStatus.OK.value(), newToken, token.getTokenType());
     }
 
+    private void validateAccessToken(Member member, Token token) {
+        Token refershToken = tokenRepository.findByMemberAndTokenType(member, TokenType.REFRESH)
+                .orElseThrow(TokenNotFoundException::new);
+        if (TokenType.ACCESS.equals(token.getTokenType()) && !tokenProvider.validateToken(refershToken.getJwtToken())) {
+            throw new InvalidTokenException();
+        }
+    }
+
+    private static Long getExpireDurationInSeconds(TokenType tokenType, Member member) {
+        return TokenType.REFRESH.equals(tokenType) ? TokenProvider.DEFAULT_REFRESH_EXPIRE_DURATION : member.getExpireDuration();
+    }
+
     @Transactional
     public void sigout(String name) {
         Member member = memberRepository.findByUserName(name)
-                .orElseThrow(() -> new MemberNotFoundException());
+                .orElseThrow(MemberNotFoundException::new);
         if (!member.getIsEnabled()) {
-            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "member is disabled");
+            throw new DisabledMemberException();
         }
 
         tokenRepository.deleteAllByMember(member);

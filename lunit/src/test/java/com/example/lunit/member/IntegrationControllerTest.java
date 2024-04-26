@@ -5,11 +5,14 @@ import com.example.lunit.api.dto.*;
 import com.example.lunit.api.mapper.MemberMapper;
 import com.example.lunit.api.service.FileStorageService;
 import com.example.lunit.common.component.TokenProvider;
+import com.example.lunit.common.dto.CommonResponseDto;
 import com.example.lunit.common.enums.Role;
 import com.example.lunit.common.enums.TokenType;
 import com.example.lunit.common.util.ObjectMapperFactory;
 import com.example.lunit.domain.entity.Member;
+import com.example.lunit.domain.repository.DicomAnalyzeResultRepository;
 import com.example.lunit.domain.repository.MemberRepository;
+import com.example.lunit.domain.repository.TokenRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
@@ -33,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -45,18 +49,24 @@ public class IntegrationControllerTest {
     MockMvc mockMvc;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    TokenRepository tokenRepository;
+    @Autowired
+    DicomAnalyzeResultRepository dicomAnalyzeResultRepository;
+
 
     @MockBean
     private FileStorageService storageService;
 
     private static String accessToken;
     private static String refreshToken;
+    private static final String TEST_USER_NAME = "kimho314test";
 
     @Order(1)
     @Test
     @DisplayName("회원 가입 테스트")
     void signupTest() throws Exception {
-        SignupRequestDto request = new SignupRequestDto("kimho314", "ghtjq2959@", "kimho314@gmail.com", Role.CLIENT);
+        SignupRequestDto request = new SignupRequestDto(TEST_USER_NAME, "ghtjq2959@", "kimho314@gmail.com", Role.CLIENT);
         String jsonBody = OBJECT_MAPPER.writeValueAsString(request);
 
         ResultActions perform = mockMvc.perform(
@@ -72,19 +82,19 @@ public class IntegrationControllerTest {
 
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        TokenResponseDto tokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<TokenResponseDto>() {
+        CommonResponseDto<TokenResponseDto> tokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
         });
 
-        Assertions.assertNotNull(tokenResponseDto.accessToken());
+        Assertions.assertNotNull(tokenResponseDto.getResult().accessToken());
 
-        accessToken = tokenResponseDto.accessToken();
+        accessToken = tokenResponseDto.getResult().accessToken();
     }
 
     @Order(2)
     @Test
     @DisplayName("로그인 테스트")
     void loginTest() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto("kimho314", "ghtjq2959@");
+        LoginRequestDto loginRequestDto = new LoginRequestDto(TEST_USER_NAME, "ghtjq2959@");
         String jsonBody = OBJECT_MAPPER.writeValueAsString(loginRequestDto);
 
         ResultActions perform = mockMvc.perform(
@@ -100,14 +110,14 @@ public class IntegrationControllerTest {
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        TokenResponseDto tokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<TokenResponseDto>() {
+        CommonResponseDto<TokenResponseDto> tokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
         });
 
-        Assertions.assertNotNull(tokenResponseDto.accessToken());
-        Assertions.assertNotNull(tokenResponseDto.refreshToken());
+        Assertions.assertNotNull(tokenResponseDto.getResult().accessToken());
+        Assertions.assertNotNull(tokenResponseDto.getResult().refreshToken());
 
-        accessToken = tokenResponseDto.accessToken();
-        refreshToken = tokenResponseDto.refreshToken();
+        accessToken = tokenResponseDto.getResult().accessToken();
+        refreshToken = tokenResponseDto.getResult().refreshToken();
     }
 
     @Order(3)
@@ -126,19 +136,19 @@ public class IntegrationControllerTest {
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        MemberInfoResponseDto memberInfoResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<MemberInfoResponseDto>() {
+        CommonResponseDto<MemberInfoResponseDto> memberInfoResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
         });
 
-        Assertions.assertEquals("kimho314", memberInfoResponseDto.userName());
-        Assertions.assertEquals(MemberMapper.DEFAULT_MAX_ANALYZE_CNT, memberInfoResponseDto.maxAnalyzeCnt());
-        Assertions.assertEquals(MemberMapper.DEFAULT_CUR_ANALYZE_CNT, memberInfoResponseDto.curAnalyzeCnt());
+        Assertions.assertEquals(TEST_USER_NAME, memberInfoResponseDto.getResult().userName());
+        Assertions.assertEquals(MemberMapper.DEFAULT_MAX_ANALYZE_CNT, memberInfoResponseDto.getResult().maxAnalyzeCnt());
+        Assertions.assertEquals(MemberMapper.DEFAULT_CUR_ANALYZE_CNT, memberInfoResponseDto.getResult().curAnalyzeCnt());
     }
 
     @Order(4)
     @Test
     @DisplayName("엑세스 토큰 재발급 테스트")
     void reissueAccessTokenTest() throws Exception {
-        ReissueTokenRequestDto reissueTokenRequestDto = new ReissueTokenRequestDto("kimho314", accessToken);
+        ReissueTokenRequestDto reissueTokenRequestDto = new ReissueTokenRequestDto(TEST_USER_NAME, accessToken);
         String jsonBody = OBJECT_MAPPER.writeValueAsString(reissueTokenRequestDto);
 
         ResultActions perform = mockMvc.perform(
@@ -154,10 +164,10 @@ public class IntegrationControllerTest {
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        ReissueTokenResponseDto reissueTokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<ReissueTokenResponseDto>() {
+        CommonResponseDto<ReissueTokenResponseDto> reissueTokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
         });
-        Assertions.assertNotNull(reissueTokenResponseDto.token());
-        Assertions.assertEquals(TokenType.ACCESS, reissueTokenResponseDto.tokenType());
+        Assertions.assertNotNull(reissueTokenResponseDto.getResult().token());
+        Assertions.assertEquals(TokenType.ACCESS, reissueTokenResponseDto.getResult().tokenType());
     }
 
 
@@ -165,7 +175,7 @@ public class IntegrationControllerTest {
     @Test
     @DisplayName("리프레쉬 토큰 재발급 테스트")
     void reissueRefreshTokenTest() throws Exception {
-        ReissueTokenRequestDto reissueTokenRequestDto = new ReissueTokenRequestDto("kimho314", refreshToken);
+        ReissueTokenRequestDto reissueTokenRequestDto = new ReissueTokenRequestDto(TEST_USER_NAME, refreshToken);
         String jsonBody = OBJECT_MAPPER.writeValueAsString(reissueTokenRequestDto);
 
         ResultActions perform = mockMvc.perform(
@@ -181,10 +191,10 @@ public class IntegrationControllerTest {
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        ReissueTokenResponseDto reissueTokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<ReissueTokenResponseDto>() {
+        CommonResponseDto<ReissueTokenResponseDto> reissueTokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
         });
-        Assertions.assertNotNull(reissueTokenResponseDto.token());
-        Assertions.assertEquals(TokenType.REFRESH, reissueTokenResponseDto.tokenType());
+        Assertions.assertNotNull(reissueTokenResponseDto.getResult().token());
+        Assertions.assertEquals(TokenType.REFRESH, reissueTokenResponseDto.getResult().tokenType());
     }
 
     @Order(6)
@@ -207,7 +217,7 @@ public class IntegrationControllerTest {
     @Test
     @DisplayName("로그아웃 후 엑세스 토큰 재발급 테스트")
     void reissueAccessTokenAfterLogoutTest() throws Exception {
-        ReissueTokenRequestDto reissueTokenRequestDto = new ReissueTokenRequestDto("kimho314", accessToken);
+        ReissueTokenRequestDto reissueTokenRequestDto = new ReissueTokenRequestDto(TEST_USER_NAME, accessToken);
         String jsonBody = OBJECT_MAPPER.writeValueAsString(reissueTokenRequestDto);
 
         ResultActions perform = mockMvc.perform(
@@ -223,10 +233,10 @@ public class IntegrationControllerTest {
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        ReissueTokenResponseDto reissueTokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<ReissueTokenResponseDto>() {
+        CommonResponseDto<ReissueTokenResponseDto> reissueTokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
         });
-        Assertions.assertNotNull(reissueTokenResponseDto.token());
-        Assertions.assertEquals(TokenType.ACCESS, reissueTokenResponseDto.tokenType());
+        Assertions.assertNotNull(reissueTokenResponseDto.getResult().token());
+        Assertions.assertEquals(TokenType.ACCESS, reissueTokenResponseDto.getResult().tokenType());
 
         accessToken = reissueTokenRequestDto.token();
     }
@@ -247,12 +257,12 @@ public class IntegrationControllerTest {
                 .andReturn();
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
-        MemberInfoResponseDto memberInfoResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<MemberInfoResponseDto>() {
+        CommonResponseDto<MemberInfoResponseDto> memberInfoResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
         });
 
-        Assertions.assertEquals("kimho314", memberInfoResponseDto.userName());
-        Assertions.assertEquals(MemberMapper.DEFAULT_MAX_ANALYZE_CNT, memberInfoResponseDto.maxAnalyzeCnt());
-        Assertions.assertEquals(MemberMapper.DEFAULT_CUR_ANALYZE_CNT, memberInfoResponseDto.curAnalyzeCnt());
+        Assertions.assertEquals(TEST_USER_NAME, memberInfoResponseDto.getResult().userName());
+        Assertions.assertEquals(MemberMapper.DEFAULT_MAX_ANALYZE_CNT, memberInfoResponseDto.getResult().maxAnalyzeCnt());
+        Assertions.assertEquals(MemberMapper.DEFAULT_CUR_ANALYZE_CNT, memberInfoResponseDto.getResult().curAnalyzeCnt());
     }
 
     @Order(9)
@@ -260,7 +270,7 @@ public class IntegrationControllerTest {
     @DisplayName("영상 분석 실행 테스트")
     void analyzeDicomTest() throws Exception {
         ClassPathResource resource = new ClassPathResource("2_Pneumothorax.dcm");
-        MockMultipartFile multipartFile = new MockMultipartFile("file", "2_Pneumothorax.dcm", "text/plain", resource.getInputStream());
+        MockMultipartFile multipartFile = new MockMultipartFile("frontal", "2_Pneumothorax.dcm", "text/plain", resource.getInputStream());
 
         given(this.storageService.store(multipartFile))
                 .willReturn(Paths.get("2_Pneumothorax.dcm"));
@@ -297,9 +307,9 @@ public class IntegrationControllerTest {
 
         MvcResult mvcResult = perform.andExpect(status().isOk())
                 .andReturn();
-        ExtendMaxAnalysisCountResponseDto extendMaxAnalysisCountResponseDto = OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<ExtendMaxAnalysisCountResponseDto>() {
+        CommonResponseDto<ExtendMaxAnalysisCountResponseDto> extendMaxAnalysisCountResponseDto = OBJECT_MAPPER.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {
         });
-        Assertions.assertEquals(110, extendMaxAnalysisCountResponseDto.maxCount());
+        Assertions.assertEquals(110, extendMaxAnalysisCountResponseDto.getResult().maxCount());
     }
 
     @Order(11)
@@ -317,7 +327,15 @@ public class IntegrationControllerTest {
         MvcResult mvcResult = perform.andExpect(status().isOk())
                 .andReturn();
 
-        Member member = memberRepository.findByUserName("kimho314").orElseThrow();
+        Member member = memberRepository.findByUserName(TEST_USER_NAME).orElseThrow();
         Assertions.assertEquals(false, member.getIsEnabled());
+
+        tearDown();
+    }
+
+    private void tearDown() {
+        dicomAnalyzeResultRepository.deleteAll();
+        tokenRepository.deleteAll();
+        memberRepository.deleteAll();
     }
 }

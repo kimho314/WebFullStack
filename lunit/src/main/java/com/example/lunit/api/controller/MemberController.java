@@ -2,6 +2,8 @@ package com.example.lunit.api.controller;
 
 import com.example.lunit.api.dto.*;
 import com.example.lunit.api.service.MemberService;
+import com.example.lunit.common.dto.CommonResponseDto;
+import com.example.lunit.common.exception.MemberNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,8 @@ public class MemberController {
      * @title 회원 가입
      */
     @PostMapping(value = "/signup")
-    public ResponseEntity<TokenResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
-        return ResponseEntity.ok(memberService.signup(signupRequestDto));
+    public ResponseEntity<CommonResponseDto<TokenResponseDto>> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
+        return ResponseEntity.ok(new CommonResponseDto<>(memberService.signup(signupRequestDto)));
     }
 
     /**
@@ -32,8 +34,8 @@ public class MemberController {
      * @title 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDto> login(@Valid @RequestBody LoginRequestDto request) {
-        return ResponseEntity.ok(memberService.login(request));
+    public ResponseEntity<CommonResponseDto<TokenResponseDto>> login(@Valid @RequestBody LoginRequestDto request) {
+        return ResponseEntity.ok(new CommonResponseDto<>(memberService.login(request)));
     }
 
     /**
@@ -59,8 +61,8 @@ public class MemberController {
      * @@title 토큰 재발급
      */
     @PutMapping("/reissue-token")
-    public ResponseEntity<ReissueTokenResponseDto> reissueToken(@Valid @RequestBody ReissueTokenRequestDto request) {
-        return ResponseEntity.ok(memberService.reissueToken(request));
+    public ResponseEntity<CommonResponseDto<ReissueTokenResponseDto>> reissueToken(@Valid @RequestBody ReissueTokenRequestDto request) {
+        return ResponseEntity.ok(new CommonResponseDto<>(memberService.reissueToken(request)));
     }
 
     /**
@@ -69,13 +71,13 @@ public class MemberController {
      * @title 회원 정보 조회
      */
     @GetMapping("/member-info")
-    public ResponseEntity<MemberInfoResponseDto> getMemberInfo(Principal principal) {
+    public ResponseEntity<CommonResponseDto<MemberInfoResponseDto>> getMemberInfo(Principal principal) {
         String userName = principal.getName();
         if (!StringUtils.hasText(userName)) {
-            throw new UsernameNotFoundException("user not found");
+            throw new MemberNotFoundException();
         }
 
-        return ResponseEntity.ok(memberService.getMemberInfo(userName));
+        return ResponseEntity.ok(new CommonResponseDto<>(memberService.getMemberInfo(userName)));
     }
 
     /**

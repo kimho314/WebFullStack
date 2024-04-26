@@ -1,5 +1,6 @@
 package com.example.lunit.common.component;
 
+import com.example.lunit.common.enums.TokenType;
 import com.example.lunit.domain.entity.Token;
 import com.example.lunit.domain.repository.TokenRepository;
 import io.jsonwebtoken.*;
@@ -33,8 +34,7 @@ import java.util.stream.Collectors;
 public class TokenProvider {
     public static final String AUTHORIZATION_HEADER = "X-API-TOKEN";
     public static final String AUTHORITIES_KEY = "auth";
-    //    public final Long DEFAULT_EXPIRE_DURATION = 3L * 60L * 60L;
-    public static final Long DEFAULT_ACCESS_EXPIRE_DURATION = 10L * 60L;
+    public static final Long DEFAULT_ACCESS_EXPIRE_DURATION = 3L * 60L * 60L;
     public static final Long DEFAULT_REFRESH_EXPIRE_DURATION = 2L * 24L * 60L * 60L;
 
     private final String secret;
@@ -129,12 +129,12 @@ public class TokenProvider {
                     .build()
                     .parseClaimsJws(token);
 
-            Optional<Token> accessTokenOptional = tokenRepository.findByJwtToken(token);
-            if (accessTokenOptional.isEmpty()) {
+            Optional<Token> tokenOptional = tokenRepository.findByJwtToken(token);
+            if (tokenOptional.isEmpty()) {
                 return false;
             }
-            Token accessToken = accessTokenOptional.get();
-            if (accessToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            Token foundToken = tokenOptional.get();
+            if (TokenType.ACCESS.equals(foundToken.getTokenType()) && foundToken.getExpiresAt().isBefore(LocalDateTime.now())) {
                 return false;
             }
 
