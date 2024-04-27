@@ -27,14 +27,14 @@ public class AnalysisService {
     private final DicomAnalyzeResultRepository dicomAnalyzeResultRepository;
 
     @Transactional
-    public AnalyzeDicomResponseDto analyze(MultipartFile file, String name) {
+    public AnalyzeDicomResponseDto startAnalysis(MultipartFile file, String name) {
         Member member = memberRepository.findByUserName(name)
                 .orElseThrow(MemberNotFoundException::new);
         if (!member.isAnalysisAvailable()) {
             throw new ServiceException(HttpStatus.SERVICE_UNAVAILABLE.value(), "analysis unavailable");
         }
 
-        AnalysisResultDto result = analyze();
+        AnalysisResultDto result = startAnalysis();
 
         member.setCurAnalyzeCnt(member.getCurAnalyzeCnt() + 1);
         memberRepository.save(member);
@@ -57,7 +57,7 @@ public class AnalysisService {
         dicomAnalyzeResultRepository.save(analyzeResult);
     }
 
-    private static AnalysisResultDto analyze() {
+    private static AnalysisResultDto startAnalysis() {
         try {
             log.info("analyzing...");
             long time = new Random().nextLong(10000);

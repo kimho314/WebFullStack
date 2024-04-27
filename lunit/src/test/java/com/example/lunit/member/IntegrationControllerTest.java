@@ -66,7 +66,7 @@ public class IntegrationControllerTest {
     @Test
     @DisplayName("회원 가입 테스트")
     void signupTest() throws Exception {
-        SignupRequestDto request = new SignupRequestDto(TEST_USER_NAME, "ghtjq2959@", "kimho314@gmail.com", Role.CLIENT);
+        SignupRequestDto request = new SignupRequestDto(TEST_USER_NAME, "lunit123@", "test@lunit.com", Role.CLIENT);
         String jsonBody = OBJECT_MAPPER.writeValueAsString(request);
 
         ResultActions perform = mockMvc.perform(
@@ -94,7 +94,7 @@ public class IntegrationControllerTest {
     @Test
     @DisplayName("로그인 테스트")
     void loginTest() throws Exception {
-        LoginRequestDto loginRequestDto = new LoginRequestDto(TEST_USER_NAME, "ghtjq2959@");
+        LoginRequestDto loginRequestDto = new LoginRequestDto(TEST_USER_NAME, "lunit123@");
         String jsonBody = OBJECT_MAPPER.writeValueAsString(loginRequestDto);
 
         ResultActions perform = mockMvc.perform(

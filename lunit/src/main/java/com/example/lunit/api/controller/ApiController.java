@@ -30,7 +30,7 @@ public class ApiController {
             @RequestParam("frontal") MultipartFile file,
             Principal principal
     ) {
-        AnalyzeDicomResponseDto result = analysisService.analyze(file, principal.getName());
+        AnalyzeDicomResponseDto result = analysisService.startAnalysis(file, principal.getName());
         return ResponseEntity.ok(new CommonResponseDto<>(result));
     }
 
