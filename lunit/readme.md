@@ -5,6 +5,8 @@ flowchart LR
     CLIENT(CLIENT) --> WEB_SERVER(WAS) --> RDS[(H2)]
 ```
 
+- 프로젝트는 Java21, Spring Boot 3.2.5, Spring Boot JPA, Spring Security 를 이용해 구성하였습니다
+- java 의 경우 가장 최신 LTS 버전인 21을 성택했습니다. 21의 경우 GC 최적화, Virtual Thread 의 도입등으로 속도 및 높은 처리량에 좋은 서택입니다
 - 해당 시스템은 과제라는 특성상 이용자수가 10명 이하이기 때문에 WAS 와 RDBMS 인 H2로 이루어진 모놀리식 서버를 설계했습니다
 - 많은 트래픽이 발생하지 않기 때문에 디버깅이 용이한 Spring MVC 스택을 이용하여 서버를 세팅하였습니다
 - 대량의 데이터를 통신하지 않기 때문에 클라이언트와의 통신 프로토콜은 Restful API 를 사용하였습니다
