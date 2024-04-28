@@ -186,6 +186,7 @@ sequenceDiagram
 
 # 실행 방법
 
-- docker-compose.yml이 위치한 디렉토리로 이동합니다
+- docker 를 설피합니다
+- docker-compose.yml 이 위치한 디렉토리로 이동합니다
 - 이동한 디렉토리에서 docker-compose up 명령어를 실행합니다
 - http://localhost:8080/<uri>로 호출하면 됩니다

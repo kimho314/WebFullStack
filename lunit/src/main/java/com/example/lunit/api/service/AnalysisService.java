@@ -60,7 +60,7 @@ public class AnalysisService {
     private static AnalysisResultDto startAnalysis() {
         try {
             log.info("analyzing...");
-            long time = new Random().nextLong(10000);
+            long time = new Random().nextLong(10000) + 1;
             Thread.sleep(time);
             return new AnalysisResultDto(time / 1000.0, getScore());
         }

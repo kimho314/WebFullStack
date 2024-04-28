@@ -52,9 +52,11 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "EXPIRE_DURATION")
     private Long expireDuration;
 
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<Token> tokens = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<DicomAnalyzeResult> dicomAnalyzeResults = new ArrayList<>();
 
