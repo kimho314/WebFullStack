@@ -33,6 +33,7 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(length = 320)
     private String email;
 
+    @Builder.Default
     @ColumnDefault("TRUE")
     @Column(name = "IS_ENABLED", nullable = false)
     private Boolean isEnabled = false;

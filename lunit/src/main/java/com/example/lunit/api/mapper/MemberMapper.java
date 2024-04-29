@@ -19,7 +19,7 @@ public class MemberMapper {
                 .email(email)
                 .expireDuration(TokenProvider.DEFAULT_ACCESS_EXPIRE_DURATION)
                 .curAnalyzeCnt(DEFAULT_CUR_ANALYZE_CNT)
-                .maxAnalyzeCnt(DEFAULT_MAX_ANALYZE_CNT)
+                .maxAnalyzeCnt(role.equals(Role.ADMIN) ? 0 : DEFAULT_MAX_ANALYZE_CNT)
                 .isEnabled(Boolean.TRUE)
                 .build();
     }

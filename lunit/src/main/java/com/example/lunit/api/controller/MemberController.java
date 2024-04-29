@@ -34,8 +34,8 @@ public class MemberController {
      * @title 로그인
      */
     @PostMapping("/login")
-    public ResponseEntity<CommonResponseDto<TokenResponseDto>> login(@Valid @RequestBody LoginRequestDto request) {
-        return ResponseEntity.ok(new CommonResponseDto<>(memberService.login(request)));
+    public ResponseEntity<CommonResponseDto<TokenResponseDto>> login(@Valid @RequestBody LoginRequestDto request, Principal principal) {
+        return ResponseEntity.ok(new CommonResponseDto<>(memberService.login(request, principal.getName())));
     }
 
     /**

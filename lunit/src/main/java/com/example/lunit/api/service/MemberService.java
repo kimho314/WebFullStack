@@ -49,7 +49,11 @@ public class MemberService implements UserDetailsService {
 
     @Transactional
     public TokenResponseDto signup(SignupRequestDto signupRequestDto) {
-        if (memberRepository.existsByUserNameAndIsEnabled(signupRequestDto.userName(), true)) {
+        if (memberRepository.existsByUserNameAndIsEnabledAndRole(
+                signupRequestDto.userName(),
+                true,
+                Role.mappedToAuthority(signupRequestDto.role()))
+        ) {
             throw new MemberExistException();
         }
 
@@ -69,13 +73,14 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public TokenResponseDto login(LoginRequestDto request) {
+    public TokenResponseDto login(LoginRequestDto request, String userName) {
         if (!memberRepository.existsByUserNameAndIsEnabled(request.userName(), true)) {
             throw new MemberNotFoundException();
         }
 
         Member member = memberRepository.findByUserName(request.userName())
                 .orElseThrow(MemberNotFoundException::new);
+        validateUserName(userName, member);
         validatePassword(request.password(), member.getPassword());
 
         Token savedAccessToken = createToken(member, TokenType.ACCESS);
@@ -86,6 +91,12 @@ public class MemberService implements UserDetailsService {
         tokenRepository.deleteByMemberAndTokenType(member, TokenType.SIGNUP);
 
         return new TokenResponseDto(ResultStatus.SUCCESS, HttpStatus.OK.value(), savedAccessToken.getJwtToken(), savedRefreshToken.getJwtToken());
+    }
+
+    private static void validateUserName(String userName, Member member) {
+        if (!userName.equals(member.getUsername())) {
+            throw new MemberNotFoundException();
+        }
     }
 
     private void validatePassword(String requestPassword, String password) {

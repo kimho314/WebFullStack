@@ -13,6 +13,7 @@ flowchart LR
 - 또한 많은 데이터가 발생하지 않고 제한적인 시간안에 만들어야 하는 서버이기 때문에 빠르게 설치와 실행이 가능한 H2데이터베이스를 선택했습니다
 - 간단한 CRUD 에 대한 개발 속도를 높이기 위해 Spring Data JPA 를 선택했습니다
 - 인증/인가 방식은 JWT, Spring Security 를 사용하여 구현하였습니다
+- 분석한 파일은 로컬에 upload-dir 디렉토리를 만들어서 저장합니다
 
 ### 패키지 구조
 
@@ -56,14 +57,10 @@ erDiagram
 
 - 회원 가입을 위한 API 입니다
 
-```
+```asciidoc
 request body
 {
-    "userName": "kimho314", // 아이디
-    "password": "ghtjq2959@", // 비밀번호
-    "email": "kimho314@gmail.com", // 이메일 주소
-    "role": "CLIENT" // 클라이언트 권한
-}
+"userName": "kimho314", // 아이디 "password": "ghtjq2959@", // 비밀번호 "email": "kimho314@gmail.com", // 이메일 주소 "role": "CLIENT" // 클라이언트 권한 }
 ```
 
 ```mermaid
@@ -79,14 +76,10 @@ sequenceDiagram
 - 회원 로그인을 위한 API 입니다
 - 가입 후 응답값으로 받은 access-token을 header에다가 넘겨주시면 됩니다
 
-```
-header
---header 'X-API-TOKEN: <access-token>
---request body
+```asciidoc
+header --header 'X-API-TOKEN: <access-token> --request body
 {
-    "userName": "kimho314", // 아이디
-    "password": "ghtjq2959@" // 비밀번호
-}
+"userName": "kimho314", // 아이디 "password": "ghtjq2959@" // 비밀번호 }
 ```
 
 ```mermaid
@@ -102,7 +95,7 @@ sequenceDiagram
 - 로그아웃을 위한 API 입니다
 - 로그인 후 응답값으로 받은 access-token을 header에다가 넘겨주시면 됩니다
 
-```
+```asciidoc
 --header 'X-API-TOKEN: <access-token>
 ```
 
@@ -118,7 +111,7 @@ sequenceDiagram
 
 - 탈퇴를 위한 API 입니다
 
-```
+```asciidoc
 --header 'X-API-TOKEN: <access-token>
 ```
 
@@ -134,12 +127,9 @@ sequenceDiagram
 
 - 유효 기간이 만료된 토큰 재발급용 API 입니다
 
-```
---header 'Content-Type: application/json' \
---request body '{
-    "userName" : "kimho314", // 아이디
-    "token" : "<access-token>"
-}
+```asciidoc
+--header 'Content-Type: application/json' \ --request body '{
+"userName" : "kimho314", // 아이디 "token" : "<access-token>" }
 ```
 
 ```mermaid
@@ -154,11 +144,9 @@ sequenceDiagram
 
 - 영상 분석 수 연장 API 입니다
 
-```
---header 'Content-Type: application/json' \
---request body '{
-    "extendCount" : 100 // 연장할 갯수
-}'
+```asciidoc
+--header 'Content-Type: application/json' \ --request body '{
+"extendCount" : 100 // 연장할 갯수 }'
 ```
 
 ```mermaid
@@ -173,9 +161,8 @@ sequenceDiagram
 
 - 영산 분석 API 입니다
 
-```
---header 'X-API-TOKEN: <access-token>' \
---form 'frontal=@"/E:/lunit_assignment/cr_samples/1_Nodule.dcm"'
+```asciidoc
+--header 'X-API-TOKEN: <access-token>' \ --form 'frontal=@"/E:/lunit_assignment/cr_samples/1_Nodule.dcm"'
 ```
 
 ```mermaid
@@ -184,6 +171,48 @@ sequenceDiagram
     SERVER ->> H2: insert DICOM_ANALYZE_RESULT, update MEMBER
     H2 -->> SERVER: response
     SERVER -->> CLIENT: response(predictionTime, score)
+```
+
+8. 클라이언트 리스트 조회 API
+
+- 가입된 클라이언트 리스트 조회 API 입니다
+
+```asciidoc
+{
+"result": [
+{
+"userName": "kimho314", // 유저 아이디 "email": "kimho314@gmail.com", // 이메일 주소 "isEnabled": true, // 탈퇴 여부 "curAnalyzeCnt": 0, // 현재 분석 수 "maxAnalyzeCnt": 10 // 최재 분석 수 }
+]
+}
+```
+
+```mermaid
+sequenceDiagram
+    CLIENT ->> SERVER: POST /admin/members
+    SERVER ->> RDS: select MEMBER
+    RDS -->> SERVER: response
+    SERVER -->> CLIENT: response(userName, email, isEnabled, curAnalyzeCnt, maxAnalyzeCnt)
+```
+
+9. 분석 결과 리스트 조회 API
+
+- 해당 클라이언트의 분석 결과 리스트 조회 APi 입니다
+
+```asciidoc
+{
+"result": [
+{
+"predictionTime": 6.486, // 분석 소요 시간 (sec) "frontalScore": 0.7854030491465442, // 스코어 "createdAt": "2024-04-30T22:27:57.946421" // 문석 날짜시간 }
+]
+}
+```
+
+```mermaid
+sequenceDiagram
+    CLIENT ->> SERVER: POST /admin/member/{userName}/analyze-results
+    SERVER ->> RDS: select DICOM_ANALYZE_RESULT
+    RDS -->> SERVER: response
+    SERVER -->> CLIENT: response(predictionTime, frontalScore, createdAt)
 ```
 
 # 실행 방법
