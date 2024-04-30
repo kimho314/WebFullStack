@@ -59,8 +59,10 @@ public class IntegrationControllerTest {
     private FileStorageService storageService;
 
     private static String accessToken;
+    private static String adminAccessToken;
     private static String refreshToken;
     private static final String TEST_USER_NAME = "kimho314test";
+    private static final String TEST_ADMIN_USER_NAME = "kimho314admintest";
 
     @Order(1)
     @Test
@@ -313,6 +315,95 @@ public class IntegrationControllerTest {
     }
 
     @Order(11)
+    @Test
+    @DisplayName("어드민 회원 가입 테스트")
+    void signupAdminTest() throws Exception {
+        SignupRequestDto request = new SignupRequestDto(TEST_ADMIN_USER_NAME, "lunit123@", "test@lunit.com", Role.ADMIN);
+        String jsonBody = OBJECT_MAPPER.writeValueAsString(request);
+
+        ResultActions perform = mockMvc.perform(
+                post("/signup")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonBody)
+                        .characterEncoding(StandardCharsets.UTF_8)
+        );
+
+        MvcResult mvcResult = perform.andExpect(status().isOk())
+                .andReturn();
+
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        CommonResponseDto<TokenResponseDto> tokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
+        });
+
+        Assertions.assertNotNull(tokenResponseDto.getResult().accessToken());
+
+        adminAccessToken = tokenResponseDto.getResult().accessToken();
+    }
+
+    @Order(12)
+    @Test
+    @DisplayName("어드민 로그인 테스트")
+    void loginAdminTest() throws Exception {
+        LoginRequestDto loginRequestDto = new LoginRequestDto(TEST_ADMIN_USER_NAME, "lunit123@");
+        String jsonBody = OBJECT_MAPPER.writeValueAsString(loginRequestDto);
+
+        ResultActions perform = mockMvc.perform(
+                post("/login")
+                        .header(TokenProvider.AUTHORIZATION_HEADER, adminAccessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonBody)
+                        .characterEncoding(StandardCharsets.UTF_8)
+        );
+
+        MvcResult mvcResult = perform.andExpect(status().isOk())
+                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        CommonResponseDto<TokenResponseDto> tokenResponseDto = OBJECT_MAPPER.readValue(contentAsString, new TypeReference<>() {
+        });
+
+        Assertions.assertNotNull(tokenResponseDto.getResult().accessToken());
+        Assertions.assertNotNull(tokenResponseDto.getResult().refreshToken());
+
+        adminAccessToken = tokenResponseDto.getResult().accessToken();
+    }
+
+    @Order(13)
+    @Test
+    @DisplayName("가입 유저 조회 테스트")
+    void getMembersTest() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/admin/members")
+                        .header(TokenProvider.AUTHORIZATION_HEADER, adminAccessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+        );
+
+        MvcResult mvcResult = perform.andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Order(14)
+    @Test
+    @DisplayName("가입 유저 분석 결과 조회 테스트")
+    void getAnalyzeResultTest() throws Exception {
+        ResultActions perform = mockMvc.perform(
+                get("/admin/member/{userName}/analyze-results", TEST_USER_NAME)
+                        .header(TokenProvider.AUTHORIZATION_HEADER, adminAccessToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding(StandardCharsets.UTF_8)
+        );
+
+        MvcResult mvcResult = perform.andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Order(16)
     @Test
     @DisplayName("회원 탈퇴 테스트")
     void signoutTest() throws Exception {
