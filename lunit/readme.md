@@ -21,6 +21,13 @@ flowchart LR
 - common : 공통적으로 적용되야 하는 configuration, filter, exception 등을 모아놓은 페키지입니다
 - domain : 서비스의 도메인을 정의하는 entity 와 repository 등이 위치해 있습니다
 
+# 실행 방법
+
+- docker 를 설치합니다
+- docker-compose.yml 이 위치한 디렉토리로 이동합니다
+- 이동한 디렉토리에서 docker-compose up 명령어를 실행합니다
+- http://localhost:8080/<uri>로 호출하면 됩니다
+
 ### API 호출 흐름도
 
 ```mermaid
@@ -214,10 +221,3 @@ sequenceDiagram
     RDS -->> SERVER: response
     SERVER -->> CLIENT: response(predictionTime, frontalScore, createdAt)
 ```
-
-# 실행 방법
-
-- docker 를 설피합니다
-- docker-compose.yml 이 위치한 디렉토리로 이동합니다
-- 이동한 디렉토리에서 docker-compose up 명령어를 실행합니다
-- http://localhost:8080/<uri>로 호출하면 됩니다
