@@ -55,7 +55,40 @@ sequenceDiagram
 ```mermaid
 erDiagram
     MEMBER ||--|{ TOKEN: uses
+    MEMBER {
+        BIGING id
+        VARCHAR user_name
+        VARCHAR pasword
+        VARCHAR email
+        BOOLEAN is_enabled
+        VARCHAR role
+        BIGINT expire_duration
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+        INT versioin
+    }
+    TOKEN {
+        BIGINT id
+        CARCHAR jwt_token
+        TIMESTAMP expires_at
+        VARCHAR token_type
+        BIGINT member_id
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+        INT version
+    }
     MEMBER ||--|{ DICOM_ANALYZE_RESULT: contains
+    DICOM_ANALYZE_RESULT {
+        BIGINT id
+        VARCHAR dicom_file_name
+        VARCHAR dicom_file_path
+        DOUBLE prediction_time
+        DOUBLE frontal_score
+        BIGINT member_id
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+        INT version
+    }
 ```
 
 # 기능 리스트
