@@ -3,7 +3,6 @@ package com.example.authserver.api.service;
 import com.example.authserver.api.dto.SignupDto;
 import com.example.authserver.core.enums.Role;
 import com.example.authserver.domain.entity.Authority;
-import com.example.authserver.domain.entity.AuthorityId;
 import com.example.authserver.domain.entity.Member;
 import com.example.authserver.domain.repository.AuthorityRepository;
 import com.example.authserver.domain.repository.MemberRepository;
@@ -31,9 +30,8 @@ public class MemberService {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         Authority authority = Authority.builder()
-                .authorityId(new AuthorityId(request.userId(), Role.ROLE_USER.name()))
+                .role(Role.ROLE_USER)
                 .build();
-
         Member member = Member.builder()
                 .userId(request.userId())
                 .password(encodedPassword)
@@ -42,10 +40,11 @@ public class MemberService {
                 .email(request.email())
                 .authorities(List.of(authority))
                 .build();
-
         Member save = memberRepository.save(member);
+
+        authority.setMember(member);
         authorityRepository.save(authority);
 
-        return String.valueOf(save.getId());
+        return save.getUserId();
     }
 }

@@ -41,13 +41,13 @@ public class Member implements UserDetails {
     @Builder.Default
     private Boolean enabled = Boolean.TRUE;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<Authority> authorities = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities.stream()
-                .map(it -> new SimpleGrantedAuthority(it.getAuthorityId().getAuthority()))
+                .map(it -> new SimpleGrantedAuthority(it.getRole().name()))
                 .collect(Collectors.toList());
     }
 

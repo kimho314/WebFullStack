@@ -2,7 +2,6 @@ package com.example.authserver;
 
 import com.example.authserver.core.enums.Role;
 import com.example.authserver.domain.entity.Authority;
-import com.example.authserver.domain.entity.AuthorityId;
 import com.example.authserver.domain.entity.Member;
 import com.example.authserver.domain.repository.AuthorityRepository;
 import com.example.authserver.domain.repository.MemberRepository;

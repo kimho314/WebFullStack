@@ -1,8 +1,7 @@
 package com.example.authserver.domain.entity;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.example.authserver.core.enums.Role;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -13,6 +12,14 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Authority {
-    @EmbeddedId
-    private AuthorityId authorityId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 }

@@ -18,7 +18,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup", produces = "application/json")
     public ResponseEntity<String> signup(@RequestBody SignupDto.Request request) {
         String memberId = memberService.singup(request);
         return ResponseEntity.ok(memberId);
