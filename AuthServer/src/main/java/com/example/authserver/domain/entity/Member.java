@@ -39,9 +39,9 @@ public class Member implements UserDetails {
     private String email;
 
     @Builder.Default
-    private Boolean enabled = Boolean.TRUE;
+    private Integer enabled = 1;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "member")
     private List<Authority> authorities = new ArrayList<>();
 
     @Override
@@ -63,21 +63,21 @@ public class Member implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return this.enabled;
+        return this.enabled == 1;
     }
 }
