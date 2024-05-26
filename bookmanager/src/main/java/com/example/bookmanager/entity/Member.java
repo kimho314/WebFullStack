@@ -17,11 +17,12 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 1000)
+    @Column(name = "name", length = 1000)
     private String name;
 
-    @Column(length = 100)
+    @Column(name = "user_id", length = 100)
     private String userId;
 
+    @Column(name = "password")
     private String password;
 }
