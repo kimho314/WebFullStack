@@ -18,7 +18,7 @@ public class AppConfig {
     }
 
     @Bean
-    public static MemoryMemberRepository memberRepository() {
+    public MemoryMemberRepository memberRepository() {
         return new MemoryMemberRepository();
     }
 
@@ -28,7 +28,7 @@ public class AppConfig {
     }
 
     @Bean
-    public static FixDiscountPolicy discountPolicy() {
+    public FixDiscountPolicy discountPolicy() {
         return new FixDiscountPolicy();
     }
 }
