@@ -33,6 +33,6 @@ public class BOJ9657 {
 
     private static void init() {
         N = SC.nextInt();
-        DP = new int[N + 1];
+        DP = new int[1001];
     }
 }
