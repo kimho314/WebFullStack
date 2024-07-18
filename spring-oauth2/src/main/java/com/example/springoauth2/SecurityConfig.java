@@ -29,7 +29,6 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
-import org.springframework.security.oauth2.server.authorization.token.JwtGenerator;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -45,20 +44,9 @@ import java.util.UUID;
 public class SecurityConfig {
     @Bean
     @Order(1)
-    SecurityFilterChain oauth2AuthorizationFilterChain(
-            HttpSecurity http,
-            RegisteredClientRepository registeredClientRepository,
-            OAuth2AuthorizationService authorizationService,
-            JwtEncoder jwtEncoder,
-            AuthorizationServerSettings settings
-    ) throws Exception {
+    SecurityFilterChain oauth2AuthorizationFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .registeredClientRepository(registeredClientRepository)
-                .authorizationService(authorizationService)
-                .tokenGenerator(new JwtGenerator(jwtEncoder))
-                .authorizationServerSettings(settings);
-
+        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
 
         return http.build();
     }
