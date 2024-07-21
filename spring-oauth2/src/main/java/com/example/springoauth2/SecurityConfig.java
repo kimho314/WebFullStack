@@ -57,7 +57,6 @@ public class SecurityConfig {
     SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
-                .securityContext(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.GET, "/v1/users/**").hasAuthority("SCOPE_read")
                         .anyRequest().authenticated())
