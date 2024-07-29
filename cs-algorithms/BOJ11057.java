@@ -1,38 +1,37 @@
 public class BOJ11057 {
-    static FastReader sc = new FastReader();
+    static FastReader SC = new FastReader();
 
     static int N;
-    static int[][] Dy;
-    static int[] A;
+    static long[][] DP;
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        A = new int[N + 1];
-        Dy = new int[N + 1][10];
+        input();
+        solve();
+    }
 
-        // 초기값 구하기
-        for (int num = 0; num <= 9; num++) {
-            Dy[1][num] = 1;
+    private static void solve() {
+        for (int i = 0; i < 10; i++) {
+            DP[1][i] = 1;
         }
 
-        // 점화식을 토대로 Dy 배열 채우기
-        for (int len = 2; len <= N; len++) {
-            for (int num = 0; num <= 9; num++) {
-                // 길이가 len이고 num으로 끝나는 개수를 계산하자 == Dy[len][num] 을 계산하자.
-                for (int prev = 0; prev <= num; prev++) {
-                    Dy[len][num] += Dy[len - 1][prev];
-                    Dy[len][num] %= 10007;
+        for (int i = 2; i <= N; i++) {
+            for (int j = 0; j < 10; j++) {
+                for (int k = 0; k <= j; k++) {
+                    DP[i][j] += DP[i - 1][k];
                 }
+                DP[i][j] %= 10_007;
             }
         }
 
-        // Dy배열로 정답 계산하기
-        int ans = 0;
-        for (int num = 0; num <= 9; num++) {
-            ans += Dy[N][num];
-            ans %= 10007;
+        long sum = 0;
+        for (int i = 0; i < 10; i++) {
+            sum += DP[N][i];
         }
+        System.out.println(sum % 10_007);
+    }
 
-        System.out.println(ans);
+    private static void input() {
+        N = SC.nextInt();
+        DP = new long[N + 1][10];
     }
 }
