@@ -6,27 +6,33 @@ public class BOJ11053 {
     static int[] A, DP;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        A = new int[N];
-        for (int i = 0; i < N; i++) {
-            A[i] = SC.nextInt();
-        }
+        input();
+        solve();
+    }
 
-        DP = new int[N];
+    private static void solve() {
         Arrays.fill(DP, 1);
-
         for (int i = 1; i < N; i++) {
             for (int j = 0; j < i; j++) {
-                if (A[i] > A[j]) {
+                if (A[j] < A[i]) {
                     DP[i] = Math.max(DP[i], DP[j] + 1);
                 }
             }
         }
 
-        int res = DP[0];
-        for (int i = 1; i < N; i++) {
-            res = Math.max(res, DP[i]);
+        int max = 0;
+        for (int i = 0; i < N; i++) {
+            max = Math.max(max, DP[i]);
         }
-        System.out.println(res);
+        System.out.println(max);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        A = new int[N];
+        DP = new int[N];
+        for (int i = 0; i < N; i++) {
+            A[i] = SC.nextInt();
+        }
     }
 }
