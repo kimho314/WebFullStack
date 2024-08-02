@@ -16,11 +16,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
@@ -49,10 +50,16 @@ public class SecurityConfig {
     @Order(1)
     SecurityFilterChain oauth2AuthorizationFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
+        OAuth2AuthorizationServerConfigurer configurer = http.getConfigurer(OAuth2AuthorizationServerConfigurer.class);
+
+        // x-www-form-urlencoded 방식이 아니라 request parameter 반식으로 token 발급하고 싶을 때 사용
+//        configurer.tokenEndpoint(tokenEndpoint -> tokenEndpoint.accessTokenRequestConverter(
+//                new CustomOAuth2ClientCredentialsAuthenticationConverter())
+//        );
 
         return http.build();
     }
+
 
     @Bean
     @Order(2)
@@ -61,7 +68,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET, "/v1/users/**").hasAuthority("SCOPE_read")
+                        .requestMatchers(HttpMethod.GET, "/**").hasAuthority("SCOPE_read")
+                        .requestMatchers(HttpMethod.POST, "/**").hasAnyAuthority("SCOPE_wrtie")
+                        .requestMatchers(HttpMethod.PUT, "/**").hasAnyAuthority("SCOPE_wrtie")
+                        .requestMatchers(HttpMethod.DELETE, "/**").hasAnyAuthority("SCOPE_wrtie")
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(resource -> resource.jwt(Customizer.withDefaults()));
 
@@ -69,26 +79,26 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
+    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails userDetails = User.builder()
                 .username("user")
-                .password("password")
+                .password(passwordEncoder.encode("password"))
                 .roles("USER")
                 .build();
 
         return new InMemoryUserDetailsManager(userDetails);
     }
 
-//    @Bean
-//    public PasswordEncoder getPasswordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository() {
+    public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder) {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("test-client")
-                .clientSecret("{noop}test")
+                .clientSecret(passwordEncoder.encode("test"))
                 .scope("read")
                 .scope("write")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
