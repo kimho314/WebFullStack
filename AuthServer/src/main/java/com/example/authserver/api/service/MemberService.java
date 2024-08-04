@@ -8,9 +8,6 @@ import com.example.authserver.domain.repository.AuthorityRepository;
 import com.example.authserver.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +19,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Validated
-public class MemberService implements UserDetailsService {
+public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final AuthorityRepository authorityRepository;
 
     @Transactional
-    public String singup(SignupDto.Request request) {
+    public void singup(SignupDto.Request request) {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         Authority authority = Authority.builder()
@@ -47,14 +44,6 @@ public class MemberService implements UserDetailsService {
 
         authority.setMember(member);
         authorityRepository.save(authority);
-
-        return save.getUserId();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberRepository.findByUserId(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+        log.info("member_id : {}", save.getId());
     }
 }
