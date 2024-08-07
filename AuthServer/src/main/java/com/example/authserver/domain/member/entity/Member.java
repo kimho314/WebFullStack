@@ -1,5 +1,6 @@
 package com.example.authserver.domain.member.entity;
 
+import com.example.authserver.core.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,4 +44,14 @@ public class Member {
     @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens = new ArrayList<>();
+
+    public List<Role> getRoles() {
+        return this.authorities.stream()
+                .map(it -> it.getRole())
+                .toList();
+    }
+
+    public boolean isEnabled() {
+        return this.enabled == 1;
+    }
 }

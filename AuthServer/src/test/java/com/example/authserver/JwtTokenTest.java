@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class JwtTokenTest {
     @Test
@@ -14,7 +15,7 @@ public class JwtTokenTest {
         final String testUserId = "hoseop";
         String token = TokenProvider.create(
                 testUserId,
-                Role.ROLE_USER,
+                List.of(Role.ROLE_USER),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusSeconds(TokenProvider.ACCESS_TOKEN_EXPIRATION_IN_SECONDS));
         System.out.println(token);
@@ -24,7 +25,7 @@ public class JwtTokenTest {
     void verifyTokenTest() {
         final String testUserId = "hoseop";
         String token = TokenProvider.create(testUserId,
-                Role.ROLE_USER,
+                List.of(Role.ROLE_USER),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusSeconds(TokenProvider.ACCESS_TOKEN_EXPIRATION_IN_SECONDS));
         System.out.println(token);

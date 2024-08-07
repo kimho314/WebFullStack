@@ -8,7 +8,7 @@ spring:
         show-sql: true
         open-in-view: false
         hibernate:
-            ddl-auto: none
+            ddl-auto: create
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
         url: jdbc:mysql://localhost:3306/auth_server
@@ -17,7 +17,7 @@ spring:
         hikari:
             auto-commit: false
             connection-test-query: SELECT 1
-#          connection-init-sql:
+            
 
 server:
     port: 8080

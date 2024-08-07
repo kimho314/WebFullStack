@@ -11,21 +11,22 @@ import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 
 @UtilityClass
 public class TokenProvider {
     public static final String JWT_SECRET_KEY = "secret_key";
-    public static final String JWT_ROLE = "role";
+    public static final String JWT_ROLE = "roles";
     public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 2 * 60 * 60;
 
-    public String create(String userId, Role role, LocalDateTime issuedAt, LocalDateTime expireAt) {
+    public String create(String userId, List<Role> roles, LocalDateTime issuedAt, LocalDateTime expireAt) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET_KEY);
             return JWT.create()
                     .withSubject(userId)
                     .withIssuedAt(issuedAt.toInstant(ZoneOffset.ofHours(+9)))
                     .withExpiresAt(expireAt.toInstant(ZoneOffset.ofHours(+9)))
-                    .withClaim("role", role.name())
+                    .withClaim("roles", roles.stream().map(it -> it.name()).toList())
                     .sign(algorithm);
         }
         catch (JWTCreationException ex) {
