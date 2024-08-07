@@ -1,9 +1,9 @@
-package com.example.authserver.common.config;
+package com.example.authserver.infra;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = {"com.example.authserver.domain.repository"})
+@EnableJpaRepositories(basePackages = {"com.example.authserver.domain.member.repository"})
 public class JpaConfig {
 }

@@ -15,6 +15,7 @@ import java.time.ZoneOffset;
 @UtilityClass
 public class TokenProvider {
     public static final String JWT_SECRET_KEY = "secret_key";
+    public static final String JWT_ROLE = "role";
     public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 2 * 60 * 60;
 
     public String create(String userId, Role role, LocalDateTime issuedAt, LocalDateTime expireAt) {
@@ -32,13 +33,11 @@ public class TokenProvider {
         }
     }
 
-    public DecodedJWT verify(String token, String userId) {
+    public DecodedJWT verify(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET_KEY);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withSubject(userId)
                     .build();
-
             return verifier.verify(token);
         }
         catch (JWTVerificationException exception) {

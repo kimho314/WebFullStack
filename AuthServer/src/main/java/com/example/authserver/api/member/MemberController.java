@@ -1,14 +1,10 @@
-package com.example.authserver.api.controller;
+package com.example.authserver.api.member;
 
-import com.example.authserver.api.dto.SignupDto;
-import com.example.authserver.api.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -22,5 +18,10 @@ public class MemberController {
     public ResponseEntity<Void> signup(@RequestBody SignupDto.Request request) {
         memberService.singup(request);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/member/{userId}", produces = "application/json")
+    public ResponseEntity<String> getMember(@PathVariable("userId") String userId) {
+        return ResponseEntity.ok(userId);
     }
 }

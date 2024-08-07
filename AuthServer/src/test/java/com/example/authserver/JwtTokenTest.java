@@ -8,11 +8,12 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-public class RSAKeyTest {
+public class JwtTokenTest {
     @Test
     void createTokenTest() {
         final String testUserId = "hoseop";
-        String token = TokenProvider.create(testUserId,
+        String token = TokenProvider.create(
+                testUserId,
                 Role.ROLE_USER,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusSeconds(TokenProvider.ACCESS_TOKEN_EXPIRATION_IN_SECONDS));
@@ -27,7 +28,7 @@ public class RSAKeyTest {
                 LocalDateTime.now(),
                 LocalDateTime.now().plusSeconds(TokenProvider.ACCESS_TOKEN_EXPIRATION_IN_SECONDS));
         System.out.println(token);
-        DecodedJWT decodedJWT = TokenProvider.verify(token, testUserId);
+        DecodedJWT decodedJWT = TokenProvider.verify(token);
         Assertions.assertEquals(testUserId, decodedJWT.getSubject());
     }
 }

@@ -1,11 +1,10 @@
-package com.example.authserver.api.service;
+package com.example.authserver.api.member;
 
-import com.example.authserver.api.dto.SignupDto;
 import com.example.authserver.core.enums.Role;
-import com.example.authserver.domain.entity.Authority;
-import com.example.authserver.domain.entity.Member;
-import com.example.authserver.domain.repository.AuthorityRepository;
-import com.example.authserver.domain.repository.MemberRepository;
+import com.example.authserver.domain.member.entity.Authority;
+import com.example.authserver.domain.member.entity.Member;
+import com.example.authserver.domain.member.repository.AuthorityRepository;
+import com.example.authserver.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;

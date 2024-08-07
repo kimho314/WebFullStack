@@ -1,4 +1,4 @@
-package com.example.authserver.domain.entity;
+package com.example.authserver.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
