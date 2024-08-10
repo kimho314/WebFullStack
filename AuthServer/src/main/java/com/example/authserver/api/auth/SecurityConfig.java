@@ -4,7 +4,7 @@ import com.example.authserver.core.enums.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,17 +17,10 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final JwtAuthenticationProvider jwtAuthenticationProvider;
-
-    public SecurityConfig(JwtAuthenticationProvider jwtAuthenticationProvider) {
-        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
-    }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.authenticationProvider(jwtAuthenticationProvider);
-        return authenticationManagerBuilder.build();
+    public AuthenticationManager authenticationManager(JwtAuthenticationProvider jwtAuthenticationProvider) {
+        return new ProviderManager(jwtAuthenticationProvider);
     }
 
     @Bean
