@@ -1,11 +1,11 @@
 package com.example.authserver.api.auth;
 
 import com.example.authserver.core.enums.Role;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,17 +35,18 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/signup", "/login").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/member/**").hasRole(Role.ROLE_USER.toSecurityRole())
                         .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(logout -> logout.clearAuthentication(true))
                 .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(HttpStatus.UNAUTHORIZED.value()))
                         .authenticationEntryPoint(
                                 (request, response, authException) -> {
-                                    if (authException instanceof BadCredentialsException) {
-                                        System.out.println("BadCredentialsException = " + authException.getMessage());
-                                    }
                                     response.sendError(HttpStatus.FORBIDDEN.value());
                                 }
 
