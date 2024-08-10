@@ -1,9 +1,7 @@
 package com.example.authserver.api.member;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import com.example.authserver.core.enums.Role;
+import jakarta.validation.constraints.*;
 
 public class SignupDto {
 
@@ -19,7 +17,9 @@ public class SignupDto {
             String name,
             String phoneNumber,
             @Email
-            String email
+            String email,
+            @NotNull
+            Role role
     ) {
 
     }

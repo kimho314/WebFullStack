@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -34,16 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         log.info("jwt : {}", jwt);
         if (StringUtils.hasText(jwt)) {
-            try {
-                JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
-                Authentication authenticate = authenticationManager.authenticate(jwtAuthenticationToken);
-                SecurityContextHolder.getContext().setAuthentication(authenticate);
-            }
-            catch (AuthenticationException ex) {
-                log.error("AuthenticationException : {}", ex.getMessage());
-                SecurityContextHolder.clearContext();
-            }
-
+            JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
+            Authentication authenticate = authenticationManager.authenticate(jwtAuthenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
         }
 
         filterChain.doFilter(request, response);

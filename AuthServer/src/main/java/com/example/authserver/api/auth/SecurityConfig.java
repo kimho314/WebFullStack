@@ -3,7 +3,9 @@ package com.example.authserver.api.auth;
 import com.example.authserver.core.enums.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,6 +39,18 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .logout(logout -> logout.clearAuthentication(true))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(
+                                (request, response, authException) -> {
+                                    if (authException instanceof BadCredentialsException) {
+                                        System.out.println("BadCredentialsException = " + authException.getMessage());
+                                    }
+                                    response.sendError(HttpStatus.FORBIDDEN.value());
+                                }
+
+                        )
+                )
                 .addFilterAfter(new JwtAuthenticationFilter(authenticationManager), LogoutFilter.class)
         ;
 

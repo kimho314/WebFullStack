@@ -1,6 +1,5 @@
 package com.example.authserver.api.member;
 
-import com.example.authserver.core.enums.Role;
 import com.example.authserver.core.util.TokenProvider;
 import com.example.authserver.domain.member.entity.Authority;
 import com.example.authserver.domain.member.entity.Member;
@@ -8,7 +7,8 @@ import com.example.authserver.domain.member.repository.AuthorityRepository;
 import com.example.authserver.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +38,7 @@ public class MemberService {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         Authority authority = Authority.builder()
-                .role(Role.ROLE_USER)
+                .role(request.role())
                 .build();
         Member member = Member.builder()
                 .userId(request.userId())
@@ -61,12 +61,12 @@ public class MemberService {
                 .orElseThrow(() -> new NoSuchElementException(request.userId()));
 
         if (!member.isEnabled()) {
-            throw new AuthenticationServiceException("disabled member");
+            throw new DisabledException("disabled member");
         }
 
         boolean isPasswordCorrect = passwordEncoder.matches(request.password(), member.getPassword());
         if (!isPasswordCorrect) {
-            throw new AuthenticationServiceException("invalid password");
+            throw new BadCredentialsException("invalid password");
         }
 
         String accessToken = TokenProvider.create(
