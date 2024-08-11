@@ -1,6 +1,6 @@
 package com.example.authserver.domain.member.entity;
 
-import com.example.authserver.core.enums.Role;
+import com.example.authserver.domain.member.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -53,5 +53,9 @@ public class Member {
 
     public boolean isEnabled() {
         return this.enabled == 1;
+    }
+
+    public void addToken(Token token) {
+        this.tokens.add(token);
     }
 }

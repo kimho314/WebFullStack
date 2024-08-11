@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.example.authserver.core.enums.Role;
+import com.example.authserver.domain.member.enums.Role;
 import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;

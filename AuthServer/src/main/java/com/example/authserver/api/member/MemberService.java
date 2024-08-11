@@ -3,8 +3,11 @@ package com.example.authserver.api.member;
 import com.example.authserver.core.util.TokenProvider;
 import com.example.authserver.domain.member.entity.Authority;
 import com.example.authserver.domain.member.entity.Member;
+import com.example.authserver.domain.member.entity.Token;
+import com.example.authserver.domain.member.enums.TokenType;
 import com.example.authserver.domain.member.repository.AuthorityRepository;
 import com.example.authserver.domain.member.repository.MemberRepository;
+import com.example.authserver.domain.member.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +31,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final AuthorityRepository authorityRepository;
+    private final TokenRepository tokenRepository;
 
     @Transactional
     public void singup(SignupDto.Request request) {
@@ -69,13 +73,24 @@ public class MemberService {
             throw new BadCredentialsException("invalid password");
         }
 
+        LocalDateTime issuedAt = LocalDateTime.now();
+        LocalDateTime expireAt = issuedAt.plusSeconds(TokenProvider.ACCESS_TOKEN_EXPIRATION_IN_SECONDS);
         String accessToken = TokenProvider.create(
                 member.getUserId(),
                 member.getRoles(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusSeconds(TokenProvider.ACCESS_TOKEN_EXPIRATION_IN_SECONDS)
+                issuedAt,
+                expireAt
         );
         log.info("access token : {}", accessToken);
+
+        member.addToken(Token.builder()
+                .token(accessToken)
+                .tokenType(TokenType.ACCESS)
+                .issuedAt(issuedAt)
+                .expireAt(expireAt)
+                .member(member)
+                .build());
+
         return LoginDto.Response.builder()
                 .accessToken(accessToken)
                 .build();

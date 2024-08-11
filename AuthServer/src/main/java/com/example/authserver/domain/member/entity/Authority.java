@@ -1,6 +1,6 @@
 package com.example.authserver.domain.member.entity;
 
-import com.example.authserver.core.enums.Role;
+import com.example.authserver.domain.member.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.example.authserver.core.enums;
+package com.example.authserver.domain.member.enums;
 
 public enum Role {
     ROLE_USER,

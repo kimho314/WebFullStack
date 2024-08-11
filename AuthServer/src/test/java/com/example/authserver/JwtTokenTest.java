@@ -1,8 +1,8 @@
 package com.example.authserver;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.authserver.core.enums.Role;
 import com.example.authserver.core.util.TokenProvider;
+import com.example.authserver.domain.member.enums.Role;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

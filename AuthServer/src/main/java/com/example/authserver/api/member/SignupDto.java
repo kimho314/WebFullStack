@@ -1,6 +1,6 @@
 package com.example.authserver.api.member;
 
-import com.example.authserver.core.enums.Role;
+import com.example.authserver.domain.member.enums.Role;
 import jakarta.validation.constraints.*;
 
 public class SignupDto {

@@ -1,13 +1,13 @@
 package com.example.authserver.domain.member.entity;
 
-import com.example.authserver.core.enums.TokenType;
+import com.example.authserver.domain.member.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "table")
+@Table(name = "token")
 @Getter
 @Setter
 @Builder
