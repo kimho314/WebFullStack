@@ -95,4 +95,18 @@ public class MemberService {
                 .accessToken(accessToken)
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public GetMemberInfoDto.Response getInfo(String userId) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException(userId));
+
+        return GetMemberInfoDto.Response.builder()
+                .userId(member.getUserId())
+                .email(member.getEmail())
+                .role(member.getRoles().get(0))
+                .name(member.getName())
+                .phoneNumber(member.getPhoneNumber())
+                .build();
+    }
 }

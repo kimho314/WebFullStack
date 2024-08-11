@@ -32,7 +32,8 @@ public class MemberController {
     }
 
     @GetMapping(value = "/member", produces = "application/json")
-    public ResponseEntity<Object> getMember(Principal principal) {
-        return ResponseEntity.ok(new GetMemberDto.Response(principal.getName()));
+    public ResponseEntity<GetMemberInfoDto.Response> getMember(Principal principal) {
+        GetMemberInfoDto.Response memberInfo = memberService.getInfo(principal.getName());
+        return ResponseEntity.ok(memberInfo);
     }
 }
