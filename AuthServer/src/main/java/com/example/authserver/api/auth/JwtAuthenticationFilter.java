@@ -1,5 +1,6 @@
 package com.example.authserver.api.auth;
 
+import com.example.authserver.core.exception.JWTExpiredException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,9 +34,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         log.info("jwt : {}", jwt);
         if (StringUtils.hasText(jwt)) {
-            JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
-            Authentication authenticate = authenticationManager.authenticate(jwtAuthenticationToken);
-            SecurityContextHolder.getContext().setAuthentication(authenticate);
+            try {
+                JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(jwt);
+                Authentication authenticate = authenticationManager.authenticate(jwtAuthenticationToken);
+                SecurityContextHolder.getContext().setAuthentication(authenticate);
+            }
+            catch (JWTExpiredException ex) {
+                // jwt token 만료시 약속된 http status 반환하는 로직 추가
+                log.error("===== JWTExpiredException : {}", ex.getMessage());
+            }
+
         }
 
         filterChain.doFilter(request, response);

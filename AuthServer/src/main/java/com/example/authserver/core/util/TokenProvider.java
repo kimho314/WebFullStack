@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.example.authserver.core.exception.JWTExpiredException;
 import com.example.authserver.domain.member.enums.Role;
 import lombok.experimental.UtilityClass;
 
@@ -17,7 +18,8 @@ import java.util.List;
 public class TokenProvider {
     public static final String JWT_SECRET_KEY = "secret_key";
     public static final String JWT_ROLE = "roles";
-    public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 2 * 60 * 60;
+    //    public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 2 * 60 * 60;
+    public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 10;
 
     public String create(String userId, List<Role> roles, LocalDateTime issuedAt, LocalDateTime expireAt) {
         try {
@@ -42,7 +44,12 @@ public class TokenProvider {
             return verifier.verify(token);
         }
         catch (JWTVerificationException exception) {
-            throw new JWTVerificationException(exception.getMessage());
+            if (exception.getMessage().contains("expired")) {
+                throw new JWTExpiredException(exception.getMessage());
+            }
+            else {
+                throw new JWTVerificationException(exception.getMessage());
+            }
         }
     }
 }
