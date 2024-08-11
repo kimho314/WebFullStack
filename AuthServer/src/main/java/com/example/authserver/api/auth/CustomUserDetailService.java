@@ -18,7 +18,7 @@ public class CustomUserDetailService implements UserDetailsService {
         this.memberRepository = memberRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUserId(username)
