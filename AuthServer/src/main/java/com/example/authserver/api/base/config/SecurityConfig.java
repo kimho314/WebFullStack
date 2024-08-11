@@ -1,10 +1,13 @@
-package com.example.authserver.api.auth;
+package com.example.authserver.api.base.config;
 
+import com.example.authserver.api.auth.JwtAuthenticationFilter;
+import com.example.authserver.api.auth.JwtAuthenticationProvider;
 import com.example.authserver.domain.member.enums.Role;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -40,16 +44,22 @@ public class SecurityConfig {
                         .requestMatchers("/member/**").hasRole(Role.ROLE_USER.toSecurityRole())
                         .anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(logout -> logout.clearAuthentication(true))
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler((request, response, accessDeniedException) ->
-                                response.sendError(HttpStatus.UNAUTHORIZED.value()))
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    response.getWriter().write(accessDeniedException.getMessage());
+                                    response.flushBuffer();
+                                }
+                        )
                         .authenticationEntryPoint(
                                 (request, response, authException) -> {
-                                    response.sendError(HttpStatus.FORBIDDEN.value());
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    response.getWriter().write(authException.getMessage());
+                                    response.flushBuffer();
                                 }
-
                         )
                 )
                 .addFilterAfter(new JwtAuthenticationFilter(authenticationManager), LogoutFilter.class)

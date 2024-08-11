@@ -1,6 +1,9 @@
 package com.example.authserver.api.auth;
 
-import com.example.authserver.core.exception.JWTExpiredException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.example.authserver.api.base.dto.ErrorDto;
+import com.example.authserver.api.base.exception.AccessJWTExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,13 +42,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 Authentication authenticate = authenticationManager.authenticate(jwtAuthenticationToken);
                 SecurityContextHolder.getContext().setAuthentication(authenticate);
             }
-            catch (JWTExpiredException ex) {
-                // jwt token 만료시 약속된 http status 반환하는 로직 추가
-                log.error("===== JWTExpiredException : {}", ex.getMessage());
+            catch (AccessJWTExpiredException e) {
+                makeJWTVerifyExceptionResponse(response, 401, e);
+            }
+            catch (JWTVerificationException e) {
+                makeJWTVerifyExceptionResponse(response, 402, e);
             }
 
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void makeJWTVerifyExceptionResponse(
+            HttpServletResponse response,
+            int code,
+            Exception e
+    ) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        ObjectMapper objectMapper = new ObjectMapper();
+        ErrorDto errorDto = ErrorDto.builder()
+                .code(code)
+                .message(e.getMessage())
+                .build();
+        response.getWriter().write(objectMapper.writeValueAsString(errorDto));
+        response.flushBuffer();
     }
 }

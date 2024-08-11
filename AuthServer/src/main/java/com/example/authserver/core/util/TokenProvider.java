@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.example.authserver.core.exception.JWTExpiredException;
+import com.example.authserver.api.base.exception.AccessJWTExpiredException;
 import com.example.authserver.domain.member.enums.Role;
 import lombok.experimental.UtilityClass;
 
@@ -18,17 +18,22 @@ import java.util.List;
 public class TokenProvider {
     public static final String JWT_SECRET_KEY = "secret_key";
     public static final String JWT_ROLE = "roles";
-    //    public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 2 * 60 * 60;
-    public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 10;
+    public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 2 * 60 * 60;
+//    public static final int ACCESS_TOKEN_EXPIRATION_IN_SECONDS = 10;
 
-    public String create(String userId, List<Role> roles, LocalDateTime issuedAt, LocalDateTime expireAt) {
+    public String create(
+            String userId,
+            List<Role> roles,
+            LocalDateTime issuedAt,
+            LocalDateTime expireAt
+    ) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET_KEY);
             return JWT.create()
                     .withSubject(userId)
                     .withIssuedAt(issuedAt.toInstant(ZoneOffset.ofHours(+9)))
                     .withExpiresAt(expireAt.toInstant(ZoneOffset.ofHours(+9)))
-                    .withClaim("roles", roles.stream().map(it -> it.name()).toList())
+                    .withClaim("roles", roles.stream().map(Enum::name).toList())
                     .sign(algorithm);
         }
         catch (JWTCreationException ex) {
@@ -45,7 +50,7 @@ public class TokenProvider {
         }
         catch (JWTVerificationException exception) {
             if (exception.getMessage().contains("expired")) {
-                throw new JWTExpiredException(exception.getMessage());
+                throw new AccessJWTExpiredException(exception.getMessage());
             }
             else {
                 throw new JWTVerificationException(exception.getMessage());

@@ -1,9 +1,6 @@
 spring:
     application:
         name: AuthServer
-    devtools:
-        restart:
-            enabled: false
     jpa:
         show-sql: true
         open-in-view: false
@@ -17,13 +14,16 @@ spring:
         hikari:
             auto-commit: false
             connection-test-query: SELECT 1
-            
+
 
 server:
     port: 8080
     tomcat:
         uri-encoding: UTF-8
-
+    servlet:
+        encoding:
+            enabled: true
+            charset: UTF-8
 
 logging:
     level:
