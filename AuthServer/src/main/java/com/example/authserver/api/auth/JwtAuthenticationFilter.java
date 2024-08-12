@@ -44,9 +44,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             catch (AccessJWTExpiredException e) {
                 makeJWTVerifyExceptionResponse(response, 401, e);
+                return;
             }
             catch (JWTVerificationException e) {
                 makeJWTVerifyExceptionResponse(response, 402, e);
+                return;
             }
 
         }
