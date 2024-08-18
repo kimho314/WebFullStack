@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .logout(logout -> logout.clearAuthentication(true))
+                .logout(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);

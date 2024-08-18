@@ -31,6 +31,12 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(value = "/logout", produces = "application/json")
+    public ResponseEntity<Void> logout(Principal principal) {
+        memberService.logout(principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping(value = "/member", produces = "application/json")
     public ResponseEntity<GetMemberInfoDto.Response> getMember(Principal principal) {
         GetMemberInfoDto.Response memberInfo = memberService.getInfo(principal.getName());

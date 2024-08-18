@@ -6,8 +6,8 @@ import com.example.authserver.domain.member.entity.Member;
 import com.example.authserver.domain.member.entity.Token;
 import com.example.authserver.domain.member.enums.TokenType;
 import com.example.authserver.domain.member.repository.AuthorityRepository;
+import com.example.authserver.domain.member.repository.BlackListRepository;
 import com.example.authserver.domain.member.repository.MemberRepository;
-import com.example.authserver.domain.member.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,7 +31,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final AuthorityRepository authorityRepository;
-    private final TokenRepository tokenRepository;
+    private final BlackListRepository blackListRepository;
 
     @Transactional
     public void singup(SignupDto.Request request) {
@@ -63,7 +63,6 @@ public class MemberService {
     public LoginDto.Response login(LoginDto.Request request) {
         Member member = memberRepository.findByUserId(request.userId())
                 .orElseThrow(() -> new NoSuchElementException(request.userId()));
-
         if (!member.isEnabled()) {
             throw new DisabledException("disabled member");
         }
@@ -75,14 +74,7 @@ public class MemberService {
 
         LocalDateTime issuedAt = LocalDateTime.now();
         LocalDateTime expireAt = issuedAt.plusSeconds(TokenProvider.ACCESS_TOKEN_EXPIRATION_IN_SECONDS);
-        String accessToken = TokenProvider.create(
-                member.getUserId(),
-                member.getRoles(),
-                issuedAt,
-                expireAt
-        );
-        log.info("access token : {}", accessToken);
-
+        String accessToken = createToken(member, issuedAt, expireAt);
         member.addToken(Token.builder()
                 .token(accessToken)
                 .tokenType(TokenType.ACCESS)
@@ -94,6 +86,22 @@ public class MemberService {
         return LoginDto.Response.builder()
                 .accessToken(accessToken)
                 .build();
+    }
+
+    private String createToken(Member member, LocalDateTime issuedAt, LocalDateTime expireAt) {
+        String accessToken;
+        do {
+            accessToken = TokenProvider.create(
+                    member.getUserId(),
+                    member.getRoles(),
+                    issuedAt,
+                    expireAt
+            );
+            log.info("access token : {}", accessToken);
+
+        }
+        while (blackListRepository.existsByToken(accessToken));
+        return accessToken;
     }
 
     @Transactional(readOnly = true)
@@ -108,5 +116,14 @@ public class MemberService {
                 .name(member.getName())
                 .phoneNumber(member.getPhoneNumber())
                 .build();
+    }
+
+    @Transactional
+    public void logout(String userId) {
+        Member member = memberRepository.findByUserId(userId)
+                .orElseThrow(() -> new NoSuchElementException(userId));
+        Token accessToken = member.getTokens().getFirst();
+        member.deleteToken();
+        member.addBlackList(accessToken);
     }
 }
