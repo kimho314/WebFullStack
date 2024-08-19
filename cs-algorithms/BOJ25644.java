@@ -9,10 +9,10 @@ public class BOJ25644 {
     }
 
     private static void solve() {
-        int res = 0;
         int min = A[0];
+        int res = 0;
         for (int i = 1; i < N; i++) {
-            if (A[i] < min) {
+            if (min > A[i]) {
                 min = A[i];
             }
             else {
