@@ -1,4 +1,4 @@
-package com.example.authserver.api.base.exception;
+package com.example.authserver.api.exception;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 

@@ -1,7 +1,7 @@
 package com.example.authserver.api.auth;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.authserver.api.base.exception.AccessJWTExpiredException;
+import com.example.authserver.api.exception.AccessJWTExpiredException;
 import com.example.authserver.core.util.TokenProvider;
 import com.example.authserver.domain.member.repository.BlackListRepository;
 import lombok.extern.slf4j.Slf4j;

@@ -6,7 +6,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.example.authserver.api.base.exception.AccessJWTExpiredException;
+import com.example.authserver.api.exception.AccessJWTExpiredException;
 import com.example.authserver.domain.member.enums.Role;
 import lombok.experimental.UtilityClass;
 

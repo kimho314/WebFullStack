@@ -36,7 +36,7 @@ public class SecurityConfig {
     ) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) // invoke csrfFilter to protect against CSRF attacks
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/signup", "/login").permitAll()
                         .requestMatchers("/error").permitAll()

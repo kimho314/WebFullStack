@@ -2,7 +2,7 @@ package com.example.authserver.api.auth;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.authserver.api.base.dto.ErrorDto;
-import com.example.authserver.api.base.exception.AccessJWTExpiredException;
+import com.example.authserver.api.exception.AccessJWTExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
