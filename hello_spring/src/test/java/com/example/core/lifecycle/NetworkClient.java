@@ -1,5 +1,8 @@
 package com.example.core.lifecycle;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+
 public class NetworkClient {
     private String url;
 
@@ -23,13 +26,15 @@ public class NetworkClient {
         System.out.println("close: " + url);
     }
 
-    public void init() throws Exception {
+    @PostConstruct
+    public void init() {
         System.out.println("afterPropertiesSet");
         connect();
         call("초기화 열결 메시지");
     }
 
-    public void close() throws Exception {
+    @PreDestroy
+    public void close() {
         System.out.println("destroy");
         disconnect();
     }
