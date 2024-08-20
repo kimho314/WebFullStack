@@ -1,6 +1,6 @@
-package com.example.authserver.api.base.advice;
+package com.example.authserver.api.advice;
 
-import com.example.authserver.api.base.dto.ErrorDto;
+import com.example.authserver.api.dto.ErrorDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

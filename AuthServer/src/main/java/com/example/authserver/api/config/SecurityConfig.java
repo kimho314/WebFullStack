@@ -1,4 +1,4 @@
-package com.example.authserver.api.base.config;
+package com.example.authserver.api.config;
 
 import com.example.authserver.api.auth.JwtAuthenticationFilter;
 import com.example.authserver.api.auth.JwtAuthenticationProvider;
