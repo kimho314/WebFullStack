@@ -1,4 +1,0 @@
-mongodbserver:
-  url: 168.126.63.1
-  username: testUser
-  password: pass

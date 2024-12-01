@@ -1,3 +1,0 @@
-server.port: 8091
-spring.application.name: springAdmin
-spring.config.import: eureka-client.yml
