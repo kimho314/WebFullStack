@@ -20,6 +20,10 @@ public class Member {
     @Column(nullable = false)
     private int age;
 
+    public Member(String name, int age) {
+        this(null, name, age);
+    }
+
     public Member(Long id, String name, int age) {
         this.id = id;
         this.name = name;
@@ -38,5 +42,14 @@ public class Member {
     @Override
     public int hashCode() {
         return getId().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }
