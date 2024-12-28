@@ -33,3 +33,4 @@ logging:
   level:
     com.zaxxer.hikari: TRACE
     com.zaxxer.hikari.HikariConfig: DEBUG
+    root: debug

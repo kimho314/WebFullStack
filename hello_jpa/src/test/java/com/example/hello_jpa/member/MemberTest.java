@@ -61,6 +61,7 @@ public class MemberTest {
         // 그런데 식별자 생성전략을 identity로 사용하면 데이터베이스에 실제로 저장르 해야 식별자를 수할 수 있으므로
         // insert 쿼리가 즉시 데이터베이스에 전달된다.
         // 따라서 이 경우에 쓰기 지연을 활용한 성능 최적화를 할 수 없다.
+        // 2024-12-28T22:22:54.864+09:00 DEBUG 1572 --- [hello_jpa] [    Test worker] org.hibernate.engine.spi.ActionQueue     : Executing identity-insert immediately
     }
 
     @Test
