@@ -54,5 +54,8 @@ public class MemberTest {
         Member member2 = new Member("hoseop", 36);
         em.persist(member2);
         log.info("member2 persist");
+
+        // 예상 결과 : "member2 persist" 후에 insert sql 날라가는 것을 예상
+        // 실제 결과 : 각각의 member1, member2 persist후에 insert sql 날라감??? why???
     }
 }
