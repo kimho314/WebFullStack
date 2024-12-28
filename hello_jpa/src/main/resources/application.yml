@@ -6,6 +6,12 @@ spring:
         url: jdbc:h2:mem:test
         username: root
         password: root1234!
+        hikari:
+            maximum-pool-size: 20
+            auto-commit: false
+            connection-timeout: 30000
+            idle-timeout: 600000
+            max-lifetime: 1800000
 
     h2:
         console:
@@ -25,3 +31,9 @@ server:
 logging:
     level:
         root: debug
+        org.springframework.boot: info
+        org.springframework.core: info
+        org.hibernate: info
+        com.zaxxer.hikari: TRACE
+        com.zaxxer.hikari.HikariConfig: DEBUG
+        web: info

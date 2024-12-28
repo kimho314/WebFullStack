@@ -1,6 +1,7 @@
 package com.example.hello_jpa.member;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MemberTest {
 //    @Autowired
 //    MemberRepository memberRepository;
-    @Autowired
+    @PersistenceContext
     EntityManager em;
 
     @Test
