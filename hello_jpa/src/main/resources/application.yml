@@ -30,10 +30,5 @@ server:
 
 logging:
     level:
-        root: debug
-        org.springframework.boot: info
-        org.springframework.core: info
-        org.hibernate: info
         com.zaxxer.hikari: TRACE
         com.zaxxer.hikari.HikariConfig: DEBUG
-        web: info
