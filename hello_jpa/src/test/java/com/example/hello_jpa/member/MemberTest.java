@@ -77,4 +77,22 @@ public class MemberTest {
 
         // 식별자 생성전략을 identity를 사용하지 않는 Member2를 사용했을때 쓰기 전략이 예상하는대로 실행되는 것을 확인할 수 있다.
     }
+
+    @Test
+    @Transactional
+    void detachTest() {
+        Member member1 = new Member(1L, "hoseop", 35);
+        em.persist(member1);
+        em.flush();
+
+        Member foundMember = em.find(Member.class, member1.getId());
+        foundMember.changeName("minseop");
+
+        em.detach(foundMember);
+//        em.clear();
+//        em.close();
+
+        Member foundMember2 = em.find(Member.class, member1.getId());
+        log.info("foundMember2: {}", foundMember2);
+    }
 }

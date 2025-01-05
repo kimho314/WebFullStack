@@ -29,6 +29,11 @@ public class Member {
         this.age = age;
     }
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof Member member)) {
