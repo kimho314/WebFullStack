@@ -1,6 +1,9 @@
 package com.example.hello_jpa.member;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -20,9 +22,6 @@ public class Member {
     @Column(nullable = false)
     private int age;
 
-    public Member(String name, int age) {
-        this(null, name, age);
-    }
 
     public Member(Long id, String name, int age) {
         this.id = id;

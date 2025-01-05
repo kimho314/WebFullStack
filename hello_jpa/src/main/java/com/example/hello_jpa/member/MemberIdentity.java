@@ -1,19 +1,17 @@
 package com.example.hello_jpa.member;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "member")
+@Table(name = "member_identity")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member2 {
+public class MemberIdentity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -22,8 +20,11 @@ public class Member2 {
     @Column(nullable = false)
     private int age;
 
+    public MemberIdentity(String name, int age) {
+        this(null, name, age);
+    }
 
-    public Member2(Long id, String name, int age) {
+    public MemberIdentity(Long id, String name, int age) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -31,11 +32,11 @@ public class Member2 {
 
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof Member2 member)) {
+        if (!(o instanceof MemberIdentity memberIdentity)) {
             return false;
         }
 
-        return getId().equals(member.getId());
+        return getId().equals(memberIdentity.getId());
     }
 
     @Override

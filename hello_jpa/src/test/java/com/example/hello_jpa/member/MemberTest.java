@@ -21,26 +21,26 @@ public class MemberTest {
     @Test
     @Transactional
     void saveTest() {
-        Member hoseop = new Member(null, "hoseop", 35);
+        MemberIdentity hoseop = new MemberIdentity(null, "hoseop", 35);
         em.persist(hoseop);
 //        em.flush();
 //        em.close();
         em.clear();
 
-        Member member = em.find(Member.class, hoseop.getId());
-        assertThat(member).isNotNull();
-        assertThat(member).isEqualTo(hoseop);
+        MemberIdentity memberIdentity = em.find(MemberIdentity.class, hoseop.getId());
+        assertThat(memberIdentity).isNotNull();
+        assertThat(memberIdentity).isEqualTo(hoseop);
     }
 
     @Test
     @Transactional
     void equalTest() {
-        Member member = new Member("hoseop", 35);
-        em.persist(member);
+        MemberIdentity memberIdentity = new MemberIdentity("hoseop", 35);
+        em.persist(memberIdentity);
 
-        Member foundMember1 = em.find(Member.class, member.getId());
-        Member foundMember2 = em.find(Member.class, member.getId());
-        assertThat(foundMember1).isEqualTo(foundMember2); // 동일성 보장
+        MemberIdentity foundMemberIdentity1 = em.find(MemberIdentity.class, memberIdentity.getId());
+        MemberIdentity foundMemberIdentity2 = em.find(MemberIdentity.class, memberIdentity.getId());
+        assertThat(foundMemberIdentity1).isEqualTo(foundMemberIdentity2); // 동일성 보장
     }
 
     @Test
@@ -48,11 +48,11 @@ public class MemberTest {
     @Rollback(false)
     void writeBehindTest() {
         log.info(em.getFlushMode().name());
-        Member member1 = new Member("hoseop", 35);
-        em.persist(member1);
+        MemberIdentity memberIdentity1 = new MemberIdentity("hoseop", 35);
+        em.persist(memberIdentity1);
         log.info("member1 persist");
-        Member member2 = new Member("hoseop", 36);
-        em.persist(member2);
+        MemberIdentity memberIdentity2 = new MemberIdentity("hoseop", 36);
+        em.persist(memberIdentity2);
         log.info("member2 persist");
 
         // 예상 결과 : "member2 persist" 후에 insert sql 날라가는 것을 예상
@@ -68,13 +68,13 @@ public class MemberTest {
     @Transactional
     @Rollback(false)
     void writeBehindTest2() {
-        Member2 member1 = new Member2(1L, "hoseop", 35);
+        Member member1 = new Member(1L, "hoseop", 35);
         em.persist(member1);
         log.info("member1 persist");
-        Member2 member2 = new Member2(2L, "hoseop", 36);
-        em.persist(member2);
+        Member member = new Member(2L, "hoseop", 36);
+        em.persist(member);
         log.info("member2 persist");
 
-        // 식별자 생성전략을 identity를 사용하지 않는 Member2를 사용했을때 쓰기 전략이 예상하는대로 실행되는 것으 확인할 수 있다.
+        // 식별자 생성전략을 identity를 사용하지 않는 Member2를 사용했을때 쓰기 전략이 예상하는대로 실행되는 것을 확인할 수 있다.
     }
 }
