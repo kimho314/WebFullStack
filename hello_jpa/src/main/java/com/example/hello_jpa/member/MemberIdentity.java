@@ -30,6 +30,10 @@ public class MemberIdentity {
         this.age = age;
     }
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof MemberIdentity memberIdentity)) {
