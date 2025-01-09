@@ -33,6 +33,9 @@ public class Member {
     @Lob
     private String description;
 
+    @Transient // table에 반영되지 않음
+    private String temp;
+
     public Member(Long id, String name, int age) {
         this.id = id;
         this.name = name;
