@@ -1,4 +1,4 @@
-package com.example.hello_jpa.member;
+package com.example.hello_jpa.old_member;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

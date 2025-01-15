@@ -1,4 +1,4 @@
-package com.example.hello_jpa.member;
+package com.example.hello_jpa.old_member;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -66,12 +66,12 @@ public class MemberTest {
 
     @Test
     @Transactional
-    @Rollback(false)
+//    @Rollback(false)
     void writeBehindTest2() {
-        Member member1 = new Member(1L, "hoseop", 35);
+        OldMember member1 = new OldMember(1L, "hoseop", 35);
         em.persist(member1);
         log.info("member1 persist");
-        Member member = new Member(2L, "hoseop", 36);
+        OldMember member = new OldMember(2L, "hoseop", 36);
         em.persist(member);
         log.info("member2 persist");
 
@@ -81,18 +81,18 @@ public class MemberTest {
     @Test
     @Transactional
     void detachTest() {
-        Member member1 = new Member(1L, "hoseop", 35);
+        OldMember member1 = new OldMember(1L, "hoseop", 35);
         em.persist(member1);
         em.flush();
 
-        Member foundMember = em.find(Member.class, member1.getId());
+        OldMember foundMember = em.find(OldMember.class, member1.getId());
         foundMember.changeName("minseop");
 
         em.detach(foundMember);
 //        em.clear();
 //        em.close();
 
-        Member foundMember2 = em.find(Member.class, member1.getId());
+        OldMember foundMember2 = em.find(OldMember.class, member1.getId());
         log.info("foundMember2: {}", foundMember2);
     }
 }

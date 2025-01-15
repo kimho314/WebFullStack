@@ -1,42 +1,30 @@
-package com.example.hello_jpa.member;
+package com.example.hello_jpa.old_member;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Entity
-@Table(name = "member")
+@Table(name = "old_member_identity")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class MemberIdentity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private int age;
 
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
+    public MemberIdentity(String name, int age) {
+        this(null, name, age);
+    }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModifiedDate;
-
-    @Lob
-    private String description;
-
-    @Transient // table에 반영되지 않음
-    private String temp;
-
-    public Member(Long id, String name, int age) {
+    public MemberIdentity(Long id, String name, int age) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -46,14 +34,13 @@ public class Member {
         this.name = name;
     }
 
-
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof Member member)) {
+        if (!(o instanceof MemberIdentity memberIdentity)) {
             return false;
         }
 
-        return getId().equals(member.getId());
+        return getId().equals(memberIdentity.getId());
     }
 
     @Override

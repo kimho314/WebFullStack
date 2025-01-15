@@ -1,4 +1,4 @@
-package com.example.hello_jpa.member;
+package com.example.hello_jpa.old_member;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

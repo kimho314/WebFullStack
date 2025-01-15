@@ -1,10 +1,10 @@
-package com.example.hello_jpa.member;
+package com.example.hello_jpa.old_member;
 
 import jakarta.persistence.*;
 import lombok.ToString;
 
 @Entity
-@Table(name = "member_sequence")
+@Table(name = "old_member_sequence")
 @SequenceGenerator(
         name = "MEMBER_SEQ_GENERATOR",
         sequenceName = "MEMBER_SEQ",
