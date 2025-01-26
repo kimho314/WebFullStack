@@ -9,23 +9,23 @@ public class BOJ20922 {
     }
 
     private static void solve() {
-        int[] cnt = new int[100001];
-        int ans = 0;
+        int[] cnt = new int[100_001];
 
-        int start = 0;
-        int end = 0;
-        while (start < N && end < N) {
-            if (cnt[A[end]] < K) {
-                cnt[A[end]]++;
-                end++;
-                ans = Math.max(ans, end - start);
+        int res = 0;
+        int l = 0;
+        int r = 0;
+        while (r < N && l < N) {
+            if (cnt[A[r]] < K) {
+                cnt[A[r]]++;
+                r++;
+                res = Math.max(res, r - l);
             } else {
-                cnt[A[start]]--;
-                start++;
+                cnt[A[l]]--;
+                l++;
             }
         }
 
-        System.out.println(ans);
+        System.out.println(res);
     }
 
     private static void input() {
