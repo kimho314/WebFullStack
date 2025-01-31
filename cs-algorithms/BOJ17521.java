@@ -1,7 +1,7 @@
 public class BOJ17521 {
     static FastReader SC = new FastReader();
     static int N, W;
-    static long[] PRICE;
+    static int[] PRICE;
 
     public static void main(String[] args) {
         input();
@@ -9,28 +9,22 @@ public class BOJ17521 {
     }
 
     private static void solve() {
-        long money = W;
-        long coin = 0;
-        for (int i = 0; i < N - 1; i++) {
-            if (coin == 0 && PRICE[i] < PRICE[i + 1]) {
-                coin = money / PRICE[i];
-                money -= coin * PRICE[i];
-            }
+        int money = W;
 
-            if (coin > 0 && PRICE[i] > PRICE[i + 1]) {
-                money += coin * PRICE[i];
-                coin = 0;
+        for (int i = 0; i < N - 1; i++) {
+            if (PRICE[i] < PRICE[i + 1]) {
+                int coin = money / PRICE[i];
+                money -= coin * PRICE[i];
+                money += coin * PRICE[i + 1];
             }
         }
-
-        money += coin * PRICE[N - 1];
         System.out.println(money);
     }
 
     private static void input() {
         N = SC.nextInt();
         W = SC.nextInt();
-        PRICE = new long[N];
+        PRICE = new int[N];
         for (int i = 0; i < N; i++) {
             PRICE[i] = SC.nextInt();
         }
