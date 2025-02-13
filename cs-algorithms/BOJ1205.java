@@ -7,7 +7,8 @@ public class BOJ1205 {
 
     public static void main(String[] args) {
         input();
-        solve();
+//        solve();
+        solve2();
     }
 
     private static void solve() {
@@ -33,6 +34,26 @@ public class BOJ1205 {
         }
 
         System.out.println(res);
+    }
+
+    private static void solve2() {
+        Arrays.sort(RANK);
+
+        if (P == N && RANK[0] >= SCORE) {
+            System.out.println(-1);
+            return;
+        }
+
+        int cnt = 1;
+        for (int i = P - 1; i >= Math.max(0, P - N - 1); i--) {
+            if (RANK[i] > SCORE) {
+                cnt++;
+            }
+            else {
+                break;
+            }
+        }
+        System.out.println(cnt);
     }
 
     private static void input() {
