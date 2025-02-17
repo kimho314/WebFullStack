@@ -1,3 +1,3 @@
 rootProject.name = 'core'
 include("spring-core-basic")
-include("spring-boot-basic")
+include("spring-boot-example")
