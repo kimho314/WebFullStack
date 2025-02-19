@@ -12,7 +12,22 @@ tasks.named('test') {
 }
 
 
-tasks.register("prepareKotlinBuildScriptModel"){}
+tasks.register("prepareKotlinBuildScriptModel") {}
 
-bootJar.enabled = true
-jar.enabled = true
+tasks.register('buildJar', Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.example.springbootexample.embed.EmbedTomcatServletMain'
+    }
+    with jar
+}
+
+
+/// Fat Jar 생성
+tasks.register('buildFatJar', Jar) {
+    manifest {
+        attributes 'Main-class': 'com.example.springbootexample.embed.EmbedTomcatServletMain'
+    }
+    duplicatesStrategy = DuplicatesStrategy.WARN
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
