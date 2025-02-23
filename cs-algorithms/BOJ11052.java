@@ -26,4 +26,5 @@ public class BOJ11052 {
             P[i] = SC.nextInt();
         }
     }
+
 }
