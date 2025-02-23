@@ -1,6 +1,6 @@
-public class Toss20241 {
+public class TsPy20241 {
     public static void main(String[] args) {
-        Toss20241 toss = new Toss20241();
+        TsPy20241 toss = new TsPy20241();
         int answer1 = toss.solution(new int[]{30, 30, 60, 90, 60, 15, 15, 60});
         System.out.println(answer1);
         int answer2 = toss.solution(new int[]{45, 15, 30});

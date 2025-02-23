@@ -1,10 +1,10 @@
 import java.util.Arrays;
 
-public class Toss20242 {
+public class TsPy20242 {
     public static void main(String[] args) {
-        Toss20242 toss20242 = new Toss20242();
-        System.out.println(toss20242.solution(new int[]{10, 7, 8, 5, 8, 7, 6, 2, 9}, 3));
-        System.out.println(toss20242.solution(new int[]{10, 7, 8, 5, 6, 4, 3, 2, 3}, 3));
+        TsPy20242 tsPy20242 = new TsPy20242();
+        System.out.println(tsPy20242.solution(new int[]{10, 7, 8, 5, 8, 7, 6, 2, 9}, 3));
+        System.out.println(tsPy20242.solution(new int[]{10, 7, 8, 5, 6, 4, 3, 2, 3}, 3));
     }
 
     public int solution(int[] prices, int k) {
