@@ -17,46 +17,39 @@ public class KaoMo3 {
         }
 
         int maxLength = 1;
-        int left = 0;  // Left pointer of current slice
 
-        while (left < A.length) {
-            // Initialize values for even and odd positions
-            int evenValue = A[left];
-            int oddValue = Integer.MIN_VALUE;
+        // For each position, calculate the longest switching slice ending at that position
+        for (int i = 0; i < A.length; i++) {
+            // Try to extend as far as possible to the right
+            int evenVal = A[i];
+            int oddVal = Integer.MIN_VALUE;
             boolean oddInitialized = false;
 
-            // Right pointer starts at left and extends as far as possible
-            int right = left;
-
-            while (right < A.length) {
-                // Check if current element follows the pattern
-                if ((right - left) % 2 == 0) {  // Even position relative to left
-                    if (A[right] != evenValue) {
+            int j = i;
+            while (j < A.length) {
+                if ((j - i) % 2 == 0) {  // Even position relative to i
+                    if (A[j] != evenVal) {
                         break;
                     }
                 }
-                else {  // Odd position relative to left
+                else {  // Odd position relative to i
                     if (!oddInitialized) {
-                        oddValue = A[right];
+                        oddVal = A[j];
                         oddInitialized = true;
                     }
-                    else if (A[right] != oddValue) {
+                    else if (A[j] != oddVal) {
                         break;
                     }
                 }
-                right++;
+                j++;
             }
 
-            // Update max length
-            maxLength = Math.max(maxLength, right - left);
+            maxLength = Math.max(maxLength, j - i);
 
-            // Optimization: If we found a valid slice longer than 1, we can
-            // skip ahead. The next potential start could be right-1 at the earliest
-            if (right > left + 1) {
-                left = right - 1;
-            }
-            else {
-                left++;
+            // Skip to the position where we found a mismatch minus 1
+            // This optimization prevents rechecking sequences we know won't be valid
+            if (j > i + 1) {
+                i = j - 2;
             }
         }
 
