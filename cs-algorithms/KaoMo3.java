@@ -18,39 +18,48 @@ public class KaoMo3 {
 
         int maxLength = 1;
 
-        // For each position, calculate the longest switching slice ending at that position
-        for (int i = 0; i < A.length; i++) {
-            // Try to extend as far as possible to the right
-            int evenVal = A[i];
-            int oddVal = Integer.MIN_VALUE;
+        // Try each possible starting position
+        for (int start = 0; start < A.length; start++) {
+            // For each starting position, try to extend as far as possible
+            int evenValue = Integer.MIN_VALUE; // Value for even positions
+            int oddValue = Integer.MIN_VALUE;  // Value for odd positions
+            boolean evenInitialized = false;
             boolean oddInitialized = false;
 
-            int j = i;
-            while (j < A.length) {
-                if ((j - i) % 2 == 0) {  // Even position relative to i
-                    if (A[j] != evenVal) {
+            int length = 0;
+            for (int i = start; i < A.length; i++) {
+                // Determine if current position is even or odd relative to the starting position
+                if ((i - start) % 2 == 0) {
+                    // Even position
+                    if (!evenInitialized) {
+                        evenValue = A[i];
+                        evenInitialized = true;
+                        length++;
+                    }
+                    else if (A[i] == evenValue) {
+                        length++;
+                    }
+                    else {
                         break;
                     }
                 }
-                else {  // Odd position relative to i
+                else {
+                    // Odd position
                     if (!oddInitialized) {
-                        oddVal = A[j];
+                        oddValue = A[i];
                         oddInitialized = true;
+                        length++;
                     }
-                    else if (A[j] != oddVal) {
+                    else if (A[i] == oddValue) {
+                        length++;
+                    }
+                    else {
                         break;
                     }
                 }
-                j++;
             }
 
-            maxLength = Math.max(maxLength, j - i);
-
-            // Skip to the position where we found a mismatch minus 1
-            // This optimization prevents rechecking sequences we know won't be valid
-            if (j > i + 1) {
-                i = j - 2;
-            }
+            maxLength = Math.max(maxLength, length);
         }
 
         return maxLength;
