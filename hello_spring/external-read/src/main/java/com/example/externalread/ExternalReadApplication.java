@@ -1,12 +1,14 @@
 package com.example.externalread;
 
-import com.example.externalread.config.MyDatasourceValueConfig;
+import com.example.externalread.config.MyDataSourceConfigV1;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 //@Import(MyDatasourceEnvConfig.class)
-@Import(MyDatasourceValueConfig.class)
+//@Import(MyDatasourceValueConfig.class)
+@Import(MyDataSourceConfigV1.class)
+//@ConfigurationPropertiesScan
 @SpringBootApplication(scanBasePackages = "com.example.externalread.datasource")
 public class ExternalReadApplication {
 
