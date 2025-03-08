@@ -1,3 +1,15 @@
 spring:
   application:
     name: actuator-start
+
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
