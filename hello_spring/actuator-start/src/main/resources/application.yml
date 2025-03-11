@@ -14,5 +14,18 @@ management:
       exposure:
         include: "*"
   endpoint:
+    health:
+      show-details: always
     shutdown:
       access: unrestricted
+  info:
+    java:
+      enabled: true
+    os:
+      enabled: true
+    env:
+      enabled: true
+
+logging:
+  level:
+    com.example.actuatorstart.controller: trace
