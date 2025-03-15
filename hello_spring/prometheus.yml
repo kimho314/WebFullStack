@@ -26,9 +26,15 @@ scrape_configs:
     static_configs:
       - targets: [ "localhost:9090" ]
 
-  - job_name: docker
+    #  - job_name: docker
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
 
+  #    static_configs:
+  #      - targets: [ "host.docker.internal:9323" ]
+
+  - job_name: "spring-actuator"
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 1s
     static_configs:
-      - targets: [ "host.docker.internal:9323" ]
+      - targets: [ '172.30.1.88:8080' ] # docker내부에서 외부의 local machine을 호출해야 하기 때문에 ip address를 입력해야 한다.
