@@ -19,22 +19,20 @@ public class BOJ11561 {
     }
 
     private static long findMaxSteppingStones(long n) {
-        long l = 0;
-        long r = 1_000_000_000;
         long result = 0;
-
+        long l = 1;
+        long r = 1_000_000_000L;
         while (l <= r) {
             long mid = (l + r) / 2;
             long sum = (mid * (mid + 1)) / 2;
-
             if (sum <= n) {
                 result = Math.max(result, mid);
                 l = mid + 1;
-            } else {
+            }
+            else {
                 r = mid - 1;
             }
         }
-
         return result;
     }
 
