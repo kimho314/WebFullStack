@@ -1,16 +1,25 @@
 public class BOJ11726 {
-    static FastReader sc = new FastReader();
-    static int DIVIDER = 10_007;
+    static FastReader SC = new FastReader();
+    private static int N;
 
     public static void main(String[] args) {
-        int n = sc.nextInt();
-        int[] D = new int[1001];
-        D[0] = 0;
-        D[1] = 1;
-        D[2] = 2;
-        for (int i = 3; i <= 1000; i++) {
-            D[i] = (D[i - 1] + D[i - 2]) % DIVIDER;
-        }
-        System.out.println(D[n]);
+        input();
+        solve();
     }
+
+    private static void solve() {
+        int[] dp = new int[1001];
+        dp[1] = 1;
+        dp[2] = 2;
+        for (int i = 3; i <= 1000; i++) {
+            dp[i] = (dp[i - 1] + dp[i - 2]) % 10_007;
+        }
+
+        System.out.println(dp[N]);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+    }
+
 }
