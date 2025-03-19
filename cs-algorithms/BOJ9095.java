@@ -1,28 +1,34 @@
 public class BOJ9095 {
-    static FastReader sc = new FastReader();
-    static StringBuilder sb = new StringBuilder();
-    static int T;
+    private static FastReader SC = new FastReader();
+    private static int T;
+    private static int[] NUMS;
 
     public static void main(String[] args) {
-        T = sc.nextInt();
-        while (T > 0) {
-            T--;
-            int n = sc.nextInt();
-            int ans = findNumberOfSum(n);
-            sb.append(ans).append('\n');
-        }
-        System.out.println(sb);
+        input();
+        solve();
     }
 
-    private static int findNumberOfSum(int n) {
-        int[] D = new int[12];
-        D[0] = 0;
-        D[1] = 1;
-        D[2] = 2;
-        D[3] = 4;
-        for (int i = 4; i <= n; i++) {
-            D[i] = D[i - 1] + D[i - 2] + D[i - 3];
+    private static void solve() {
+        int[] dp = new int[12];
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 4;
+        for (int i = 4; i <= 11; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2] + dp[i - 3];
         }
-        return D[n];
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < T; i++) {
+            sb.append(dp[NUMS[i]]).append("\n");
+        }
+        System.out.println(sb.toString());
+    }
+
+    private static void input() {
+        T = SC.nextInt();
+        NUMS = new int[T];
+        for (int i = 0; i < T; i++) {
+            NUMS[i] = SC.nextInt();
+        }
     }
 }
