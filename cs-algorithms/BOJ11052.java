@@ -1,30 +1,33 @@
 public class BOJ11052 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] P;
-    static int[] DP;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[] P;
 
     public static void main(String[] args) {
-        init();
+        input();
         solve();
     }
 
     private static void solve() {
+        int[] dp = new int[N + 1];
         for (int i = 1; i <= N; i++) {
-            for (int j = 1; j <= i; j++) {
-                DP[i] = Math.max(DP[i], DP[i - j] + P[j]);
+            dp[i] = P[i];
+        }
+
+        for (int i = 2; i <= N; i++) {
+            for (int j = 1; j < i; j++) {
+                dp[i] = Math.max(dp[i], dp[j] + P[i - j]);
             }
         }
-        System.out.println(DP[N]);
+
+        System.out.println(dp[N]);
     }
 
-    private static void init() {
+    private static void input() {
         N = SC.nextInt();
         P = new int[N + 1];
-        DP = new int[N + 1];
         for (int i = 1; i <= N; i++) {
             P[i] = SC.nextInt();
         }
     }
-
 }
