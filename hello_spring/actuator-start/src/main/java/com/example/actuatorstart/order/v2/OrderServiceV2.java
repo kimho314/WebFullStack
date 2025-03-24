@@ -1,0 +1,33 @@
+package com.example.actuatorstart.order.v2;
+
+import com.example.actuatorstart.order.OrderService;
+import io.micrometer.core.annotation.Counted;
+import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class OrderServiceV2 implements OrderService {
+
+    private AtomicInteger stock = new AtomicInteger(100);
+
+
+    @Counted("my.order")
+    @Override
+    public void order() {
+        log.info("주문");
+        stock.decrementAndGet();
+    }
+
+    @Counted("my.order")
+    @Override
+    public void cancel() {
+        log.info("취소");
+        stock.incrementAndGet();
+    }
+
+    @Counted("my.order")
+    @Override
+    public AtomicInteger getStock() {
+        return stock;
+    }
+}
