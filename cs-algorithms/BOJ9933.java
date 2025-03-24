@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class BOJ9933 {
     private static FastReader SC = new FastReader();
@@ -7,7 +8,21 @@ public class BOJ9933 {
 
     public static void main(String[] args) {
         input();
-        solve();
+//        solve();
+        solve2();
+    }
+
+    private static void solve2() {
+        HashSet<String> set = new HashSet<>();
+        for (int i = 0; i < N; i++) {
+            set.add(STR[i]);
+            StringBuilder sb = new StringBuilder(STR[i]);
+            String reversed = sb.reverse().toString();
+            if (set.contains(reversed)) {
+                System.out.println(STR[i].length() + " " + STR[i].charAt(STR[i].length() / 2));
+                break;
+            }
+        }
     }
 
     private static void solve() {
