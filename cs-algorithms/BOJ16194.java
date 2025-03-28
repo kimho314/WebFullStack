@@ -9,9 +9,9 @@ public class BOJ16194 {
     }
 
     private static void solve() {
-        for (int i = 1; i <= N; i++) {
-            for (int j = 1; j <= i; j++) {
-                DP[i] = Math.min(DP[i], P[j] + DP[i - j]);
+        for (int i = 2; i <= N; i++) {
+            for (int j = 1; j < i; j++) {
+                DP[i] = Math.min(DP[i], DP[j] + P[i - j]);
             }
         }
 
@@ -24,7 +24,7 @@ public class BOJ16194 {
         DP = new int[N + 1];
         for (int i = 1; i <= N; i++) {
             P[i] = SC.nextInt();
-            DP[i] = Integer.MAX_VALUE;
+            DP[i] = P[i];
         }
     }
 }
