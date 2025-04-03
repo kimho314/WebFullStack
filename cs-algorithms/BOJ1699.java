@@ -1,7 +1,6 @@
 public class BOJ1699 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] DP;
+    private static FastReader SC = new FastReader();
+    private static int N;
 
     public static void main(String[] args) {
         input();
@@ -9,22 +8,21 @@ public class BOJ1699 {
     }
 
     private static void solve() {
-        for (int i = 0; i <= 100_000; i++) {
-            DP[i] = i;
+        int[] dp = new int[100_000 + 1];
+        for (int i = 1; i <= 100_000; i++) {
+            dp[i] = i;
         }
 
         for (int i = 2; i <= 100_000; i++) {
             for (int j = 1; j * j <= i; j++) {
-                int remainder = i - (j * j);
-                DP[i] = Math.min(DP[i], DP[remainder] + 1);
+                dp[i] = Math.min(dp[i], dp[i - (j * j)] + 1);
             }
         }
 
-        System.out.println(DP[N]);
+        System.out.println(dp[N]);
     }
 
     private static void input() {
         N = SC.nextInt();
-        DP = new int[100_000 + 1];
     }
 }
