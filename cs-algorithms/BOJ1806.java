@@ -1,28 +1,24 @@
 public class BOJ1806 {
-    static FastReader sc = new FastReader();
-    static int N, S;
-    static int[] NUMS;
+    private static FastReader SC = new FastReader();
+    private static int N, S;
+    private static int[] A;
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        S = sc.nextInt();
-        NUMS = new int[N + 1];
-        for (int i = 1; i <= N; i++) {
-            NUMS[i] = sc.nextInt();
-        }
+        input();
+        solve();
+    }
 
-        int right = 0;
+    private static void solve() {
+        int r = 0;
         int sum = 0;
         int ans = N + 1;
-        for (int left = 1; left <= N; left++) {
-            sum -= NUMS[left - 1];
-
-            while (right + 1 <= N && sum < S) {
-                sum += NUMS[++right];
+        for (int l = 1; l <= N; l++) {
+            sum -= A[l - 1];
+            while (r + 1 <= N && sum < S) {
+                sum += A[++r];
             }
-
             if (sum >= S) {
-                ans = Math.min(ans, right - left + 1);
+                ans = Math.min(ans, r - l + 1);
             }
         }
 
@@ -31,4 +27,14 @@ public class BOJ1806 {
         }
         System.out.println(ans);
     }
+
+    private static void input() {
+        N = SC.nextInt();
+        S = SC.nextInt();
+        A = new int[N + 1];
+        for (int i = 1; i <= N; i++) {
+            A[i] = SC.nextInt();
+        }
+    }
+
 }
