@@ -1,24 +1,34 @@
 public class BOJ15988 {
-    static FastReader SC = new FastReader();
-    static int T;
-    static long[] D;
-    static StringBuilder SB = new StringBuilder();
+    private static FastReader SC = new FastReader();
+    private static int T;
+    private static int[] NUMS;
 
     public static void main(String[] args) {
+        input();
+        solve();
+    }
+
+    private static void solve() {
+        long[] dp = new long[1_000_001];
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 4;
+        for (int i = 4; i <= 1_000_000; i++) {
+            dp[i] = (dp[i - 1] + dp[i - 2] + dp[i - 3]) % 1_000_000_009;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < T; i++) {
+            sb.append(dp[NUMS[i]] % 1_000_000_009).append("\n");
+        }
+        System.out.println(sb);
+    }
+
+    private static void input() {
         T = SC.nextInt();
-        D = new long[1000001];
-        D[0] = 0;
-        D[1] = 1;
-        D[2] = 2;
-        D[3] = 4;
-        for (int i = 4; i <= 1000000; i++) {
-            D[i] = (D[i - 1] + D[i - 2] + D[i - 3]) % 1000000009;
+        NUMS = new int[T];
+        for (int i = 0; i < T; i++) {
+            NUMS[i] = SC.nextInt();
         }
-        while (T > 0) {
-            T--;
-            int n = SC.nextInt();
-            SB.append(D[n]).append('\n');
-        }
-        System.out.println(SB);
     }
 }
