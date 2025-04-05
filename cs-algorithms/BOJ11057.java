@@ -1,8 +1,8 @@
-public class BOJ11057 {
-    static FastReader SC = new FastReader();
+import java.util.Arrays;
 
-    static int N;
-    static long[][] DP;
+public class BOJ11057 {
+    private static FastReader SC = new FastReader();
+    private static int N;
 
     public static void main(String[] args) {
         input();
@@ -10,28 +10,25 @@ public class BOJ11057 {
     }
 
     private static void solve() {
-        for (int i = 0; i < 10; i++) {
-            DP[1][i] = 1;
-        }
+        int[][] dp = new int[1_000 + 1][10];
+        Arrays.fill(dp[1], 1);
 
-        for (int i = 2; i <= N; i++) {
+        for (int i = 2; i <= 1_000; i++) {
             for (int j = 0; j < 10; j++) {
                 for (int k = 0; k <= j; k++) {
-                    DP[i][j] += DP[i - 1][k];
+                    dp[i][j] += (dp[i - 1][k] % 10_007);
                 }
-                DP[i][j] %= 10_007;
             }
         }
 
-        long sum = 0;
+        int res = 0;
         for (int i = 0; i < 10; i++) {
-            sum += DP[N][i];
+            res += dp[N][i];
         }
-        System.out.println(sum % 10_007);
+        System.out.println(res % 10_007);
     }
 
     private static void input() {
         N = SC.nextInt();
-        DP = new long[N + 1][10];
     }
 }
