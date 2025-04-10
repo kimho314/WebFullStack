@@ -3,43 +3,45 @@ package boj;
 import java.util.Arrays;
 
 public class BOJ10815 {
-    static FastReader SC = new FastReader();
-    static int N, M;
-    static StringBuilder SB = new StringBuilder();
-    static int[] A, B;
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] NUMS1, NUMS2;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        A = new int[N];
-        for (int i = 0; i < N; i++) {
-            A[i] = SC.nextInt();
-        }
-        Arrays.sort(A);
-
-        M = SC.nextInt();
-        B = new int[M];
-        for (int i = 0; i < M; i++) {
-            B[i] = SC.nextInt();
-        }
-
-        for (int i = 0; i < M; i++) {
-            int res = search(A, 0, N - 1, B[i]);
-            SB.append(res).append(' ');
-        }
-        System.out.println(SB);
+        input();
+        solve();
     }
 
-    private static int search(int[] arr, int left, int right, int target) {
-        int res = 0;
+    private static void solve() {
+        Arrays.sort(NUMS1);
 
+        int[] res = new int[M];
+        for (int i = 0; i < M; i++) {
+            int idx = binarySearch(NUMS2[i]);
+            if (idx == -1) {
+                res[i] = 0;
+            }
+            else {
+                res[i] = 1;
+            }
+        }
+
+        for (int i = 0; i < M; i++) {
+            System.out.print(res[i] + " ");
+        }
+    }
+
+    private static int binarySearch(int target) {
+        int res = -1;
+        int left = 0;
+        int right = N - 1;
         while (left <= right) {
-            int mid = (right + left) / 2;
-            if (arr[mid] == target) {
-                res = 1;
+            int mid = (left + right) / 2;
+            if (NUMS1[mid] == target) {
+                res = mid;
                 break;
             }
-
-            if (arr[mid] > target) {
+            else if (NUMS1[mid] > target) {
                 right = mid - 1;
             }
             else {
@@ -48,5 +50,18 @@ public class BOJ10815 {
         }
 
         return res;
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        NUMS1 = new int[N];
+        for (int i = 0; i < N; i++) {
+            NUMS1[i] = SC.nextInt();
+        }
+        M = SC.nextInt();
+        NUMS2 = new int[M];
+        for (int i = 0; i < M; i++) {
+            NUMS2[i] = SC.nextInt();
+        }
     }
 }
