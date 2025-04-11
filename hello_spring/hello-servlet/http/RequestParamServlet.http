@@ -1,0 +1,4 @@
+### GET request to example server
+GET http://localhost:8080/request-param?username=hello&age=20&username=hello2
+
+###
