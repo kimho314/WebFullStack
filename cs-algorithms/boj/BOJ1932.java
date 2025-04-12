@@ -1,37 +1,44 @@
 package boj;
 
 public class BOJ1932 {
-    static FastReader SC = new FastReader();
-    static int[][] INPUTS;
-    static int N;
-    static int[][] DP;
-
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[][] MAP;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        INPUTS = new int[500][500];
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j <= i; j++) {
-                INPUTS[i][j] = SC.nextInt();
-            }
-        }
+        input();
+        solve();
+    }
 
-        DP = new int[N][N];
-        DP[0][0] = INPUTS[0][0];
+    private static void solve() {
+        int[][] dp = new int[N][N];
+        dp[0][0] = MAP[0][0];
         for (int i = 1; i < N; i++) {
-            DP[i][0] = DP[i - 1][0] + INPUTS[i][0];
-
-            for (int j = 1; j < i; j++) {
-                DP[i][j] = Math.max(DP[i - 1][j - 1], DP[i - 1][j]) + INPUTS[i][j];
+            for (int j = 0; j < N; j++) {
+                if (j == 0) {
+                    dp[i][j] = dp[i - 1][j] + MAP[i][j];
+                }
+                else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - 1]) + MAP[i][j];
+                }
             }
-
-            DP[i][i] = DP[i - 1][i - 1] + INPUTS[i][i];
         }
 
         int res = 0;
         for (int i = 0; i < N; i++) {
-            res = Math.max(res, DP[N - 1][i]);
+            res = Math.max(res, dp[N - 1][i]);
         }
         System.out.println(res);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        MAP = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            String[] split = SC.nextLine().split(" ");
+            for (int j = 0; j < split.length; j++) {
+                MAP[i][j] = Integer.parseInt(split[j]);
+            }
+        }
     }
 }
