@@ -1,36 +1,37 @@
 package boj;
 
 public class BOJ10844 {
-    static FastReader SC = new FastReader();
-    static int N;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int MOD = 1_000_000_000;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        long[][] dp = new long[101][10];
-        for (int i = 1; i < 10; i++) {
+        input();
+        solve();
+    }
+
+    private static void solve() {
+        long[][] dp = new long[N + 1][10];
+        for (int i = 0; i <= 9; i++) {
             dp[1][i] = 1;
         }
 
-        for (int i = 2; i <= 100; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (j == 0) {
-                    dp[i][j] = dp[i - 1][1];
-                }
-                else if (j == 9) {
-                    dp[i][j] = dp[i - 1][8];
-                }
-                else {
-                    dp[i][j] = dp[i - 1][j + 1] + dp[i - 1][j - 1];
-                }
-
-                dp[i][j] %= 1_000_000_000;
+        for (int i = 2; i <= N; i++) {
+            dp[i][0] = dp[i - 1][1] % MOD;
+            for (int j = 1; j <= 8; j++) {
+                dp[i][j] = (dp[i - 1][j - 1] % MOD) + (dp[i - 1][j + 1] % MOD);
             }
+            dp[i][9] = dp[i - 1][8] % MOD;
         }
 
-        long res = 0;
-        for (int i = 0; i < 10; i++) {
-            res += dp[N][i];
+        long total = 0;
+        for (int i = 1; i <= 9; i++) {
+            total = (total + dp[N][i]) % MOD;
         }
-        System.out.println(res % 1_000_000_000);
+        System.out.println(total);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
     }
 }
