@@ -1,10 +1,9 @@
 package boj;
 
 public class BOJ2156 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] A;
-    static int[] DP;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[] WINES;
 
     public static void main(String[] args) {
         input();
@@ -12,27 +11,27 @@ public class BOJ2156 {
     }
 
     private static void solve() {
-        DP[0] = 0;
-        for (int i = 1; i <= N; i++) {
-            if (i == 1) {
-                DP[i] = A[i];
-            }
-            else if (i == 2) {
-                DP[i] = A[i] + A[i - 1];
-            }
-            else {
-                DP[i] = Math.max(DP[i - 1], Math.max(DP[i - 2] + A[i], DP[i - 3] + A[i] + A[i - 1]));
-            }
+        int[] dp = new int[N + 1];
+        dp[1] = WINES[1];
+        if (N >= 2) {
+            dp[2] = WINES[1] + WINES[2];
         }
-        System.out.println(DP[N]);
+
+        for (int i = 3; i <= N; i++) {
+            int case1 = dp[i - 1];
+            int case2 = dp[i - 2] + WINES[i];
+            int case3 = dp[i - 3] + WINES[i - 1] + WINES[i];
+            dp[i] = Math.max(case1, Math.max(case2, case3));
+        }
+
+        System.out.println(dp[N]);
     }
 
     private static void input() {
         N = SC.nextInt();
-        A = new int[N + 1];
+        WINES = new int[N + 1];
         for (int i = 1; i <= N; i++) {
-            A[i] = SC.nextInt();
+            WINES[i] = SC.nextInt();
         }
-        DP = new int[N + 1];
     }
 }
