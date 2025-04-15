@@ -3,9 +3,9 @@ package boj;
 import java.util.Arrays;
 
 public class BOJ11722 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] A, DP;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[] A;
 
     public static void main(String[] args) {
         input();
@@ -13,27 +13,27 @@ public class BOJ11722 {
     }
 
     private static void solve() {
-        Arrays.fill(DP, 1);
+        int[] dp = new int[N];
+        Arrays.fill(dp, 1);
 
         for (int i = 1; i < N; i++) {
             for (int j = 0; j < i; j++) {
-                if (A[i] < A[j]) {
-                    DP[i] = Math.max(DP[i], DP[j] + 1);
+                if (A[j] > A[i]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
             }
         }
 
-        int max = DP[0];
-        for (int i = 1; i < N; i++) {
-            max = Math.max(max, DP[i]);
+        int res = 0;
+        for (int i = 0; i < N; i++) {
+            res = Math.max(res, dp[i]);
         }
-        System.out.println(max);
+        System.out.println(res);
     }
 
     private static void input() {
         N = SC.nextInt();
         A = new int[N];
-        DP = new int[N];
         for (int i = 0; i < N; i++) {
             A[i] = SC.nextInt();
         }
