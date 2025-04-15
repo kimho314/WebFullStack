@@ -1,42 +1,41 @@
 package boj;
 
 public class BOJ11055 {
-    static FastReader SC = new FastReader();
-    static int[] DP;
-    static int N;
-    static int[] A;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[] A;
 
     public static void main(String[] args) {
-        init();
-
+        input();
         solve();
-
-        int max = Integer.MIN_VALUE;
-        for (int i : DP) {
-            max = Math.max(i, max);
-        }
-        System.out.println(max);
-    }
-
-    private static void init() {
-        N = SC.nextInt();
-        DP = new int[N + 1];
-        A = new int[N + 1];
-        for (int i = 1; i <= N; i++) {
-            A[i] = SC.nextInt();
-        }
     }
 
     private static void solve() {
-        DP[1] = A[1];
+        int[] dp = new int[N];
+        for (int i = 0; i < N; i++) {
+            dp[i] = A[i];
+        }
 
-        for (int i = 1; i <= N; i++) {
-            DP[i] = A[i];
-            for (int j = 1; j < i; j++) {
-                if (A[i] > A[j]) {
-                    DP[i] = Math.max(DP[j] + A[i], DP[i]);
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < i; j++) {
+                if (A[j] < A[i]) {
+                    dp[i] = Math.max(dp[i], dp[j] + A[i]);
                 }
             }
+        }
+
+        int res = 0;
+        for (int i = 0; i < N; i++) {
+            res = Math.max(res, dp[i]);
+        }
+        System.out.println(res);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        A = new int[N];
+        for (int i = 0; i < N; i++) {
+            A[i] = SC.nextInt();
         }
     }
 }
