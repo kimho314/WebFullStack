@@ -11,48 +11,52 @@ public class BOJ1913 {
     }
 
     private static void solve() {
-        int[][] map = new int[N][N];
-        int value = 1;
-        int limit = 1;
-
-        int x = N / 2, y = N / 2;
+        int[][] arr = new int[N][N];
+        int cnt = 1;
+        int y = N / 2;
+        int x = N / 2;
+        int r = 1;
+        int c = 1;
+        int dirR = -1;
+        int dirC = 1;
+        arr[y][x] = cnt;
 
         while (true) {
-            for (int i = 0; i < limit; i++) {
-                map[y--][x] = value++;
+            boolean isEnd = false;
+            for (int i = 0; i < r; i++) {
+                y += dirR;
+                ++cnt;
+                arr[y][x] = cnt;
+                if (cnt == N * N) {
+                    isEnd = true;
+                    break;
+                }
             }
-            if (value - 1 == N * N) {
+            if (isEnd) {
                 break;
             }
-            for (int i = 0; i < limit; i++) {
-                map[y][x++] = value++;
-            }
+            ++r;
+            dirR *= -1;
 
-            limit++;
-            for (int i = 0; i < limit; i++) {
-                map[y++][x] = value++;
+            for (int i = 0; i < c; i++) {
+                x += dirC;
+                ++cnt;
+                arr[y][x] = cnt;
             }
-
-            for (int i = 0; i < limit; i++) {
-                map[y][x--] = value++;
-            }
-            limit++;
+            ++c;
+            dirC *= -1;
         }
 
         StringBuilder sb = new StringBuilder();
-        int ty = -1, tx = -1;
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                sb.append(map[i][j]).append(' ');
-                if (TARGET == map[i][j]) {
-                    ty = i + 1;
-                    tx = j + 1;
+                System.out.print(arr[i][j] + " ");
+                if (arr[i][j] == TARGET) {
+                    sb.append(i + 1).append(" ").append(j + 1);
                 }
             }
-            sb.append('\n');
+            System.out.println();
         }
-        sb.append(ty).append(' ').append(tx);
-
         System.out.println(sb);
     }
 
