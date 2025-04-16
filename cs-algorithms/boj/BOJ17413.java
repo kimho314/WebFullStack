@@ -1,59 +1,59 @@
 package boj;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
 
 public class BOJ17413 {
-    static FastReader SC = new FastReader();
-    static String INPUT;
+    private static FastReader SC = new FastReader();
+    private static String S;
 
     public static void main(String[] args) {
-        init();
+        input();
         solve();
     }
 
     private static void solve() {
         boolean isTag = false;
-        Stack<Character> stack = new Stack<>();
+        ArrayDeque<Character> dq = new ArrayDeque<>();
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < INPUT.length(); i++) {
-            if (INPUT.charAt(i) == '<') {
-                isTag = true;
-                while (!stack.isEmpty()) {
-                    sb.append(stack.pop());
+        for (char ch : S.toCharArray()) {
+            if (ch == '<' && !isTag) {
+                while (!dq.isEmpty()) {
+                    sb.append(dq.pollLast());
                 }
-                sb.append(INPUT.charAt(i));
+                dq.addLast(ch);
+                isTag = true;
             }
-            else if (INPUT.charAt(i) == '>') {
+            else if (ch == '>' && isTag) {
+                dq.addLast(ch);
                 isTag = false;
-                sb.append(INPUT.charAt(i));
+                while (!dq.isEmpty()) {
+                    sb.append(dq.pollFirst());
+                }
+            }
+            else if (Character.isDigit(ch) || Character.isLowerCase(ch)) {
+                dq.addLast(ch);
             }
             else {
-                if (isTag) {
-                    sb.append(INPUT.charAt(i));
-                }
                 if (!isTag) {
-                    if (INPUT.charAt(i) == ' ') {
-                        while (!stack.isEmpty()) {
-                            sb.append(stack.pop());
-                        }
-                        sb.append(INPUT.charAt(i));
+                    while (!dq.isEmpty()) {
+                        sb.append(dq.pollLast());
                     }
-                    else {
-                        stack.push(INPUT.charAt(i));
-                    }
+                    sb.append(ch);
+                }
+                else {
+                    dq.addLast(ch);
                 }
             }
         }
-
-        while (!stack.isEmpty()) {
-            sb.append(stack.pop());
+        while (!dq.isEmpty()) {
+            sb.append(dq.pollLast());
         }
 
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
-    private static void init() {
-        INPUT = SC.nextLine();
+    private static void input() {
+        S = SC.nextLine();
     }
 }
