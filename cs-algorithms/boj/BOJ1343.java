@@ -1,38 +1,35 @@
 package boj;
 
 public class BOJ1343 {
-    static FastReader SC = new FastReader();
+    private static FastReader SC = new FastReader();
+    private static String STR;
 
     public static void main(String[] args) {
-        String input = SC.nextLine();
+        input();
+        solve();
+    }
 
-        StringBuilder sb = new StringBuilder();
-        boolean isAllCovered = true;
-        int idx = 0;
-        while (idx < input.length()) {
-            if (input.charAt(idx) == '.') {
-                idx++;
-                sb.append('.');
-            }
-            else {
-                int idxOfDot = input.indexOf('.', idx);
-                int idx1 = idxOfDot == -1 ? input.length() : idxOfDot;
-                String substring = input.substring(idx, idx1);
-                if (substring.length() % 2 == 1) {
-                    isAllCovered = false;
-                    break;
-                }
-                String str = substring.replaceAll("XXXX", "AAAA").replaceAll("XX", "BB");
-                sb.append(str);
-                idx = idx1;
+    private static void solve() {
+        STR = STR.replaceAll("XXXX", "AAAA");
+        STR = STR.replaceAll("XX", "BB");
+
+        boolean isPossible = true;
+        for (char ch : STR.toCharArray()) {
+            if (ch == 'X') {
+                isPossible = false;
+                break;
             }
         }
 
-        if (!isAllCovered) {
+        if (!isPossible) {
             System.out.println(-1);
         }
         else {
-            System.out.println(sb);
+            System.out.println(STR);
         }
+    }
+
+    private static void input() {
+        STR = SC.nextLine();
     }
 }
