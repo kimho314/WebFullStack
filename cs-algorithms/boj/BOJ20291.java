@@ -26,7 +26,6 @@ public class BOJ20291 {
         for (String s : list) {
             System.out.println(s + " " + map.get(s));
         }
-
     }
 
     private static void input() {

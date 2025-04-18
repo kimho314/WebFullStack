@@ -1,31 +1,35 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
+import java.io.*;
 
 public class BOJ2217 {
-    static FastReader SC = new FastReader();
-    static int N;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[] W;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        int[] ROPES = new int[N];
-        for (int i = 0; i < N; i++) {
-            ROPES[i] = SC.nextInt();
-        }
+        input();
+        solve();
+    }
 
-        Arrays.sort(ROPES);
-        long max = Long.MIN_VALUE;
-        for (int i = 0; i < N; i++) {
-            int cnt = 1;
-            for (int j = i + 1; j < N; j++) {
-                if (ROPES[j] >= ROPES[i]) {
-                    cnt++;
-                }
+    private static void solve() {
+        Arrays.sort(W);
+
+        int res = W[0] * N;
+        for (int i = 1; i < N; i++) {
+            if (W[i] * (N - i) > res) {
+                res = W[i] * (N - i);
             }
-            long sum = (long) ROPES[i] * cnt;
-//            System.out.println("i = " + ROPES[i] + " sum = " + sum);
-            max = Math.max(max, sum);
         }
-        System.out.println(max);
+        System.out.println(res);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        W = new int[N];
+        for (int i = 0; i < N; i++) {
+            W[i] = SC.nextInt();
+        }
     }
 }
