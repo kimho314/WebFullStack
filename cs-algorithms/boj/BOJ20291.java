@@ -1,39 +1,40 @@
 package boj;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
+import java.io.*;
+import java.util.Comparator.*;
 
 public class BOJ20291 {
     private static FastReader SC = new FastReader();
     private static int N;
-    private static HashMap<String, Integer> MAP = new HashMap<>();
+    private static String[] ARR;
 
-    public static void main(String[] args) {
-        input();
-        solve();
+    public static void main(String[] args){
+            input();
+            solve();
     }
 
-    private static void solve() {
-        ArrayList<String> formats = new ArrayList<>(MAP.keySet());
-        formats.sort(Comparator.comparing(it -> it));
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < formats.size(); i++) {
-            String key = formats.get(i);
-            Integer count = MAP.get(key);
-            sb.append(key).append(' ').append(count).append('\n');
+    private static void solve(){
+        HashMap<String,Integer> map = new HashMap<>();
+        for(String s : ARR){
+            String[] split = s.split("\\.");
+            // System.out.println(Arrays.toString(split));
+            map.put(split[1], map.getOrDefault(split[1], 0) + 1);
         }
 
-        System.out.println(sb);
+        ArrayList<String> list = new ArrayList<>(map.keySet());
+        list.sort(Comparator.comparing(it -> String.valueOf(it)));
+        for(String s : list){
+            System.out.println(s + " " + map.get(s));
+        }
+
     }
 
-    private static void input() {
+    private static void input(){
         N = SC.nextInt();
-        for (int i = 0; i < N; i++) {
-            String input = SC.next();
-            String format = input.split("\\.")[1];
-            MAP.put(format, MAP.getOrDefault(format, 0) + 1);
+        ARR = new String[N];
+        for(int i=0; i<N; i++){
+            ARR[i] = SC.nextLine();
         }
     }
 }
