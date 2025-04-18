@@ -1,28 +1,36 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ1758 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] A;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static ArrayList<Integer> M;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        A = new int[N];
-        for (int i = 0; i < N; i++) {
-            A[i] = SC.nextInt();
-        }
+        input();
+        solve();
+    }
 
-        Arrays.sort(A);
-        int sum = 0;
-        for (int i = A.length - 1; i >= 0; i--) {
-            int score = A[i] - (A.length - 1 - i);
-            if (score < 0) {
-                score = 0;
+    private static void solve() {
+        Collections.sort(M, Comparator.reverseOrder());
+
+        long res = 0;
+        for (int i = 0; i < N; i++) {
+            long money = M.get(i) - i;
+            if (money < 0) {
+                money = 0;
             }
-            sum += score;
+            res += money;
         }
-        System.out.println(sum);
+        System.out.println(res);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        M = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            M.add(SC.nextInt());
+        }
     }
 }
