@@ -19,8 +19,7 @@ public class FastReader {
         while (st == null || !st.hasMoreElements()) {
             try {
                 st = new StringTokenizer(br.readLine());
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -43,8 +42,7 @@ public class FastReader {
         String str = "";
         try {
             str = br.readLine();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return str;

@@ -23,17 +23,15 @@ public class BOJ26069 {
                 cnt += 2;
                 map.put(input1, 1);
                 map.put(input2, 1);
-            }
-            else if (input2.equals(startName) && !map.containsKey(input2) && !map.containsKey(input1)) {
+            } else if (input2.equals(startName) && !map.containsKey(input2)
+                    && !map.containsKey(input1)) {
                 cnt += 2;
                 map.put(input1, 1);
                 map.put(input2, 1);
-            }
-            else if (map.containsKey(input1) && !map.containsKey(input2)) {
+            } else if (map.containsKey(input1) && !map.containsKey(input2)) {
                 map.put(input2, 1);
                 cnt++;
-            }
-            else if (map.containsKey(input2) && !map.containsKey(input1)) {
+            } else if (map.containsKey(input2) && !map.containsKey(input1)) {
                 map.put(input1, 1);
                 cnt++;
             }
