@@ -3,71 +3,74 @@ package boj;
 import java.util.*;
 
 public class BOJ1260 {
-    static FastReader sc = new FastReader();
-    static int N, M, V;
-    static boolean[] visited;
-    static List<List<Integer>> list = new ArrayList<>();
-    static StringBuilder sb = new StringBuilder();
+    private static FastReader SC = new FastReader();
+    private static int N, M, V;
+    private static ArrayList<Integer>[] ADJ;
+    private static boolean[] VISITED;
+    private static StringBuilder SB1, SB2;
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        M = sc.nextInt();
-        V = sc.nextInt();
-        visited = new boolean[N + 1];
-        for (int i = 0; i <= N; i++) {
-            list.add(new ArrayList<>());
-        }
-        for (int i = 1; i <= M; i++) {
-            int node1 = sc.nextInt();
-            int node2 = sc.nextInt();
-            List<Integer> subList1 = list.remove(node1);
-            subList1.add(node2);
-            list.add(node1, subList1);
-            List<Integer> subList2 = list.remove(node2);
-            subList2.add(node1);
-            list.add(node2, subList2);
-        }
-        list.forEach(it -> it.sort(Comparator.comparingInt(each -> each)));
+        input();
+        solve();
+    }
 
+    private static void solve() {
         dfs(V);
-        System.out.println(sb);
-        sb = new StringBuilder();
-        visited = new boolean[N + 1];
+        Arrays.fill(VISITED, false);
         bfs(V);
-        System.out.println(sb);
+
+        System.out.println(SB1);
+        System.out.println(SB2);
     }
 
-    static void bfs(int start) {
-        Queue<Integer> needVisit = new LinkedList<>();
+    private static void bfs(int start) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(start);
+        VISITED[start] = true;
+        SB2.append(start).append(" ");
 
-        needVisit.add(start);
-        visited[start] = true;
-
-        while (!needVisit.isEmpty()) {
-            int x = needVisit.poll();
-            sb.append(x).append(" ");
-
-            for (Integer elem : list.get(x)) {
-                if (visited[elem]) {
-                    continue;
+        while (!q.isEmpty()) {
+            int x = q.poll();
+            for (int n : ADJ[x]) {
+                if (!VISITED[n]) {
+                    VISITED[n] = true;
+                    SB2.append(n).append(" ");
+                    q.add(n);
                 }
-
-                needVisit.add(elem);
-                visited[elem] = true;
             }
         }
     }
 
-    static void dfs(int start) {
-        visited[start] = true;
-        sb.append(start).append(" ");
-
-        for (Integer elem : list.get(start)) {
-            if (visited[elem]) {
-                continue;
+    private static void dfs(int x) {
+        VISITED[x] = true;
+        SB1.append(x).append(" ");
+        for (int n : ADJ[x]) {
+            if (!VISITED[n]) {
+                VISITED[n] = true;
+                dfs(n);
             }
-
-            dfs(elem);
         }
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        M = SC.nextInt();
+        V = SC.nextInt();
+        ADJ = new ArrayList[N + 1];
+        for (int i = 1; i <= N; i++) {
+            ADJ[i] = new ArrayList<>();
+        }
+        VISITED = new boolean[N + 1];
+        for (int i = 0; i < M; i++) {
+            int n1 = SC.nextInt();
+            int n2 = SC.nextInt();
+            ADJ[n1].add(n2);
+            ADJ[n2].add(n1);
+        }
+        for (int i = 1; i <= N; i++) {
+            Collections.sort(ADJ[i]);
+        }
+        SB1 = new StringBuilder();
+        SB2 = new StringBuilder();
     }
 }
