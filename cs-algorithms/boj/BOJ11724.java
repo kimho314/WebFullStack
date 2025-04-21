@@ -1,52 +1,55 @@
 package boj;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BOJ11724 {
-    static FastReader sc = new FastReader();
-    static int N, M;
-    static List<Integer> GROUP;
-    static int GROUP_CNT;
-    static boolean[] VISITED;
-    static ArrayList<Integer>[] LIST;
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static ArrayList<Integer>[] ADJ;
+    private static boolean[] VISITED;
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        M = sc.nextInt();
-        VISITED = new boolean[N + 1];
-        LIST = new ArrayList[N + 1];
-        for (int i = 1; i <= N; i++) {
-            LIST[i] = new ArrayList<>();
-        }
-        for (int i = 0; i < M; i++) {
-            int u = sc.nextInt();
-            int v = sc.nextInt();
-            LIST[u].add(v);
-            LIST[v].add(u);
-        }
-
-        GROUP = new ArrayList<>();
-        for (int i = 1; i <= N; i++) {
-            if (!VISITED[i]) {
-                GROUP_CNT = 0;
-                dfs(i);
-                GROUP.add(GROUP_CNT);
-            }
-        }
-        System.out.println(GROUP.size());
+        input();
+        solve();
     }
 
-    private static void dfs(int start) {
-        VISITED[start] = true;
-        GROUP_CNT++;
+    private static void solve() {
+        ArrayList<Integer> group = new ArrayList<>();
 
-        for (int x : LIST[start]) {
-            if (VISITED[x]) {
-                continue;
+        for (int i = 1; i <= N; i++) {
+            if (!VISITED[i]) {
+                dfs(i);
+                group.add(i);
             }
-            VISITED[x] = true;
-            dfs(x);
         }
+
+        System.out.println(group.size());
+    }
+
+    private static void dfs(int n) {
+        VISITED[n] = true;
+        for (int x : ADJ[n]) {
+            if (!VISITED[x]) {
+                VISITED[x] = true;
+                dfs(x);
+            }
+        }
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        M = SC.nextInt();
+        ADJ = new ArrayList[N + 1];
+        for (int i = 1; i <= N; i++) {
+            ADJ[i] = new ArrayList<>();
+        }
+        for (int i = 0; i < M; i++) {
+            int n1 = SC.nextInt();
+            int n2 = SC.nextInt();
+            ADJ[n1].add(n2);
+            ADJ[n2].add(n1);
+        }
+        VISITED = new boolean[N + 1];
+
     }
 }
