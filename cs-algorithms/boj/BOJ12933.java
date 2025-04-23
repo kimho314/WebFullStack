@@ -41,8 +41,7 @@ public class BOJ12933 {
 
             if (check) {
                 cnt++;
-            }
-            else {
+            } else {
                 break;
             }
         }
