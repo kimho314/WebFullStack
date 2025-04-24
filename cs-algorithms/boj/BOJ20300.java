@@ -1,11 +1,11 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ20300 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static long[] T;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static long[] T;
 
     public static void main(String[] args) {
         input();
@@ -18,15 +18,22 @@ public class BOJ20300 {
         long max = 0;
         if (N % 2 == 0) {
             for (int i = 0; i < N / 2; i++) {
-                max = Math.max(max, T[i] + T[N - 1 - i]);
+                long sum = T[i] + T[N - 1 - i];
+                if (max < sum) {
+                    max = sum;
+                }
             }
-        }
-        else {
+        } else {
             max = T[N - 1];
-            for (int i = 0; i < (N - 1) / 2; i++) {
-                max = Math.max(max, T[i] + T[N - 2 - i]);
+            int size = N - 1;
+            for (int i = 0; i < size / 2; i++) {
+                long sum = T[i] + T[size - 1 - i];
+                if (max < sum) {
+                    max = sum;
+                }
             }
         }
+
         System.out.println(max);
     }
 
