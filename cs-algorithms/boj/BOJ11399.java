@@ -1,32 +1,31 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ11399 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] P;
-    static int[] S;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[] P;
 
     public static void main(String[] args) {
+        input();
+        solve();
+    }
+
+    private static void solve() {
+        Arrays.sort(P);
+        int res = 0;
+        for (int i = 0; i < N; i++) {
+            res += (P[i] * (N - i));
+        }
+        System.out.println(res);
+    }
+
+    private static void input() {
         N = SC.nextInt();
         P = new int[N];
         for (int i = 0; i < N; i++) {
             P[i] = SC.nextInt();
         }
-        S = new int[N];
-
-        Arrays.sort(P);
-
-        S[0] = P[0];
-        for (int i = 1; i < N; i++) {
-            S[i] = S[i - 1] + P[i];
-        }
-
-        int sum = 0;
-        for (int i = 0; i < N; i++) {
-            sum += S[i];
-        }
-        System.out.println(sum);
     }
 }
