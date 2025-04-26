@@ -3,6 +3,7 @@ package boj;
 import java.io.*;
 import java.util.StringTokenizer;
 
+
 public class FastReader {
     BufferedReader br;
     StringTokenizer st;
