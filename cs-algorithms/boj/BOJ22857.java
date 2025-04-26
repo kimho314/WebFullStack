@@ -10,6 +10,32 @@ public class BOJ22857 {
     public static void main(String[] args) {
         input();
         solve();
+        // solve2();
+        // solve3();
+    }
+
+    // using dynamic programming
+    private static void solve3() {
+        int[][] dp = new int[N + 1][K + 1];
+
+        for (int i = 1; i <= N; i++) {
+            S[i - 1] %= 2;
+            for (int j = 0; j <= K; j++) {
+                if (S[i - 1] == 0) {
+                    dp[i][j] = dp[i - 1][j] + 1;
+                } else {
+                    if (j != 0) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    }
+                }
+            }
+        }
+
+        int max = 0;
+        for (int i = 1; i <= N; i++) {
+            max = Math.max(max, dp[i][K]);
+        }
+        System.out.println(max);
     }
 
     // using two pointers
