@@ -19,7 +19,7 @@ public class BOJ2422 {
                 if (!C[i][j]) {
                     for (int k = j + 1; k <= N; k++) {
                         if (!C[j][k] && !C[i][k]) {
-                            System.out.println(i + " " + j + " " + k);
+                            // System.out.println(i + " " + j + " " + k);
                             CNT++;
                         }
                     }
