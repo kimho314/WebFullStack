@@ -86,7 +86,7 @@ public class BOJ14940 {
         N = SC.nextInt();
         M = SC.nextInt();
         MAP = new int[N][M];
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < M; i++) {
             for (int j = 0; j < M; j++) {
                 MAP[i][j] = SC.nextInt();
             }
