@@ -1,11 +1,12 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ10815 {
     private static FastReader SC = new FastReader();
     private static int N, M;
-    private static int[] NUMS1, NUMS2;
+    private static int[] CARDS;
+    private static int[] NUMS;
 
     public static void main(String[] args) {
         input();
@@ -13,16 +14,26 @@ public class BOJ10815 {
     }
 
     private static void solve() {
-        Arrays.sort(NUMS1);
+        Arrays.sort(CARDS);
 
         int[] res = new int[M];
         for (int i = 0; i < M; i++) {
-            int idx = binarySearch(NUMS2[i]);
-            if (idx == -1) {
-                res[i] = 0;
-            }
-            else {
+            int l = 0;
+            int r = N - 1;
+            if (CARDS[l] == NUMS[i] || CARDS[r] == NUMS[i]) {
                 res[i] = 1;
+                continue;
+            }
+            while (l <= r) {
+                int mid = (l + r) / 2;
+                if (CARDS[mid] == NUMS[i]) {
+                    res[i] = 1;
+                    break;
+                } else if (CARDS[mid] < NUMS[i]) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
+                }
             }
         }
 
@@ -31,37 +42,16 @@ public class BOJ10815 {
         }
     }
 
-    private static int binarySearch(int target) {
-        int res = -1;
-        int left = 0;
-        int right = N - 1;
-        while (left <= right) {
-            int mid = (left + right) / 2;
-            if (NUMS1[mid] == target) {
-                res = mid;
-                break;
-            }
-            else if (NUMS1[mid] > target) {
-                right = mid - 1;
-            }
-            else {
-                left = mid + 1;
-            }
-        }
-
-        return res;
-    }
-
     private static void input() {
         N = SC.nextInt();
-        NUMS1 = new int[N];
+        CARDS = new int[N];
         for (int i = 0; i < N; i++) {
-            NUMS1[i] = SC.nextInt();
+            CARDS[i] = SC.nextInt();
         }
         M = SC.nextInt();
-        NUMS2 = new int[M];
+        NUMS = new int[M];
         for (int i = 0; i < M; i++) {
-            NUMS2[i] = SC.nextInt();
+            NUMS[i] = SC.nextInt();
         }
     }
 }
