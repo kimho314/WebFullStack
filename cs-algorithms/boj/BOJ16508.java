@@ -54,7 +54,6 @@ public class BOJ16508 {
     private static void recFunc(int k, int prev, int len) {
         if (k == len) {
             String[] split = T.split("");
-            // System.out.println(Arrays.toString(SELECTED));
             for (Book b : SELECTED) {
                 String[] split2 = b.title.split("");
                 for (int i = 0; i < split2.length; i++) {
@@ -82,8 +81,7 @@ public class BOJ16508 {
                 }
                 MIN = Math.min(MIN, sum);
             }
-            // System.out.println(
-            // Arrays.toString(SELECTED) + " " + Arrays.toString(split) + " " + isFound);
+
         } else {
             for (int i = prev + 1; i < N; i++) {
                 SELECTED[k] = BOOKS[i];
