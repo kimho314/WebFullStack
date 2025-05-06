@@ -1,43 +1,61 @@
 package boj;
 
 public class BOJ11728 {
-    static FastReader sc = new FastReader();
-    static int N;
-    static int M;
-    static int[] A, B;
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] A, B;
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        M = sc.nextInt();
-        A = new int[N + 1];
-        B = new int[M + 1];
-        for (int i = 1; i <= N; i++) {
-            A[i] = sc.nextInt();
-        }
-        for (int i = 1; i <= M; i++) {
-            B[i] = sc.nextInt();
-        }
+        input();
+        solve();
+    }
 
-        StringBuilder ans = new StringBuilder();
-        int left = 1, right = 1;
-        while (left <= N && right <= M) {
-            if (A[left] <= B[right]) {
-                ans.append(A[left]).append(" ");
-                left++;
-            }
-            else {
-                ans.append(B[right]).append(" ");
-                right++;
+    private static void solve() {
+        int[] res = new int[N + M];
+
+        int l = 0;
+        int r = 0;
+        int cur = 0;
+        while (l < N && r < M && cur < N + M) {
+            // System.out.println(l + " " + r + " " + cur);
+            if (A[l] <= B[r]) {
+                res[cur++] = A[l];
+                l++;
+
+            } else {
+                res[cur++] = B[r];
+                r++;
             }
         }
 
-        while (left <= N) {
-            ans.append(A[left++]).append(' ');
+        if (l < N) {
+            while (l < N) {
+                res[cur++] = A[l++];
+            }
         }
-        while (right <= M) {
-            ans.append(B[right++]).append(' ');
+        if (r < M) {
+            while (r < M) {
+                res[cur++] = B[r++];
+            }
         }
 
-        System.out.println(ans);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < N + M; i++) {
+            sb.append(res[i]).append(" ");
+        }
+        System.out.println(sb);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        M = SC.nextInt();
+        A = new int[N];
+        for (int i = 0; i < N; i++) {
+            A[i] = SC.nextInt();
+        }
+        B = new int[M];
+        for (int i = 0; i < M; i++) {
+            B[i] = SC.nextInt();
+        }
     }
 }

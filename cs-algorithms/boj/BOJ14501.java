@@ -37,5 +37,6 @@ public class BOJ14501 {
             A[i][0] = t;
             A[i][1] = p;
         }
+
     }
 }
