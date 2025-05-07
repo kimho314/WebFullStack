@@ -1,11 +1,10 @@
 package boj;
 
 public class BOJ19637 {
-    static FastReader SC = new FastReader();
-    static int N, M;
-    static String[] TITLES;
-    static int[] POWERS;
-    static int[] INPUTS;
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static String[] NAMES;
+    private static int[] LEVELS;
 
     public static void main(String[] args) {
         input();
@@ -14,37 +13,39 @@ public class BOJ19637 {
 
     private static void solve() {
         StringBuilder sb = new StringBuilder();
+        while (M > 0) {
+            M--;
+            int in = SC.nextInt();
 
-        for (int i = 0; i < M; i++) {
-            int L = 0;
-            int R = N - 1;
-            while (L <= R) {
-                int mid = (L + R) / 2;
-
-                if (POWERS[mid] < INPUTS[i]) {
-                    L = mid + 1;
-                }
-                else {
-                    R = mid - 1;
+            int l = 0;
+            int r = N - 1;
+            int res = 0;
+            while (l <= r) {
+                int mid = (l + r) / 2;
+                if (LEVELS[mid] >= in) {
+                    r = mid - 1;
+                    res = mid;
+                } else {
+                    l = mid + 1;
                 }
             }
-            sb.append(TITLES[L]).append('\n');
+
+            sb.append(NAMES[res]).append("\n");
         }
+
         System.out.println(sb);
     }
 
     private static void input() {
         N = SC.nextInt();
         M = SC.nextInt();
-        TITLES = new String[N];
-        POWERS = new int[N];
+        NAMES = new String[N];
+        LEVELS = new int[N];
         for (int i = 0; i < N; i++) {
-            TITLES[i] = SC.next();
-            POWERS[i] = SC.nextInt();
-        }
-        INPUTS = new int[M];
-        for (int i = 0; i < M; i++) {
-            INPUTS[i] = SC.nextInt();
+            String s = SC.next();
+            int l = SC.nextInt();
+            NAMES[i] = s;
+            LEVELS[i] = l;
         }
     }
 }
