@@ -1,42 +1,47 @@
 package boj;
 
 public class BOJ20365 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static String[] COLORS;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static char[] CHARS;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        COLORS = new String[N];
-
-        String input = SC.nextLine();
-        char[] arr = input.toCharArray();
-        for (int i = 0; i < N; i++) {
-            COLORS[i] = String.valueOf(arr[i]);
-        }
-
-        int dominant = getDominantColorCnt();
-        int res = dominant + 1;
-
-        System.out.println(res);
+        input();
+        solve();
     }
 
-    private static int getDominantColorCnt() {
-        int cntR = 0;
+    private static void solve() {
         int cntB = 0;
-        String cur = "";
-        for (int i = 0; i < N; i++) {
-            if (!cur.equals(COLORS[i])) {
-                if (COLORS[i].equals("R")) {
+        int cntR = 0;
+        if (CHARS[0] == 'R') {
+            cntR++;
+        } else {
+            cntB++;
+        }
+
+        for (int i = 1; i < N; i++) {
+            if (CHARS[i - 1] != CHARS[i]) {
+                if (CHARS[i] == 'R') {
                     cntR++;
-                }
-                else {
+                } else {
                     cntB++;
                 }
             }
-            cur = COLORS[i];
         }
 
-        return Math.min(cntR, cntB);
+        // System.out.println(cntR + " " + cntB);
+
+        int res = 1;
+        if (cntR >= cntB) {
+            res += cntB;
+        } else {
+            res += cntR;
+        }
+        System.out.println(res);
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        CHARS = SC.nextLine().toCharArray();
     }
 }
