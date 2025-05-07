@@ -1,83 +1,75 @@
 package boj;
 
+import java.util.*;
+
 public class BOJ2503 {
-    static FastReader SC = new FastReader();
-    static int N;
-
-    static class Data {
-        int num;
-        int strikes;
-        int balls;
-
-        public Data(int _num, int _strikes, int _balls) {
-            this.num = _num;
-            this.strikes = _strikes;
-            this.balls = _balls;
-        }
-    }
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[][] IN;
+    private static int CNT = 0;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        Data[] inputs = new Data[N];
-        for (int i = 0; i < N; i++) {
-            int num = SC.nextInt();
-            int strike = SC.nextInt();
-            int ball = SC.nextInt();
+        input();
+        solve();
+    }
 
-            Data data = new Data(num, strike, ball);
-            inputs[i] = data;
-        }
+    private static void solve() {
+        int[] nums = new int[10];
+        Arrays.fill(nums, 1);
+        dfs(0, "", nums);
+        System.out.println(CNT);
+    }
 
-        int cnt = 0;
-        for (int i = 100; i <= 999; i++) {
-            if (!isValidNumber(i)) {
-                continue;
-            }
-
-            boolean matched = true;
-            for (int j = 0; j < N; j++) {
-                Data data = inputs[j];
-                matched = isMatched(i, data);
-//                System.out.println("i = " + i + " data = " + data.num + " matched = " + matched);
-                if (!matched) {
-                    break;
+    private static void dfs(int k, String s, int[] nums) {
+        if (k == 3) {
+            int cnt = 0;
+            for (int i = 0; i < N; i++) {
+                int cnt1 = 0;
+                int cnt2 = 0;
+                String n = String.valueOf(IN[i][0]);
+                for (int j = 0; j < 3; j++) {
+                    int idx = -1;
+                    for (int t = 0; t < 3; t++) {
+                        if (n.charAt(j) == s.charAt(t)) {
+                            idx = t;
+                            break;
+                        }
+                    }
+                    if (idx == -1) {
+                        continue;
+                    }
+                    if (idx == j) {
+                        cnt1++;
+                    } else {
+                        cnt2++;
+                    }
+                }
+                if (cnt1 == IN[i][1] && cnt2 == IN[i][2]) {
+                    cnt++;
                 }
             }
-            if (matched) {
-                cnt++;
+            if (cnt == N) {
+                CNT++;
+            }
+        } else {
+            for (int i = 1; i <= 9; i++) {
+                if (nums[i] == 1) {
+                    nums[i]--;
+                    dfs(k + 1, s + i + "", nums);
+                    nums[i]++;
+                }
+
             }
         }
-        System.out.println(cnt);
     }
 
-    private static boolean isValidNumber(int num) {
-        int figure1 = num / 100;
-        int figure2 = num % 100 / 10;
-        int figure3 = num % 100 % 10;
-
-        return ((figure1 != figure2) && (figure2 != figure3) && (figure1 != figure3)) && (figure1 > 0 && figure2 > 0 && figure3 > 0);
-    }
-
-    private static boolean isMatched(int num, Data test) {
-        char[] tmpNum = String.valueOf(num).toCharArray();
-
-        int strike = 0;
-        int ball = 0;
-        char[] testNum = String.valueOf(test.num).toCharArray();
-        for (int i = 0; i < tmpNum.length; i++) {
-            int index = String.valueOf(num).indexOf(testNum[i]);
-            if (index == -1) {
-                continue;
-            }
-
-            if (index == i) {
-                strike++;
-            }
-            if (index != i) {
-                ball++;
-            }
+    private static void input() {
+        N = SC.nextInt();
+        IN = new int[N][3];
+        for (int i = 0; i < N; i++) {
+            IN[i][0] = SC.nextInt();
+            IN[i][1] = SC.nextInt();
+            IN[i][2] = SC.nextInt();
         }
-
-        return (strike == test.strikes) && (ball == test.balls);
     }
 }
