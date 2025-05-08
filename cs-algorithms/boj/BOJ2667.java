@@ -1,64 +1,69 @@
 package boj;
 
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 
 public class BOJ2667 {
-    static int N;
-    static int GROUP_CNT = 0;
-    static boolean[][] VISITED;
-    static int[][] DIR = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-    static int[][] MAP;
-
-    static ArrayList<Integer> GROUP = new ArrayList<>();
-    static FastReader sc = new FastReader();
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static int[][] MAP;
+    private static boolean[][] VISITED;
+    private static ArrayList<Integer> GROUP;
+    private static int CNT;
+    private static int[][] DIR = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        VISITED = new boolean[N][N];
-        MAP = new int[N][N];
-        for (int i = 0; i < N; i++) {
-            String[] next = sc.next().split("");
-            for (int j = 0; j < N; j++) {
-                MAP[i][j] = Integer.parseInt(next[j]);
-            }
-        }
+        input();
+        solve();
+    }
 
+    private static void solve() {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if (MAP[i][j] == 1 && !VISITED[i][j]) {
+                    CNT = 0;
                     dfs(i, j);
-                    GROUP.add(GROUP_CNT);
-                    GROUP_CNT = 0;
+                    GROUP.add(CNT);
                 }
             }
         }
 
-        GROUP.sort(Comparator.comparingInt(it -> it));
         System.out.println(GROUP.size());
-        GROUP.forEach(System.out::println);
+        GROUP.sort(Comparator.naturalOrder());
+        for (int g : GROUP) {
+            System.out.println(g);
+        }
     }
 
-    public static void dfs(int x, int y) {
-        VISITED[x][y] = true;
-        GROUP_CNT++;
+    private static void dfs(int y, int x) {
+        VISITED[y][x] = true;
+        CNT++;
 
         for (int i = 0; i < 4; i++) {
-            int dx = x + DIR[i][0];
-            int dy = y + DIR[i][1];
+            int dy = y + DIR[i][0];
+            int dx = x + DIR[i][1];
 
-            if (dx < 0 || dy < 0 || dx >= N | dy >= N) {
+            if (dy < 0 || dx < 0 || dy >= N || dx >= N) {
                 continue;
             }
-            if (MAP[dx][dy] == 0) {
+            if (VISITED[dy][dx] || MAP[dy][dx] == 0) {
                 continue;
             }
-            if (VISITED[dx][dy]) {
-                continue;
-            }
-
-            dfs(dx, dy);
+            dfs(dy, dx);
         }
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        MAP = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            String[] split = SC.nextLine().split("");
+            for (int j = 0; j < N; j++) {
+                MAP[i][j] = Integer.parseInt(split[j]);
+            }
+        }
+        VISITED = new boolean[N][N];
+        GROUP = new ArrayList<>();
+        CNT = 0;
     }
 
 }
