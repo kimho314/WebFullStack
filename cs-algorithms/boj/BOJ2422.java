@@ -24,7 +24,7 @@ public class BOJ2422 {
                             || COMBINATION[k][j]) {
                         continue;
                     }
-                    System.out.println(i + " " + j + " " + k);
+                    // System.out.println(i + " " + j + " " + k);
                     cnt++;
                 }
             }
