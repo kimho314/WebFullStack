@@ -1,67 +1,85 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ11663 {
-    static FastReader SC = new FastReader();
-    static int N, M;
-    static long[] POS;
-    static StringBuilder SB = new StringBuilder();
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] A;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        M = SC.nextInt();
-        POS = new long[N];
-        for (int i = 0; i < N; i++) {
-            POS[i] = SC.nextLong();
-        }
-
-        Arrays.sort(POS);
-        for (int i = 0; i < M; i++) {
-            solve();
-        }
-        System.out.println(SB.toString());
+        input();
+        solve();
     }
 
     private static void solve() {
-        long min = SC.nextLong();
-        long max = SC.nextLong();
+        StringBuilder sb = new StringBuilder();
+        Arrays.sort(A);
+        for (int i = 0; i < M; i++) {
+            int start = SC.nextInt();
+            int end = SC.nextInt();
 
-        int lowerBound = getLowerBound(min);
-        int upperBound = getUpperBound(max);
+            int lower = searchUpper(start);
+            int upper = searchLower(end);
 
-        int cnt = upperBound - lowerBound;
-
-        SB.append(cnt).append('\n');
+            int cnt = 0;
+            if (lower <= upper) {
+                cnt = upper - lower + 1;
+            }
+            if (start > A[N - 1]) {
+                cnt = 0;
+            }
+            if (end < A[0]) {
+                cnt = 0;
+            }
+            // System.out.println(start + " " + end + " " + lower + " " + upper + " " + cnt);
+            sb.append(cnt).append("\n");
+        }
+        System.out.println(sb);
     }
 
-    private static int getUpperBound(long max) {
+    private static int searchUpper(int target) {
         int l = 0;
         int r = N - 1;
+        int res = 0;
+
         while (l <= r) {
-            int mid = (r + l) / 2;
-            if (POS[mid] > max) {
+            int mid = (l + r) / 2;
+            if (A[mid] >= target) {
+                res = mid;
                 r = mid - 1;
-            }
-            else {
+            } else {
                 l = mid + 1;
             }
         }
-        return r + 1;
+
+        return res;
     }
 
-    private static int getLowerBound(long min) {
+    private static int searchLower(int target) {
         int l = 0;
         int r = N - 1;
+        int res = N - 1;
+
         while (l <= r) {
-            int mid = (r + l) / 2;
-            if (POS[mid] < min) {
+            int mid = (l + r) / 2;
+            if (A[mid] <= target) {
+                res = mid;
                 l = mid + 1;
-            }
-            else {
+            } else {
                 r = mid - 1;
             }
         }
-        return l;
+
+        return res;
+    }
+
+    private static void input() {
+        N = SC.nextInt();
+        M = SC.nextInt();
+        A = new int[N];
+        for (int i = 0; i < N; i++) {
+            A[i] = SC.nextInt();
+        }
     }
 }
