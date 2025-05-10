@@ -1,31 +1,31 @@
 package boj;
 
+import java.util.*;
+
 public class BOJ17626 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] DP;
+    private static FastReader SC = new FastReader();
+    private static int N;
 
     public static void main(String[] args) {
         input();
         solve();
     }
 
-    private static void solve() {
-        DP[1] = 1;
-
-        for (int i = 2; i <= 50_000; i++) {
-            int min = Integer.MAX_VALUE;
-            for (int j = 1; j * j <= i; j++) {
-                min = Math.min(min, DP[i - j * j]);
-            }
-            DP[i] = min + 1;
-        }
-
-        System.out.println(DP[N]);
-    }
-
     private static void input() {
         N = SC.nextInt();
-        DP = new int[50_001];
+    }
+
+    private static void solve() {
+        int[] dp = new int[50_001];
+        Arrays.fill(dp, Integer.MAX_VALUE);
+        dp[0] = 0;
+        dp[1] = 1;
+        for (int i = 2; i <= 50_000; i++) {
+            for (int j = 1; j * j <= i; j++) {
+                dp[i] = Math.min(dp[i], dp[i - (j * j)] + 1);
+            }
+        }
+
+        System.out.println(dp[N]);
     }
 }
