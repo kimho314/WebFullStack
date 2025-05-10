@@ -1,38 +1,47 @@
 package boj;
 
+import java.util.*;
+
 public class BOJ15649 {
-    static StringBuilder sb = new StringBuilder();
-    static FastReader sc = new FastReader();
-    static int N;
-    static int M;
-    static int[] selected;
-    static int[] used;
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] SELECTED;
+    private static boolean[] USED;
+    private static StringBuilder SB = new StringBuilder();
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        M = sc.nextInt();
-        selected = new int[M + 1];
-        used = new int[N + 1];
-
-        rec_func(1);
-        System.out.println(sb);
+        input();
+        solve();
     }
 
-    static void rec_func(int k) {
-        if (k == M + 1) {
-            for (int i = 1; i <= M; i++) {
-                sb.append(selected[i]).append(" ");
+    private static void input() {
+        N = SC.nextInt();
+        M = SC.nextInt();
+        SELECTED = new int[M];
+        USED = new boolean[9];
+    }
+
+    private static void solve() {
+        recFunc(0);
+        System.out.println(SB);
+    }
+
+    private static void recFunc(int k) {
+        if (k == M) {
+            StringBuilder sb = new StringBuilder();
+            for (int elem : SELECTED) {
+                sb.append(elem).append(" ");
             }
-            sb.append("\n");
-        }
-        else {
-            for (int cand = 1; cand <= N; cand++) {
-                if (used[cand] == 0) {
-                    selected[k] = cand;
-                    used[cand] = 1;
-                    rec_func(k + 1);
-                    selected[k] = 0;
-                    used[cand] = 0;
+            SB.append(sb).append("\n");
+
+        } else {
+            for (int i = 1; i <= N; i++) {
+                if (!USED[i]) {
+                    USED[i] = true;
+                    SELECTED[k] = i;
+                    recFunc(k + 1);
+                    USED[i] = false;
+                    SELECTED[k] = 0;
                 }
             }
         }
