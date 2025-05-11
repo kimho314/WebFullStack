@@ -1,32 +1,41 @@
 package boj;
 
+import java.util.*;
+
 public class BOJ15651 {
-    static StringBuilder sb = new StringBuilder();
-    static FastReader sc = new FastReader();
-    static int N;
-    static int M;
-    static int[] selected;
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] SELECTED;
+    private static StringBuilder SB = new StringBuilder();
 
     public static void main(String[] args) {
-        N = sc.nextInt();
-        M = sc.nextInt();
-        selected = new int[M + 1];
-        rec_fun(1);
-        System.out.println(sb);
+        input();
+        solve();
     }
 
-    static void rec_fun(int k) {
-        if (k == M + 1) {
-            for (int i = 1; i <= M; i++) {
-                sb.append(selected[i]).append(" ");
+    private static void input() {
+        N = SC.nextInt();
+        M = SC.nextInt();
+        SELECTED = new int[M];
+    }
+
+    private static void solve() {
+        recFunc(0);
+        System.out.println(SB);
+    }
+
+    private static void recFunc(int k) {
+        if (k == M) {
+            for (int n : SELECTED) {
+                SB.append(n).append(" ");
             }
-            sb.append("\n");
-        }
-        else {
-            for (int cand = 1; cand <= N; cand++) {
-                selected[k] = cand;
-                rec_fun(k + 1);
-                selected[k] = 0;
+            SB.append("\n");
+
+        } else {
+            for (int i = 1; i <= N; i++) {
+                SELECTED[k] = i;
+                recFunc(k + 1);
+                SELECTED[k] = 0;
             }
         }
     }
