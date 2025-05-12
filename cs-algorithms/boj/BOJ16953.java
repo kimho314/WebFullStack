@@ -10,6 +10,30 @@ public class BOJ16953 {
     public static void main(String[] args) {
         input();
         solve();
+        // solve2();
+    }
+
+    private static void solve2() {
+        int answer = 1;
+        int current = B;
+        while (current != A) {
+            if (current % 10 == 1) {
+                current /= 10;
+            } else if (current % 2 == 0) {
+                current /= 2;
+            } else {
+                answer = -1;
+                break;
+            }
+
+            if (current < A) {
+                answer = -1;
+                break;
+            }
+            answer++;
+        }
+
+        System.out.println(answer);
     }
 
     private static void input() {
