@@ -1,24 +1,37 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ20115 {
-    static FastReader SC = new FastReader();
-    static int N;
-    static int[] X;
+    private static FastReader SC = new FastReader();
+    private static int N;
+    private static double[] A;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        X = new int[N];
-        for (int i = 0; i < N; i++) {
-            X[i] = SC.nextInt();
-        }
-        Arrays.sort(X);
+        input();
+        solve();
+    }
 
-        double pick = X[X.length - 1];
-        for (int i = 0; i < N - 1; i++) {
-            pick += X[i] / 2.0;
+    private static void input() {
+        N = SC.nextInt();
+        A = new double[N];
+        for (int i = 0; i < N; i++) {
+            A[i] = SC.nextDouble();
         }
-        System.out.println(pick);
+    }
+
+    private static void solve() {
+        Arrays.sort(A);
+
+        double sum = A[N - 1];
+        for (int i = N - 2; i >= 0; i--) {
+            if (sum >= A[i]) {
+                sum = sum + (A[i] / 2.0);
+            } else {
+                sum = A[i] + (sum / 2.0);
+            }
+            // System.out.println(i + " " + sum);
+        }
+        System.out.println(sum);
     }
 }
