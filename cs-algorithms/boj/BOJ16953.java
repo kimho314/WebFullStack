@@ -1,44 +1,55 @@
 package boj;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 public class BOJ16953 {
-    static FastReader SC = new FastReader();
-    static long A, B;
-    static long RES = -1;
+    private static FastReader SC = new FastReader();
+    private static int A, B;
+
 
     public static void main(String[] args) {
-        A = SC.nextInt();
-        B = SC.nextInt();
-
-        bfs();
-        System.out.println(RES);
+        input();
+        solve();
     }
 
-    private static void bfs() {
-        Queue<Long> queue = new LinkedList<>();
-        queue.add(A);
-        queue.add(1L);
+    private static void input() {
+        A = SC.nextInt();
+        B = SC.nextInt();
+    }
 
-        while (!queue.isEmpty()) {
-            long n = queue.poll();
-            long cnt = queue.poll();
+    private static void solve() {
+        long res = bfs(A);
+        System.out.println(res);
+    }
+
+    private static long bfs(int start) {
+        Queue<Long> q = new LinkedList<>();
+        q.add((long) start);
+        q.add(1L);
+
+        while (!q.isEmpty()) {
+            long n = q.poll();
+            long d = q.poll();
+            // System.out.println(n + " " + d);
             if (n == B) {
-                RES = cnt;
-                break;
+                return d;
             }
 
             long dn = n * 2;
-            if (dn <= B) {
-                queue.add(dn);
-                queue.add(cnt + 1);
+            long dd = d + 1;
+            if (dn > 0 && dn <= B) {
+                q.add(dn);
+                q.add(dd);
+
             }
-            dn = n * 10 + 1;
-            if (dn <= B) {
-                queue.add(dn);
-                queue.add(cnt + 1);
+            dn = (n * 10) + 1;
+            dd = d + 1;
+            if (dn > 0 && dn <= B) {
+                q.add(dn);
+                q.add(dd);
             }
         }
+
+        return -1;
     }
 }
