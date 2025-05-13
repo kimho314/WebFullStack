@@ -1,45 +1,50 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ1182 {
-    static FastReader SC = new FastReader();
-    static int N, S;
-    static int[] A;
-    static int[] SELECTED;
-    static int CNT = 0;
-
+    private static FastReader SC = new FastReader();
+    private static int N, S;
+    private static int[] NUMS, SELECTED;
+    private static int CNT;
 
     public static void main(String[] args) {
+        input();
+        solve();
+    }
+
+    private static void input() {
         N = SC.nextInt();
         S = SC.nextInt();
-        A = new int[N + 1];
-        SELECTED = new int[N + 1];
-        Arrays.fill(SELECTED, Integer.MIN_VALUE);
+        NUMS = new int[N];
+        for (int i = 0; i < N; i++) {
+            NUMS[i] = SC.nextInt();
+        }
+        CNT = 0;
+    }
+
+    private static void solve() {
         for (int i = 1; i <= N; i++) {
-            A[i] = SC.nextInt();
+            SELECTED = new int[i];
+            recFunc(-1, 0, i);
         }
 
-        Arrays.sort(A, 1, A.length);
-        for (int i = 1; i <= N; i++) {
-            recFunc(1, 0, i);
-        }
         System.out.println(CNT);
     }
 
-    private static void recFunc(int k, int prevIdx, int maxLen) {
-        if (k == maxLen + 1) {
-            int[] copy = Arrays.copyOfRange(SELECTED, 1, maxLen + 1);
-            System.out.println(Arrays.toString(copy));
-            int sum = Arrays.stream(copy).sum();
+    private static void recFunc(int prev, int k, int len) {
+        if (k == len) {
+            int sum = 0;
+            for (int elem : SELECTED) {
+                sum += elem;
+            }
             if (sum == S) {
                 CNT++;
             }
-        }
-        else {
-            for (int cand = prevIdx + 1; cand <= N; cand++) {
-                SELECTED[k] = A[cand];
-                recFunc(k + 1, cand, maxLen);
+        } else {
+            for (int i = prev + 1; i < N; i++) {
+                SELECTED[k] = NUMS[i];
+                recFunc(i, k + 1, len);
                 SELECTED[k] = Integer.MIN_VALUE;
             }
         }
