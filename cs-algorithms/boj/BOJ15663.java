@@ -1,50 +1,59 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ15663 {
-    static FastReader SC = new FastReader();
-    static StringBuilder SB = new StringBuilder();
-    static int N, M;
-    static int[] SELECTED, NUMS, USED;
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] SELECTED;
+    private static int[] NUMS;
+    private static boolean[] USED;
+    private static StringBuilder SB = new StringBuilder();
 
     public static void main(String[] args) {
+        input();
+        solve();
+    }
+
+    private static void input() {
         N = SC.nextInt();
         M = SC.nextInt();
-        SELECTED = new int[M + 1];
-        NUMS = new int[N + 1];
-        USED = new int[N + 1];
-        for (int i = 1; i <= N; i++) {
+        SELECTED = new int[M];
+        NUMS = new int[N];
+        for (int i = 0; i < N; i++) {
             NUMS[i] = SC.nextInt();
         }
-        Arrays.sort(NUMS, 1, N + 1);
-        recFunc(1);
+        USED = new boolean[N];
+    }
+
+    private static void solve() {
+        Arrays.sort(NUMS);
+
+        recFunc(0);
+
         System.out.println(SB);
     }
 
-    private static void recFunc(int num) {
-        if (num == M + 1) {
-            for (int i = 1; i <= M; i++) {
-                SB.append(SELECTED[i]).append(' ');
+    private static void recFunc(int k) {
+        if (k == M) {
+            // System.out.println(Arrays.toString(SELECTED));
+            for (int elem : SELECTED) {
+                SB.append(elem).append(" ");
             }
-            SB.append('\n');
-        }
-        else {
-            int lastCand = 0;
-            for (int cand = 1; cand <= N; cand++) {
-                if (USED[cand] == 1) {
-                    continue;
-                }
-                if (NUMS[cand] == lastCand) {
-                    continue;
-                }
+            SB.append("\n");
+        } else {
+            int prev = 0;
+            for (int i = 0; i < N; i++) {
+                if (prev != NUMS[i] && !USED[i]) {
+                    SELECTED[k] = NUMS[i];
+                    USED[i] = true;
+                    prev = NUMS[i];
 
-                lastCand = NUMS[cand];
-                SELECTED[num] = NUMS[cand];
-                USED[cand] = 1;
-                recFunc(num + 1);
-                SELECTED[num] = 0;
-                USED[cand] = 0;
+                    recFunc(k + 1);
+
+                    SELECTED[k] = 0;
+                    USED[i] = false;
+                }
             }
         }
     }
