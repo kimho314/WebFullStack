@@ -1,45 +1,52 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ15665 {
-    static FastReader SC = new FastReader();
-    static int N, M;
-    static int[] A, SELECTED;
-    static StringBuilder SB = new StringBuilder();
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] NUMS;
+    private static int[] SELECTED;
+    private static StringBuilder SB = new StringBuilder();
 
     public static void main(String[] args) {
+        input();
+        solve();
+    }
+
+    private static void input() {
         N = SC.nextInt();
         M = SC.nextInt();
-        A = new int[N + 1];
-        SELECTED = new int[M + 1];
-        for (int i = 1; i <= N; i++) {
-            A[i] = SC.nextInt();
+        NUMS = new int[N];
+        for (int i = 0; i < N; i++) {
+            NUMS[i] = SC.nextInt();
         }
-        Arrays.sort(A);
+        SELECTED = new int[M];
+    }
 
-        recFunc(1);
+    private static void solve() {
+        Arrays.sort(NUMS);
+
+        recFunc(0);
+
         System.out.println(SB);
     }
 
     private static void recFunc(int k) {
-        if (k == M + 1) {
-            for (int i = 1; i <= M; i++) {
-                SB.append(SELECTED[i]).append(' ');
+        if (k == M) {
+            for (int elem : SELECTED) {
+                SB.append(elem).append(" ");
             }
-            SB.append('\n');
-        }
-        else {
-            int num = 0;
-            for (int i = 1; i <= N; i++) {
-                if (num == A[i]) {
-                    continue;
+            SB.append("\n");
+        } else {
+            int prev = 0;
+            for (int i = 0; i < N; i++) {
+                if (prev != NUMS[i]) {
+                    prev = NUMS[i];
+                    SELECTED[k] = NUMS[i];
+                    recFunc(k + 1);
+                    SELECTED[k] = 0;
                 }
-
-                num = A[i];
-                SELECTED[k] = A[i];
-                recFunc(k + 1);
-                SELECTED[k] = 0;
             }
         }
     }
