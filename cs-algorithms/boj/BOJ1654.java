@@ -1,44 +1,49 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ1654 {
-    static FastReader SC = new FastReader();
-    static int K, N;
-    static int[] WIRES;
+    private static FastReader SC = new FastReader();
+    private static int K, N;
+    private static int[] CABLES;
 
     public static void main(String[] args) {
+        input();
+        solve();
+    }
+
+    private static void input() {
         K = SC.nextInt();
         N = SC.nextInt();
-        WIRES = new int[K];
+        CABLES = new int[K];
         for (int i = 0; i < K; i++) {
-            WIRES[i] = SC.nextInt();
+            CABLES[i] = SC.nextInt();
         }
-        Arrays.sort(WIRES);
 
-        long l = 1;
-        long r = Integer.MAX_VALUE;
-        long res = 0;
+    }
+
+    private static void solve() {
+        long max = Long.MIN_VALUE;
+        long l = 0;
+        long r = (long) Integer.MAX_VALUE;
         while (l <= r) {
-            long mid = (r + l) / 2;
-            if (determination(mid)) {
+            long mid = (l + r) / 2;
+            if (check(mid)) {
+                max = Math.max(max, mid);
                 l = mid + 1;
-                res = mid;
-            }
-            else {
+            } else {
                 r = mid - 1;
             }
         }
 
-        System.out.println(res);
+        System.out.println(max);
     }
 
-    private static boolean determination(long mid) {
-        long cnt = 0;
+    private static boolean check(long n) {
+        int cnt = 0;
         for (int i = 0; i < K; i++) {
-            cnt += WIRES[i] / mid;
+            cnt += CABLES[i] / n;
         }
-
         return cnt >= N;
     }
 }
