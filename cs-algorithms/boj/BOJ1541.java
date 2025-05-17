@@ -1,29 +1,35 @@
 package boj;
 
+import java.util.*;
+
 public class BOJ1541 {
-    static FastReader SC = new FastReader();
+    private static FastReader SC = new FastReader();
+    private static String STR;
 
     public static void main(String[] args) {
-        int sum = Integer.MAX_VALUE;
-        String[] subtraction = SC.nextLine().split("-");
+        input();
+        solve();
+    }
 
-        for (int i = 0; i < subtraction.length; i++) {
-            int tmp = 0;
+    private static void input() {
+        STR = SC.nextLine();
+    }
 
-            String[] addition = subtraction[i].split("\\+");
-
-            for (int j = 0; j < addition.length; j++) {
-                tmp += Integer.parseInt(addition[j]);
+    private static void solve() {
+        String[] split = STR.split("-");
+        int res = 0;
+        for (int i = 0; i < split.length; i++) {
+            int sum = 0;
+            for (String s : split[i].split("\\+")) {
+                sum += Integer.parseInt(s);
             }
 
-            if (sum == Integer.MAX_VALUE) {
-                sum = tmp;
-            }
-            else {
-                sum -= tmp;
+            if (i == 0) {
+                res = sum;
+            } else {
+                res -= sum;
             }
         }
-
-        System.out.println(sum);
+        System.out.println(res);
     }
 }
