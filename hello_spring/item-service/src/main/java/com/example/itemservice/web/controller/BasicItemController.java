@@ -23,7 +23,7 @@ public class BasicItemController {
         itemRepository.save(new Item("testB", 20000, 20));
     }
 
-    @GetMapping("/")
+    @GetMapping
     public String items(Model model) {
         List<Item> items =
             itemRepository.findAll();
