@@ -4,7 +4,7 @@ import java.util.*;
 
 public class BOJ2504 {
     private static FastReader SC = new FastReader();
-    private static char[] STR;
+    private static char[] ARR;
 
     public static void main(String[] args) {
         input();
@@ -12,47 +12,50 @@ public class BOJ2504 {
     }
 
     private static void input() {
-        STR = SC.nextLine().toCharArray();
+        ARR = SC.nextLine().toCharArray();
     }
 
     private static void solve() {
-        ArrayDeque<Character> dq = new ArrayDeque<>();
-
-        int result = 0;
+        int res = 0;
         int value = 1;
+        ArrayDeque<Character> s = new ArrayDeque<>();
 
-        for (int i = 0; i < STR.length; i++) {
-            if (STR[i] == '(') {
-                dq.addLast(STR[i]);
+        for (int i = 0; i < ARR.length; i++) {
+            if (ARR[i] == '(') {
                 value *= 2;
-            } else if (STR[i] == '[') {
-                dq.addLast(STR[i]);
+                s.addLast(ARR[i]);
+            } else if (ARR[i] == '[') {
                 value *= 3;
-            } else if (STR[i] == ')') {
-                if (dq.isEmpty() || dq.peekLast() != '(') {
-                    result = 0;
+                s.addLast(ARR[i]);
+            } else if (ARR[i] == ')') {
+                if (s.isEmpty() || s.peekLast() != '(') {
+                    res = 0;
                     break;
-                } else if (STR[i - 1] == '(') {
-                    result += value;
                 }
-                dq.pollLast();
+                if (ARR[i - 1] == '(') {
+                    res += value;
+                }
                 value /= 2;
-            } else if (STR[i] == ']') {
-                if (dq.isEmpty() || dq.peekLast() != '[') {
-                    result = 0;
+                s.pollLast();
+
+            } else if (ARR[i] == ']') {
+                if (s.isEmpty() || s.peekLast() != '[') {
+                    res = 0;
                     break;
-                } else if (STR[i - 1] == '[') {
-                    result += value;
                 }
-                dq.pollLast();
+                if (ARR[i - 1] == '[') {
+                    res += value;
+                }
                 value /= 3;
+                s.pollLast();
             }
+            // System.out.println(ARR[i] + " " + res + " " + value);
         }
 
-        if (!dq.isEmpty()) {
+        if (!s.isEmpty()) {
             System.out.println(0);
         } else {
-            System.out.println(result);
+            System.out.println(res);
         }
     }
 }
