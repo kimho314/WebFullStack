@@ -1,53 +1,58 @@
 package boj;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class BOJ2512 {
-    static int N, M;
-    static int[] NUMS;
-    static FastReader SC = new FastReader();
+    private static FastReader SC = new FastReader();
+    private static int N, M;
+    private static int[] PRICE;
 
     public static void main(String[] args) {
-        N = SC.nextInt();
-        NUMS = new int[N];
-        for (int i = 0; i < N; i++) {
-            NUMS[i] = SC.nextInt();
-        }
-        Arrays.sort(NUMS);
-        M = SC.nextInt();
-
-        int r = 0;
-        int l = 0;
-        for (int i = 0; i < N; i++) {
-            r = Math.max(r, NUMS[i]);
-        }
-        int result = search(l, r);
-        System.out.println(result);
+        input();
+        solve();
     }
 
-    private static int search(int l, int r) {
+    private static void input() {
+        N = SC.nextInt();
+        PRICE = new int[N];
+        for (int i = 0; i < N; i++) {
+            PRICE[i] = SC.nextInt();
+        }
+        M = SC.nextInt();
+    }
+
+    private static void solve() {
         int res = 0;
+        int l = 1;
+        int r = PRICE[0];
+        for (int i = 1; i < N; i++) {
+            if (r < PRICE[i]) {
+                r = PRICE[i];
+            }
+        }
+
         while (l <= r) {
             int mid = (l + r) / 2;
-            if (determination(mid)) {
+            if (determin(mid)) {
                 l = mid + 1;
                 res = mid;
-            }
-            else {
+            } else {
                 r = mid - 1;
             }
         }
 
-        return res;
+        System.out.println(res);
     }
 
-    private static boolean determination(int mid) {
+    private static boolean determin(int limit) {
         int sum = 0;
         for (int i = 0; i < N; i++) {
-            int min = Math.min(NUMS[i], mid);
-            sum += min;
+            if (limit <= PRICE[i]) {
+                sum += limit;
+            } else {
+                sum += PRICE[i];
+            }
         }
-
         return sum <= M;
     }
 }
