@@ -5,8 +5,7 @@ import java.util.*;
 public class BOJ1991 {
     private static FastReader SC = new FastReader();
     private static int N;
-    private static boolean[] VISITED;
-    private static ArrayList<Character>[] ADJ;
+    private static char[][] MAP;
     private static StringBuilder SB = new StringBuilder();
 
     public static void main(String[] args) {
@@ -16,63 +15,60 @@ public class BOJ1991 {
 
     private static void input() {
         N = SC.nextInt();
-        VISITED = new boolean[N];
-        ADJ = new ArrayList[N];
+        MAP = new char['Z' - 'A' + 1][2];
         for (int i = 0; i < N; i++) {
-            ADJ[i] = new ArrayList<>();
-        }
-        for (int i = 0; i < N; i++) {
-            char n = SC.next().charAt(0);
-            char l = SC.next().charAt(0);
-            char r = SC.next().charAt(0);
-            ADJ[n - 'A'].add(l);
-            ADJ[n - 'A'].add(r);
+            char root = SC.next().charAt(0);
+            char left = SC.next().charAt(0);
+            char right = SC.next().charAt(0);
+            MAP[root - 'A'][0] = left;
+            MAP[root - 'A'][1] = right;
         }
     }
 
     private static void solve() {
-        preOrder('A' - 'A');
+        preOrder('A');
         SB.append('\n');
-
-        inOrder('A' - 'A');
+        inOrder('A');
         SB.append('\n');
-
-        postOrder('A' - 'A');
-        SB.append('\n');
+        postOrder('A');
 
         System.out.println(SB);
     }
 
-    private static void inOrder(int n) {
-        if ((char) (n + 'A') == '.') {
+    private static void postOrder(char ch) {
+        if (ch == '.') {
             return;
         }
-        inOrder(ADJ[n].get(0) - 'A');
-        SB.append((char) (n + 'A'));
-        inOrder(ADJ[n].get(1) - 'A');
+        int idx = ch - 'A';
+        int l = MAP[idx][0];
+        int r = MAP[idx][1];
+        postOrder((char) l);
+        postOrder((char) r);
+        SB.append(ch);
     }
 
-    private static void preOrder(int n) {
-        if ((char) (n + 'A') == '.') {
+    private static void inOrder(char ch) {
+        if (ch == '.') {
             return;
         }
-        if (!VISITED[n]) {
-            SB.append((char) (n + 'A'));
-        }
-        VISITED[n] = true;
-
-        for (char elem : ADJ[n]) {
-            preOrder(elem - 'A');
-        }
+        int idx = ch - 'A';
+        int l = MAP[idx][0];
+        int r = MAP[idx][1];
+        inOrder((char) l);
+        SB.append(ch);
+        inOrder((char) r);
     }
 
-    private static void postOrder(int n) {
-        if ((char) (n + 'A') == '.') {
+    private static void preOrder(char ch) {
+        if (ch == '.') {
             return;
         }
-        for (char elem : ADJ[n]) {
-            postOrder(elem - 'A');
-        }
-        SB.append((char) (n + 'A'));
+        SB.append(ch);
+        int idx = ch - 'A';
+        // System.out.println(ch + " " + idx);
+        int l = MAP[idx][0];
+        int r = MAP[idx][1];
+        preOrder((char) (l));
+        preOrder((char) (r));
     }
 }
