@@ -2,23 +2,27 @@ package boj;
 
 public class BOJ2581 {
     private static FastReader SC = new FastReader();
-    private static int M, N;
+    private static int N, M;
 
     public static void main(String[] args) {
         input();
         solve();
     }
 
-    // 1 ... 10
-    // 2,3,5,7
-    // 17
+    private static void input() {
+        M = SC.nextInt();
+        N = SC.nextInt();
+    }
+
     private static void solve() {
-        int min = Integer.MAX_VALUE;
         int sum = 0;
+        int min = Integer.MAX_VALUE;
+
         for (int i = M; i <= N; i++) {
             if (isPrime(i)) {
-                min = Math.min(min, i);
+                // System.out.println(i);
                 sum += i;
+                min = Math.min(min, i);
             }
         }
 
@@ -28,26 +32,18 @@ public class BOJ2581 {
             System.out.println(sum);
             System.out.println(min);
         }
+
     }
 
     private static boolean isPrime(int num) {
         if (num == 1) {
             return false;
         }
-
-        boolean isPrime = true;
-        for (int i = 2; i <= (int) Math.sqrt(num); i++) {
-            if (num % i == 0 || num % (num / i) == 0) {
-                isPrime = false;
-                break;
+        for (int i = 2; i <= num / 2; i++) {
+            if (num % i == 0) {
+                return false;
             }
         }
-
-        return isPrime;
-    }
-
-    private static void input() {
-        M = SC.nextInt();
-        N = SC.nextInt();
+        return true;
     }
 }
