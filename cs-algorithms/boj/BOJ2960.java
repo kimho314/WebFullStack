@@ -21,23 +21,16 @@ public class BOJ2960 {
         int cnt = 0;
         int res = 0;
         for (int i = 2; i <= N; i++) {
-            if (!nums[i] && isPrime(i)) {
-                nums[i] = true;
-                cnt++;
-                // System.out.println(i + " " + cnt);
-                if (cnt == K) {
-                    res = i;
+            for (int j = i; j <= N; j += i) {
+                if (nums[j]) {
+                    continue;
                 }
-                for (int j = 2; j * i <= N; j++) {
-                    if (nums[i * j]) {
-                        continue;
-                    }
-                    nums[i * j] = true;
-                    cnt++;
-                    // System.out.println(i * j + " " + cnt);
-                    if (cnt == K) {
-                        res = i * j;
-                    }
+
+                nums[j] = true;
+                cnt++;
+                if (cnt == K) {
+                    res = j;
+                    break;
                 }
             }
         }
@@ -45,13 +38,4 @@ public class BOJ2960 {
         System.out.println(res);
     }
 
-    private static boolean isPrime(int num) {
-        for (int i = 2; i <= num / 2; i++) {
-            if (num % i == 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
