@@ -13,20 +13,21 @@ public class BOJ20922 {
     private static void solve() {
         int[] cnt = new int[100_001];
         int res = 0;
-        int start = 0;
-        int end = 0;
+        int l = 0;
+        int r = 0;
 
-        while (end < N) {
-            while (end < N && cnt[A[end]] + 1 <= K) {
-                cnt[A[end]]++;
-                end++;
+        while (r < N) {
+            while (r < N && cnt[A[r]] + 1 <= K) {
+                cnt[A[r]]++;
+                r++;
             }
 
-            int len = end - start;
+            int len = r - l;
             res = Math.max(res, len);
-            cnt[A[start]]--;
-            start++;
+            cnt[A[l]]--;
+            l++;
         }
+
 
         System.out.println(res);
     }
