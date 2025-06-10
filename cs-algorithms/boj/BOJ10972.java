@@ -3,7 +3,7 @@ package boj;
 public class BOJ10972 {
     private static FastReader SC = new FastReader();
     private static int N;
-    private static int[] NUMS;
+    private static int[] A;
 
     public static void main(String[] args) {
         input();
@@ -12,53 +12,57 @@ public class BOJ10972 {
 
     private static void input() {
         N = SC.nextInt();
-        NUMS = new int[N];
+        A = new int[N];
         for (int i = 0; i < N; i++) {
-            NUMS[i] = SC.nextInt();
+            A[i] = SC.nextInt();
         }
     }
 
     private static void solve() {
-        StringBuilder sb = new StringBuilder();
         if (nextPerm()) {
-            for (int elem : NUMS) {
-                sb.append(elem).append(" ");
+            for (int i = 0; i < N; i++) {
+                System.out.print(A[i] + " ");
             }
         } else {
-            sb.append(-1);
+            System.out.println(-1);
         }
-
-        System.out.println(sb);
     }
 
     private static boolean nextPerm() {
-        int i = N - 1;
-        while (i > 0 && NUMS[i - 1] > NUMS[i]) {
-            i--;
+        int idx = N - 1;
+        while (idx > 0) {
+            if (A[idx] > A[idx - 1]) {
+                break;
+            }
+            idx--;
         }
-        if (i == 0) {
+
+        if (idx == 0) {
             return false;
         }
 
-        int j = N - 1;
-        while (NUMS[i - 1] >= NUMS[j]) {
-            j--;
+        int cmp = idx - 1;
+        int idx2 = N - 1;
+        while (A[cmp] >= A[idx2]) {
+            idx2--;
         }
-        swap(i - 1, j);
+        // System.out.println(idx + " " + cmp + " " + idx2);
+        swap(cmp, idx2);
 
-        j = N - 1;
-        while (i < j) {
-            swap(i, j);
-            i++;
-            j--;
+        int r = N - 1;
+        int l = idx;
+        while (l < r) {
+            swap(l, r);
+            l++;
+            r--;
         }
 
         return true;
     }
 
-    private static void swap(int idx1, int idx2) {
-        int tmp = NUMS[idx1];
-        NUMS[idx1] = NUMS[idx2];
-        NUMS[idx2] = tmp;
+    private static void swap(int n1, int n2) {
+        int tmp = A[n1];
+        A[n1] = A[n2];
+        A[n2] = tmp;
     }
 }
