@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="837277ee-f73f-4ce1-b5da-578c721a1b1f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/python-example.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/python-example.iml" afterDir="false" />
-    </list>
+    <list default="true" id="837277ee-f73f-4ce1-b5da-578c721a1b1f" name="Changes" comment="[feat]: add spellcheck module with tests and update IDE configurations" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,11 +53,24 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1750610987200</updated>
-      <workItem from="1750610988707" duration="859000" />
+      <workItem from="1750610988707" duration="1760000" />
     </task>
+    <task id="LOCAL-00001" summary="[feat]: add spellcheck module with tests and update IDE configurations">
+      <option name="closed" value="true" />
+      <created>1750612875420</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1750612875420</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="[feat]: add spellcheck module with tests and update IDE configurations" />
+    <option name="LAST_COMMIT_MESSAGE" value="[feat]: add spellcheck module with tests and update IDE configurations" />
   </component>
 </project>
