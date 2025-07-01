@@ -1,6 +1,5 @@
 package leetcode;
 
-import java.math.*;
 import java.util.*;
 
 public class LCD66 {
