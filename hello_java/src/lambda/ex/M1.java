@@ -1,6 +1,6 @@
 package lambda.ex;
 
-public class M1After {
+public class M1 {
     interface M1Interface {
         void run();
     }

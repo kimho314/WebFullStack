@@ -3,7 +3,7 @@ package lambda.ex;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class M3After {
+public class M3 {
     public static void measureTime(Consumer<Integer> consumer, int n) {
         long start = System.currentTimeMillis();
         consumer.accept(n);
