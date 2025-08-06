@@ -7,6 +7,6 @@
 5. Collections [X]
 6. Concurrency [X]
 7. File IO [X]
-8. Socket IO []
+8. Socket IO [X]
 9. reflection [X]
 10. Streams []
