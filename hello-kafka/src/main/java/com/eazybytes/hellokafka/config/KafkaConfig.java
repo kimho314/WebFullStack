@@ -28,8 +28,11 @@ import java.util.Map;
 @EnableKafkaStreams
 public class KafkaConfig {
     private static final String SCHEMA_REGISTRY_URL = "http://localhost:8081";
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    private final String bootstrapServers;
+
+    public KafkaConfig(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+        this.bootstrapServers = bootstrapServers;
+    }
 
     @Bean
     public ConsumerFactory<String, OrderEvent> orderEventConsumerFactory() {
