@@ -25,7 +25,7 @@ public class OrderEventPublisher {
                             log.error("Error when publishing order event", ex);
                         }
                         else {
-                            log.info("Successfully published order event");
+                            log.info("Successfully published order event: {}", recordMetadata);
                         }
                     });
         }
