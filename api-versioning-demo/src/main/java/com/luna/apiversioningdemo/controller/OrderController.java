@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrderController {
-    @GetMapping(path = "/orders/{id}", version = "1", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/orders/{id}", version = "1.0", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getOrderV1(@PathVariable(value = "id") Long id) {
         return "order: " + id;
     }
 
-    @GetMapping(path = "/{version}/orders/{id}", version = "2", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/orders/{id}", version = "2.0", produces = MediaType.APPLICATION_JSON_VALUE)
     public String getOrderV2(@PathVariable(value = "id") Long id) {
         return "order: " + id;
     }
