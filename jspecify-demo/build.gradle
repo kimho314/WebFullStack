@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'net.ltgt.errorprone' version '4.3.0' // https://github.com/tbroyer/gradle-errorprone-plugin
+}
+
+group = 'com.luna'
+version = '0.0.1-SNAPSHOT'
+description = 'jspecify-demo'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.errorprone {
+        disableAllChecks = true // Other error prone checks are disabled
+        option("NullAway:OnlyNullMarked", "true") // Enable nullness checks only in null-marked code
+        error("NullAway") // bump checks from warnings (default) to errors
+        option("NullAway:JSpecifyMode", "true") // https://github.com/uber/NullAway/wiki/JSpecify-Support
+    }
+    // Keep a JDK 17 baseline
+    options.release = 17
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    errorprone 'com.google.errorprone:error_prone_core:2.42.0' // https://github.com/google/error-prone
+    errorprone 'com.uber.nullaway:nullaway:0.12.12' // https://github.com/uber/NullAway
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
