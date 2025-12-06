@@ -1,0 +1,9 @@
+spring:
+    application:
+        name: bean-registrar-demo
+
+
+app:
+    message-type: SMS
+server:
+    port: 8080
