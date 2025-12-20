@@ -60,6 +60,11 @@ class LinkedList:
             current = current.next
         current.next = new_node
 
+    def pre_append(self, data):
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+
     def print_all(self):
         list = []
         current = self.head
