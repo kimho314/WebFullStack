@@ -3,38 +3,29 @@ package thread.start.test;
 import util.MyLogger;
 
 public class StartTest4Main {
-
-    public static void main(String[] args) {
-        Thread thread1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
+    static void main() {
+        while (true) {
+            new Thread(() -> {
+                try {
                     MyLogger.log("A");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Thread.sleep(1000);
                 }
-            }
-        });
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }, "Thread-A").start();
 
-        Thread thread2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
+            new Thread(() -> {
+                try {
                     MyLogger.log("B");
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Thread.sleep(500);
                 }
-            }
-        });
-
-        thread1.start();
-        thread2.start();
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }, "Thread-B").start();
+        }
 
     }
+
 }
