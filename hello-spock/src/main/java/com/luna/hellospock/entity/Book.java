@@ -23,8 +23,7 @@ public class Book {
     public Book() {
     }
 
-    public Book(Long id, String isbn, String title, boolean available) {
-        this.id = id;
+    public Book(String isbn, String title, boolean available) {
         this.isbn = isbn;
         this.title = title;
         this.available = available;
