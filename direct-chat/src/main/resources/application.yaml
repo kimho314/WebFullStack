@@ -1,0 +1,16 @@
+spring:
+    application:
+        name: direct-chat
+    datasource:
+        hikari:
+            jdbc-url: jdbc:mysql://localhost:13306/messagesystem
+            username: dev_user
+            password: dev_password
+            driver-class-name: com.mysql.cj.jdbc.Driver
+            pool-name: ConnectionPool
+            minimum-idle: 10
+            maximum-pool-size: 20
+            idle-timeout: 60000
+            connection-timeout: 30000
+server:
+    port: 8080
