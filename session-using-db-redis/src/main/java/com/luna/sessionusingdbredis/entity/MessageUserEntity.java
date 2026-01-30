@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "message_user")
-public class MessageUserEntity {
+public class MessageUserEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -19,11 +19,6 @@ public class MessageUserEntity {
     @Column(name ="password", nullable = false)
     private String password;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
 
     public MessageUserEntity() {
     }
@@ -45,24 +40,6 @@ public class MessageUserEntity {
         return password;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = this.createdAt;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -75,5 +52,11 @@ public class MessageUserEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(userId);
+    }
+
+    @Override
+    public String toString() {
+        return "MessageUserEntity{userId=%d, username='%s', createAt=%s, updatedAt=%s}"
+                .formatted(userId, username, getCreateAt(), getUpdatedAt());
     }
 }
