@@ -1,6 +1,6 @@
 package com.luna.directchat.handler;
 
-import com.luna.directchat.dto.Message;
+import com.luna.directchat.dto.domain.Message;
 import com.luna.directchat.session.WebSocketSessionManager;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;

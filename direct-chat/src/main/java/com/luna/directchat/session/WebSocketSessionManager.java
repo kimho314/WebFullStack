@@ -1,6 +1,7 @@
 package com.luna.directchat.session;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -9,8 +10,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-@Slf4j
 public class WebSocketSessionManager {
+
+    private static final Logger log = LoggerFactory.getLogger(WebSocketSessionManager.class);
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
     public List<WebSocketSession> getSessions() {
@@ -28,9 +30,9 @@ public class WebSocketSessionManager {
             if (webSocketSession != null) {
                 log.info("Remove session : {}", sessionId);
                 webSocketSession.close();
-                log.info("Close session : {}", sessionId);
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             log.error("Failed WebSocketSession close. sessionId: {}", sessionId);
         }
     }
