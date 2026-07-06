@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: grafana-monitoring-demo
+  datasource:
+    url: jdbc:postgresql://postgres:5432/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create
+  cache:
+    type: redis
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+server:
+  tomcat:
+    max-connections: 8192
+    threads:
+      max: 200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: grafana-monitoring-demo
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+
+logging:
+  pattern:
+    level: "trace_id=%mdc{trace_id} span_id=%mdc{span_id} trace_flags=%mdc{trace_flags} %p"
+  level:
+    com.luna.grafanamonitoringdemo: DEBUG
+

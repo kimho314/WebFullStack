@@ -1,0 +1,149 @@
+x-logging: &default-logging
+  driver: loki
+  options:
+    loki-url: 'http://localhost:3100/api/prom/push'
+    loki-pipeline-stages: |
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<date>\d{4}-\d{2}-\d{2})T(?P<time>\d{2}:\d{2}:\d{2}.\d{3}) (?P<message>(?s:.*))$$'
+
+x-app-dependencies: &app-dependencies
+  loki:
+    condition: service_started
+  postgres:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+
+x-app-image: &app-image
+  image: grafana-monitoring-demo-app:latest
+  build:
+    context: .
+    dockerfile: Dockerfile
+  pull_policy: build
+
+services:
+  # Infrastructure
+  loki:
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./etc/prometheus:/workspace
+    command:
+      - --config.file=/workspace/prometheus.yml
+      - --enable-feature=exemplar-storage
+    depends_on:
+      - loki
+    logging: *default-logging
+
+  tempo:
+    image: grafana/tempo:latest
+    command: [ "-config.file=/etc/tempo.yml", "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./etc/tempo.yml:/etc/tempo.yml
+    depends_on:
+      - loki
+    logging: *default-logging
+
+  grafana:
+    image: grafana/grafana:12.0.1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./etc/grafana/:/etc/grafana/provisioning/datasources
+      - ./etc/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./etc/dashboards:/etc/grafana/dashboards
+    depends_on:
+      - loki
+      - prometheus
+    logging: *default-logging
+
+  # Applications
+  app-a:
+    <<: *app-image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - TARGET_ONE_HOST=app-b
+      - TARGET_TWO_HOST=app-c
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317 # send traces to Tempo
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc # use gRPC for OTLP
+      - OTEL_SERVICE_NAME=app-a # service name for Span
+      - OTEL_METRICS_EXPORTER=none # disable metrics exporter
+      - OTEL_LOGS_EXPORTER=none # disable logs exporter
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-a # override default value of management.metrics.tags.application in app/src/main/resources/application.properties
+    ports:
+      - "8080:8080"
+    logging: *default-logging
+    depends_on: *app-dependencies
+
+  app-b:
+    <<: *app-image
+    environment:
+      - TARGET_ONE_HOST=app-b
+      - TARGET_TWO_HOST=app-c
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=app-b
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-b
+    ports:
+      - "8081:8080"
+    logging: *default-logging
+    depends_on: *app-dependencies
+
+  app-c:
+    <<: *app-image
+    environment:
+      - TARGET_ONE_HOST=app-b
+      - TARGET_TWO_HOST=app-c
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=app-c
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      - MANAGEMENT_METRICS_TAGS_APPLICATION=app-c
+    ports:
+      - "8082:8080"
+    logging: *default-logging
+    depends_on: *app-dependencies
+
+  postgres:
+    image: postgres:18.4-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
+
+  redis:
+    image: redis:8.8.0-alpine
+    ports:
+      - "6379:6379"
+    logging: *default-logging
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
