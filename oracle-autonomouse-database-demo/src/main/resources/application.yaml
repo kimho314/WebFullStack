@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: oracle-autonomouse-database-demo
+  sql:
+    init:
+      mode: always
+  data:
+    jdbc:
+      repositories:
+        enabled: true
+  datasource:
+    username: kimho314
+    password: Ghtjq2959@@@
+    url: jdbc:oracle:thin:@(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.eu-amsterdam-1.oraclecloud.com))(connect_data=(service_name=g2681e1947c15b6_lyry0gxqh1swbcta_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+    type: oracle.jdbc.pool.OracleDataSource
+    driver-class-name: oracle.jdbc.OracleDriver
+    oracleucp:
+      data-source-name: autonomous-connection-pool
+      initial-pool-size: 10
+      min-pool-size: 10
+      max-pool-size: 30
+      s-q-l-for-validate-connection: select 1 from dual
+
+logging:
+  level:
+    org.springframework.jdbc: DEBUG
+    oracle.ucp: TRACE
