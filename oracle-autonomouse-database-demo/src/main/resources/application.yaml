@@ -9,12 +9,12 @@ spring:
       repositories:
         enabled: true
   datasource:
-    username: kimho314
-    password: Ghtjq2959@@@
-    url: jdbc:oracle:thin:@lyry0gxqh1swbcta_medium?TNS_ADMIN=E:/oracle_cloud/Wallet_LYRY0GXQH1SWBCTA
-    type: oracle.ucp.jdbc.PoolDataSourceImpl
-    driver-class-name: oracle.jdbc.OracleDriver
+    #    username: kimho314
+    #    password: Ghtjq2959@@@
+    url: jdbc:oracle:thin:@config-ocivault://ocid1.vaultsecret.oc1.eu-amsterdam-1.amaaaaaadfpcpfiaaqjsu3vsaw3h3xxhbmdu6c7jdte5qlzygbm3cfu45hza
+    type: oracle.ucp.jdbc.PoolDataSource
     oracleucp:
+      connection-factory-class-name: oracle.jdbc.pool.OracleDataSource
       data-source-name: autonomous-connection-pool
       initial-pool-size: 10
       min-pool-size: 10

@@ -18,12 +18,19 @@ repositories {
     mavenCentral()
 }
 
+// OCI provider 1.1.0 requires the cache API moved in JDBC 23.26.2.
+ext['oracle-database.version'] = '23.26.1.0.0'
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+
     runtimeOnly 'com.oracle.database.jdbc:ojdbc17'
     implementation("com.oracle.database.spring:oracle-spring-boot-starter-ucp:26.3.0")
     implementation("com.oracle.database.spring:oracle-spring-boot-starter-wallet:26.3.0")
+    implementation("com.oracle.database.jdbc:ojdbc-provider-oci:1.1.0")
+    implementation("com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey3:3.103.0")
+
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
